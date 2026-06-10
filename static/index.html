@@ -525,6 +525,93 @@
             display: none;
         }
 
+        /* ── MODAL OPCIONES — ESCRITORIO (glassmorphism) ───────────────── */
+        .more-sheet-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 3000;
+            display: none;
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.25s ease;
+        }
+        .more-sheet-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .more-sheet-content {
+            width: 360px;
+            background: linear-gradient(135deg,
+                rgba(20, 12, 40, 0.92) 0%,
+                rgba(12, 8, 28, 0.96) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            border-radius: 20px;
+            padding: 28px 24px 24px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04),
+                0 24px 80px rgba(0,0,0,0.7),
+                0 0 60px rgba(124, 58, 237, 0.12);
+            transform: translateY(0) scale(1);
+            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .more-sheet-drag-handle { display: none; }
+        .more-sheet-header {
+            text-align: left;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .more-sheet-header h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e0b0ff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .more-sheet-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .more-sheet-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 16px 14px;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.2px;
+        }
+        .more-sheet-item:hover {
+            background: rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.4);
+            color: #e0b0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+        }
+        .more-sheet-item i {
+            font-size: 20px;
+            color: #a78bfa;
+            text-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
+        }
+
         /* --- MEDIA QUERY PARA MÓVILES (RESPONSIVE) --- */
         @media (max-width: 768px), (max-height: 500px) {
             body {
@@ -664,95 +751,7 @@
                 transform: scale(1.08);
             }
 
-        /* ── MODAL OPCIONES — ESCRITORIO (glassmorphism) ───────────────── */
-        .more-sheet-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 3000;
-            display: none;
-            opacity: 0;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.25s ease;
-        }
-        .more-sheet-overlay.show {
-            display: flex;
-            opacity: 1;
-        }
-        .more-sheet-content {
-            width: 360px;
-            background: linear-gradient(135deg,
-                rgba(20, 12, 40, 0.92) 0%,
-                rgba(12, 8, 28, 0.96) 100%);
-            border: 1px solid rgba(124, 58, 237, 0.35);
-            border-radius: 20px;
-            padding: 28px 24px 24px;
-            box-shadow:
-                0 0 0 1px rgba(255,255,255,0.04),
-                0 24px 80px rgba(0,0,0,0.7),
-                0 0 60px rgba(124, 58, 237, 0.12);
-            transform: translateY(0) scale(1);
-            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .more-sheet-drag-handle { display: none; }
-        .more-sheet-header {
-            text-align: left;
-            margin-bottom: 20px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
-        .more-sheet-header h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: #e0b0ff;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin: 0;
-        }
-        .more-sheet-body {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .more-sheet-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 14px;
-            padding: 16px 14px;
-            color: rgba(255,255,255,0.8);
-            font-size: 12px;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            width: 100%;
-            outline: none;
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.2px;
-        }
-        .more-sheet-item:hover {
-            background: rgba(124, 58, 237, 0.12);
-            border-color: rgba(124, 58, 237, 0.4);
-            color: #e0b0ff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
-        }
-        .more-sheet-item i {
-            font-size: 20px;
-            color: #a78bfa;
-            text-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
-        }
-
-        /* ── BOTTOM SHEET — solo en móvil sobreescribe el modal de escritorio ── */
-        @media (max-width: 768px) {
+            /* ── BOTTOM SHEET — solo en móvil sobreescribe el modal de escritorio ── */
             .more-sheet-overlay {
                 align-items: flex-end;
                 justify-content: stretch;
@@ -818,7 +817,6 @@
                 color: #e0b0ff;
                 text-shadow: none;
             }
-        }
 
             /* --- MEJORAS DE ACCESIBILIDAD: AUMENTO DE FUENTES EN MÓVIL --- */
             .info-row {
