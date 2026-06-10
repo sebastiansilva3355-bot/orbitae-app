@@ -86,5 +86,91 @@
         "-58.6713139"
       ]
     }
+  ],
+  "columbia brit": [
+    {
+      "place_id": 378985212,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 5324471829,
+      "lat": "49.2048182",
+      "lon": "-122.9061329",
+      "class": "railway",
+      "type": "station",
+      "place_rank": 30,
+      "importance": 0.39189118331215606,
+      "addresstype": "railway",
+      "name": "Columbia",
+      "display_name": "Columbia, Fourth Street, Downtown, New Westminster, Metro Vancouver Regional District, British Columbia, V3L 5M4, Canada",
+      "boundingbox": [
+        "49.1998182",
+        "49.2098182",
+        "-122.9111329",
+        "-122.9011329"
+      ]
+    },
+    {
+      "place_id": 375559758,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 11678160,
+      "lat": "49.2578915",
+      "lon": "-123.2429755",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 20,
+      "importance": 0.6222838486029556,
+      "addresstype": "suburb",
+      "name": "University of British Columbia",
+      "display_name": "University of British Columbia, Electoral Area A, Metro Vancouver Regional District, British Columbia, Canada",
+      "boundingbox": [
+        "49.2431313",
+        "49.2730071",
+        "-123.2622125",
+        "-123.2273623"
+      ]
+    },
+    {
+      "place_id": 375760648,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 5313574,
+      "lat": "52.1608944",
+      "lon": "-117.3086713",
+      "class": "natural",
+      "type": "glacier",
+      "place_rank": 22,
+      "importance": 0.4875278203641164,
+      "addresstype": "glacier",
+      "name": "Columbia Icefield",
+      "display_name": "Columbia Icefield, Area A (Kicking Horse/Kinbasket Lake), Improvement District No. 9, Alberta, Canada",
+      "boundingbox": [
+        "52.0805289",
+        "52.2652684",
+        "-117.4486756",
+        "-117.1602094"
+      ]
+    },
+    {
+      "place_id": 378075233,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 2218398,
+      "lat": "51.4783394",
+      "lon": "-117.9295767",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.46731997584895757,
+      "addresstype": "county",
+      "name": "Columbia-Shuswap Regional District",
+      "display_name": "Columbia-Shuswap Regional District, British Columbia, Canada",
+      "boundingbox": [
+        "50.4016867",
+        "52.5000492",
+        "-119.7107045",
+        "-116.2546296"
+      ]
+    }
   ]
 }

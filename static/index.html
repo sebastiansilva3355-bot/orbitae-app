@@ -3068,6 +3068,9 @@
                             <!-- CALENDARIO DE VIAJES DINÁMICO (Inicialmente oculto) -->
                             <div id="travel-calendar-container" style="display: none; margin-bottom: 14px;"></div>
 
+                            <!-- REPORTE DE DESTINO DINÁMICO (Inicialmente oculto) -->
+                            <div id="destination-report" style="display: none; margin-bottom: 14px;"></div>
+
                             <div style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 12px; margin-top: 12px;">
                                 <h4 style="margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark); display: flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-star" style="color: #ffd54f;"></i> Tus Mejores Destinos
@@ -4611,6 +4614,7 @@
                     // Hacerlo de forma diferida para no interferir con las animaciones de carga inicial
                     setTimeout(() => {
                         generateTravelCalendar(activeDestCoords.lat, activeDestCoords.lon, activeDestName);
+                        analyzeDestination(activeDestCoords.lat, activeDestCoords.lon, activeDestName);
                     }, 100);
                 }
                 
@@ -5252,6 +5256,11 @@
                     }
                     map.flyTo([city.lat, city.lon], 6, { animate: true, duration: 1.5 });
                     setTimeout(() => { cityMarkers[index].openPopup(); }, 1500);
+                    
+                    activeDestCoords = { lat: city.lat, lon: city.lon };
+                    activeDestName = `${city.name}, ${city.country}`;
+                    analyzeDestination(city.lat, city.lon, `${city.name}, ${city.country}`);
+                    generateTravelCalendar(city.lat, city.lon, `${city.name}, ${city.country}`);
                 };
                 
                 let badges = '';
@@ -5286,6 +5295,13 @@
                             <p style="color:#d1d5db; line-height:1.4;">${city.desc}</p>
                         </div>
                     `);
+                
+                marker.on('click', () => {
+                    activeDestCoords = { lat: city.lat, lon: city.lon };
+                    activeDestName = `${city.name}, ${city.country}`;
+                    analyzeDestination(city.lat, city.lon, `${city.name}, ${city.country}`);
+                    generateTravelCalendar(city.lat, city.lon, `${city.name}, ${city.country}`);
+                });
                 
                 cityMarkers.push(marker);
             });
@@ -6611,8 +6627,9 @@
                             // ── Verificar límite de ciudades gratuitas antes de analizar ──
                             if (!checkCityLimit(name)) return;
 
-                            // Generar Calendario de Viaje
+                            // Generar Calendario de Viaje y Análisis de Relocalización
                             generateTravelCalendar(lat, lon, name);
+                            analyzeDestination(lat, lon, name);
                         };
                         
                         dropdown.appendChild(div);
