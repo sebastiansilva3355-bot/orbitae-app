@@ -6997,51 +6997,138 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
             const W = doc.internal.pageSize.getWidth();
+            const H = doc.internal.pageSize.getHeight();
             const margin = 18;
-            let y = 20;
-
-            // ── Encabezado ──
-            doc.setFillColor(10, 10, 20);
-            doc.rect(0, 0, W, 38, 'F');
-            doc.setTextColor(186, 85, 211);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.text('Orbitae', margin, 16);
-            doc.setFontSize(10);
-            doc.setTextColor(160, 160, 180);
-            doc.text('Reporte de Carta Natal Personalizada', margin, 23);
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 120);
-            doc.text(`Generado el ${new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 30);
-
-            y = 50;
-
-            // ── Datos de nacimiento ──
-            doc.setFillColor(20, 10, 35);
-            doc.roundedRect(margin, y, W - margin*2, 28, 4, 4, 'F');
-            doc.setTextColor(186, 85, 211);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('DATOS DE NACIMIENTO', margin + 6, y + 8);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(200, 200, 220);
+            
             const birthDate = document.getElementById('date-input')?.value || '-';
             const birthTime = document.getElementById('time-input')?.value || '-';
             const birthCity = document.getElementById('city-search')?.value || '-';
             const lat       = parseFloat(document.getElementById('lat-input')?.value || 0).toFixed(4);
             const lon       = parseFloat(document.getElementById('lon-input')?.value || 0).toFixed(4);
             const timezoneOffset = parseFloat(document.getElementById('timezone-input')?.value || 0);
-            doc.text(`Fecha: ${birthDate}   Hora: ${birthTime}hs (GMT${timezoneOffset >= 0 ? '+' : ''}${timezoneOffset})`, margin + 6, y + 16);
-            doc.text(`Lugar: ${birthCity}   (${lat}°, ${lon}°)`, margin + 6, y + 23);
 
-            y += 38;
+            // ── PORTADA (COVER PAGE) ────────────────────────────────────────────────────────
+            // Fondo Espacio Profundo
+            doc.setFillColor(10, 10, 22);
+            doc.rect(0, 0, W, H, 'F');
+
+            // Marco Dorado Doble
+            doc.setDrawColor(197, 160, 89); // Oro
+            doc.setLineWidth(0.4);
+            doc.rect(10, 10, W - 20, H - 20);
+            doc.rect(11.5, 11.5, W - 23, H - 23);
+
+            // Círculos Celestiales en el Centro (Geometría Sagrada / Órbitas)
+            doc.setDrawColor(186, 85, 211); // Violeta
+            doc.setLineWidth(0.2);
+            doc.circle(W/2, 95, 38);
+            doc.circle(W/2, 95, 25);
+            doc.circle(W/2, 95, 12);
+            
+            // Cruz Astral
+            doc.setDrawColor(197, 160, 89);
+            doc.line(W/2, 50, W/2, 140);
+            doc.line(W/2 - 45, 95, W/2 + 45, 95);
+            
+            // Constelaciones / Estrellas pequeñas (Puntitos decorativos)
+            doc.setFillColor(255, 255, 255);
+            doc.circle(W/2 - 20, 75, 0.4, 'F');
+            doc.circle(W/2 + 25, 80, 0.5, 'F');
+            doc.circle(W/2 - 30, 110, 0.3, 'F');
+            doc.circle(W/2 + 15, 120, 0.4, 'F');
+            doc.circle(W/2 + 35, 100, 0.6, 'F');
+
+            // Título Principal
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('times', 'bold');
+            doc.setFontSize(32);
+            doc.text('O R B I T A E', W/2, 155, { align: 'center' });
+
+            // Subtítulo
+            doc.setTextColor(230, 230, 250); // Muted Lavender
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text('INFORME PREMIUM DE CARTA NATAL PERSONALIZADA', W/2, 165, { align: 'center' });
+
+            // Tarjeta de Presentación / Información del Usuario
+            doc.setFillColor(20, 14, 38);
+            doc.roundedRect(W/2 - 65, 195, 130, 48, 4, 4, 'F');
+            doc.setDrawColor(186, 85, 211);
+            doc.setLineWidth(0.4);
+            doc.roundedRect(W/2 - 65, 195, 130, 48, 4, 4, 'D');
+
+            doc.setTextColor(197, 160, 89);
+            doc.setFont('times', 'bold');
+            doc.setFontSize(11);
+            doc.text('CONSULTANTE', W/2, 203, { align: 'center' });
+
+            doc.setTextColor(240, 240, 250);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            const username = document.getElementById('greeting-username')?.innerText || 'Viajero';
+            doc.text(username.toUpperCase(), W/2, 210, { align: 'center' });
+
+            doc.setTextColor(170, 170, 190);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.text(`Fecha: ${birthDate}`, W/2, 218, { align: 'center' });
+            doc.text(`Hora: ${birthTime} hs`, W/2, 223, { align: 'center' });
+            doc.text(`Lugar: ${birthCity}`, W/2, 228, { align: 'center' });
+            doc.text(`Coords: ${lat}°, ${lon}°`, W/2, 233, { align: 'center' });
+
+            // Pie de página de portada
+            doc.setTextColor(100, 100, 120);
+            doc.setFontSize(7.5);
+            doc.text('Calculado científicamente en base a efemérides de la NASA (VSOP87)', W/2, 272, { align: 'center' });
+
+            // ── FIN PORTADA ──────────────────────────────────────────────────────────────────
+            doc.addPage();
+            let y = 20;
+
+            // ── Encabezado Páginas Interiores ──
+            function drawHeader(title) {
+                doc.setDrawColor(220, 215, 235);
+                doc.setLineWidth(0.3);
+                doc.line(margin, 16, W - margin, 16);
+                
+                doc.setTextColor(107, 33, 168); // Púrpura oscuro
+                doc.setFont('times', 'bold');
+                doc.setFontSize(10);
+                doc.text('ORBITAE ASTROLOGÍA', margin, 12);
+                
+                doc.setTextColor(120, 120, 140);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text(title, W - margin - doc.getTextWidth(title), 12);
+            }
+
+            drawHeader('CARTA NATAL PERSONALIZADA');
+
+            // ── Datos de nacimiento (Estilo elegante en hoja clara) ──
+            doc.setFillColor(248, 246, 252); // Fondo lavanda muy suave
+            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'F');
+            doc.setDrawColor(233, 220, 250);
+            doc.setLineWidth(0.4);
+            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'D');
+
+            doc.setTextColor(107, 33, 168);
+            doc.setFontSize(10);
+            doc.setFont('times', 'bold');
+            doc.text('DATOS DE NACIMIENTO REGISTRADOS', margin + 6, y + 7);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(80, 80, 100);
+            doc.text(`Fecha: ${birthDate}   Hora: ${birthTime}hs (GMT${timezoneOffset >= 0 ? '+' : ''}${timezoneOffset})`, margin + 6, y + 15);
+            doc.text(`Lugar original: ${birthCity}   (${lat}°, ${lon}°)`, margin + 6, y + 21);
+
+            y += 36;
 
             // ── Posiciones Planetarias (Tabla) ──
-            doc.setTextColor(255, 215, 0);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text('POSICIONES PLANETARIAS', margin, y);
+            doc.setTextColor(197, 160, 89); // Dorado
+            doc.setFont('times', 'bold');
+            doc.setFontSize(13);
+            doc.text('POSICIONES PLANETARIAS EN EL CIELO', margin, y);
             y += 6;
 
             const planetOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'ASC', 'MC'];
@@ -7052,18 +7139,18 @@
             };
 
             // Dibujar cabecera de tabla
-            doc.setFillColor(15, 15, 25);
-            doc.rect(margin, y, W - margin*2, 7, 'F');
-            doc.setTextColor(156, 39, 176);
+            doc.setFillColor(107, 33, 168); // Púrpura principal
+            doc.rect(margin, y, W - margin*2, 7.5, 'F');
+            doc.setTextColor(255, 255, 255);
             doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
+            doc.setFont('times', 'bold');
             doc.text('Planeta / Ángulo', margin + 4, y + 5);
             doc.text('Signo Astrológico', margin + 60, y + 5);
             doc.text('Posición Exacta', W - margin - 35, y + 5);
-            y += 7;
+            y += 7.5;
 
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(230, 230, 240);
+            doc.setTextColor(60, 60, 80);
             planetOrder.forEach((p, idx) => {
                 const lonVal = natalPlanets[p];
                 if (lonVal !== undefined) {
@@ -7073,24 +7160,26 @@
 
                     // Fila cebra
                     if (idx % 2 === 0) {
-                        doc.setFillColor(25, 25, 35);
+                        doc.setFillColor(248, 246, 252);
                         doc.rect(margin, y, W - margin*2, 7, 'F');
                     }
+                    doc.setFont('helvetica', 'bold');
                     doc.text(planetNamesSp[p], margin + 4, y + 5);
+                    doc.setFont('helvetica', 'normal');
                     doc.text(sign.name, margin + 60, y + 5);
                     doc.text(`${deg}° ${min}'`, W - margin - 35, y + 5);
                     y += 7;
                 }
             });
 
-            y += 10;
+            y += 12;
 
             // ── Interpretación Personalizada ──
             if (y + 40 > 275) { doc.addPage(); y = 20; }
-            doc.setTextColor(255, 215, 0);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text('INTERPRETACIÓN ASTRAL PERSONALIZADA', margin, y);
+            doc.setTextColor(197, 160, 89);
+            doc.setFont('times', 'bold');
+            doc.setFontSize(13);
+            doc.text('INFLUENCIA DETALLADA DE TUS PLANETAS CLAVE', margin, y);
             y += 8;
 
             const interpretKeys = ['Sun', 'Moon', 'ASC', 'Venus', 'Mars'];
@@ -7103,20 +7192,24 @@
                     if (interpData && interpData.desc[sign.name]) {
                         const descText = interpData.desc[sign.name];
                         const fullTitle = `${interpData.name} en ${sign.name}:`;
-                        const lines = doc.splitTextToSize(descText, W - margin*2 - 8);
+                        const lines = doc.splitTextToSize(descText, W - margin*2 - 12);
                         const blockH = 6 + (lines.length * 4.5) + 6;
 
                         if (y + blockH > 275) { doc.addPage(); y = 20; }
 
-                        doc.setFillColor(18, 10, 30);
+                        doc.setFillColor(250, 248, 255); // Fondo lavanda
                         doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
+                        doc.setDrawColor(233, 213, 255); // Borde
+                        doc.setLineWidth(0.3);
+                        doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
 
-                        doc.setTextColor(186, 85, 211);
-                        doc.setFont('helvetica', 'bold');
-                        doc.text(fullTitle, margin + 4, y + 5);
+                        doc.setTextColor(107, 33, 168);
+                        doc.setFont('times', 'bold');
+                        doc.text(fullTitle, margin + 6, y + 6);
+                        
                         doc.setFont('helvetica', 'normal');
-                        doc.setTextColor(200, 200, 210);
-                        doc.text(lines, margin + 4, y + 10.5);
+                        doc.setTextColor(60, 60, 80);
+                        doc.text(lines, margin + 6, y + 11.5);
 
                         y += blockH + 4;
                     }
@@ -7129,10 +7222,10 @@
                 const mcSign = getZodiacSign(mcLon);
                 const mcInterp = vocationInterpretations[mcSign.name];
                 if (mcInterp) {
-                    const fullTitle = `Medio Cielo (MC) en ${mcSign.name} (Vocación y Carrera):`;
-                    const descLines = doc.splitTextToSize(mcInterp.desc, W - margin*2 - 8);
-                    const jobsText = `Profesiones recomendadas: ${mcInterp.jobs}`;
-                    const jobsLines = doc.splitTextToSize(jobsText, W - margin*2 - 8);
+                    const fullTitle = `Medio Cielo (MC) en ${mcSign.name} (Vocación y Éxito Profesional):`;
+                    const descLines = doc.splitTextToSize(mcInterp.desc, W - margin*2 - 12);
+                    const jobsText = `Profesiones e industrias recomendadas: ${mcInterp.jobs}`;
+                    const jobsLines = doc.splitTextToSize(jobsText, W - margin*2 - 12);
 
                     // Planetas culminantes en PDF
                     const culmList = getCulminatingPlanets(natalPlanets);
@@ -7141,8 +7234,8 @@
                     culmList.forEach(item => {
                         const interp = culminatingInterpretations[item.key];
                         if (interp) {
-                            const txt = `* [${interp.symbol}] ${interp.name}: ${interp.text} (Extra: ${interp.jobs})`;
-                            const lines = doc.splitTextToSize(txt, W - margin*2 - 12);
+                            const txt = `* [${interp.symbol}] ${interp.name}: ${interp.text} (Industria: ${interp.jobs})`;
+                            const lines = doc.splitTextToSize(txt, W - margin*2 - 16);
                             culmLinesList.push(lines);
                             culmHeight += lines.length * 4.5 + 2.5;
                         }
@@ -7152,29 +7245,34 @@
 
                     if (y + blockH > 275) { doc.addPage(); y = 20; }
 
-                    doc.setFillColor(10, 25, 35);
+                    doc.setFillColor(240, 253, 250); // Fondo verde menta para trabajo/vocación
                     doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
+                    doc.setDrawColor(204, 251, 241);
+                    doc.setLineWidth(0.3);
+                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
 
-                    doc.setTextColor(255, 215, 0);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(fullTitle, margin + 4, y + 5);
+                    doc.setTextColor(13, 148, 136); // Teal oscuro
+                    doc.setFont('times', 'bold');
+                    doc.text(fullTitle, margin + 6, y + 6);
+                    
                     doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(200, 200, 210);
-                    doc.text(descLines, margin + 4, y + 10.5);
+                    doc.setTextColor(50, 60, 70);
+                    doc.text(descLines, margin + 6, y + 11.5);
+                    
                     doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(255, 215, 0);
-                    doc.text(jobsLines, margin + 4, y + 10.5 + (descLines.length * 4.5) + 2);
+                    doc.setTextColor(15, 118, 110);
+                    doc.text(jobsLines, margin + 6, y + 11.5 + (descLines.length * 4.5) + 2);
 
-                    let cy = y + 10.5 + (descLines.length * 4.5) + (jobsLines.length * 4.5) + 6;
+                    let cy = y + 11.5 + (descLines.length * 4.5) + (jobsLines.length * 4.5) + 6;
                     if (culmList.length > 0) {
-                        doc.setTextColor(0, 188, 212);
-                        doc.setFont('helvetica', 'bold');
-                        doc.text('Planetas influyentes en tu carrera (Culminantes):', margin + 4, cy);
+                        doc.setTextColor(10, 115, 130);
+                        doc.setFont('times', 'bold');
+                        doc.text('Planetas influyentes cerca del Medio Cielo (Planetas Culminantes):', margin + 6, cy);
                         cy += 4.5;
                         doc.setFont('helvetica', 'normal');
-                        doc.setTextColor(200, 200, 210);
+                        doc.setTextColor(50, 60, 70);
                         culmLinesList.forEach(lines => {
-                            doc.text(lines, margin + 6, cy);
+                            doc.text(lines, margin + 8, cy);
                             cy += lines.length * 4.5 + 2.5;
                         });
                     }
@@ -7183,18 +7281,19 @@
                 }
             }
 
-            // Pie de página en todas las páginas
+            // Pie de página en todas las páginas (excepto portada)
             const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
+            for (let i = 2; i <= pageCount; i++) {
                 doc.setPage(i);
+                drawHeader('CARTA NATAL PERSONALIZADA');
                 doc.setFontSize(8);
-                doc.setTextColor(90, 90, 110);
+                doc.setTextColor(120, 120, 140);
                 doc.text(`Página ${i} de ${pageCount}`, W / 2, 287, { align: 'center' });
-                doc.text('Orbitae — Reporte Oficial de Carta Natal', margin, 287);
+                doc.text('Orbitae — Astrocartografía e Interpretación', margin, 287);
             }
 
-            doc.save('Orbitae_Carta_Natal.pdf');
-            showToast('✅ PDF de Carta Natal descargado correctamente');
+            doc.save('Orbitae_Carta_Natal_Premium.pdf');
+            showToast('✅ PDF de Carta Natal Premium descargado correctamente');
         }
 
         // ─────────────────────────────────────────────────────────────────────
@@ -7219,115 +7318,228 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
             const W = doc.internal.pageSize.getWidth();
+            const H = doc.internal.pageSize.getHeight();
             const margin = 18;
-            let y = 20;
 
-            // ── Encabezado ────────────────────────────────────────────────────────────────
-            doc.setFillColor(10, 10, 20);
-            doc.rect(0, 0, W, 38, 'F');
-            doc.setTextColor(186, 85, 211);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(20);
-            doc.text('Orbitae', margin, 16);
-            doc.setFontSize(9);
-            doc.setTextColor(160, 160, 180);
-            doc.text('Reporte de Astrocartografia', margin, 23);
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 120);
-            doc.text(`Generado el ${new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 30);
-
-            y = 50;
-
-            // ── Datos de nacimiento ──────────────────────────────────────────────────────
-            doc.setFillColor(20, 10, 35);
-            doc.roundedRect(margin, y, W - margin*2, 28, 4, 4, 'F');
-            doc.setTextColor(186, 85, 211);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Carta Natal', margin + 6, y + 8);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(200, 200, 220);
             const birthDate = document.getElementById('date-input')?.value || '-';
             const birthTime = document.getElementById('time-input')?.value || '-';
             const birthCity = document.getElementById('city-search')?.value || '-';
-            const lat       = document.getElementById('lat-input')?.value || '-';
-            const lon       = document.getElementById('lon-input')?.value || '-';
-            doc.text(`Fecha: ${birthDate}   Hora: ${birthTime}hs`, margin + 6, y + 16);
-            doc.text(`Lugar: ${birthCity}   (${lat}, ${lon})`, margin + 6, y + 23);
 
-            y += 36;
+            // ── PORTADA (COVER PAGE) ────────────────────────────────────────────────────────
+            // Fondo Espacio Profundo
+            doc.setFillColor(10, 10, 22);
+            doc.rect(0, 0, W, H, 'F');
 
-            // ── Título del destino ──────────────────────────────────────────────────────────
-            doc.setTextColor(255, 215, 0);
+            // Marco Dorado y Cian
+            doc.setDrawColor(197, 160, 89); // Oro
+            doc.setLineWidth(0.4);
+            doc.rect(10, 10, W - 20, H - 20);
+            doc.setDrawColor(0, 180, 216); // Cian
+            doc.rect(11.5, 11.5, W - 23, H - 23);
+
+            // Círculos Celestiales en el Centro (Geometría Sagrada / Órbitas)
+            doc.setDrawColor(0, 180, 216); // Cian
+            doc.setLineWidth(0.2);
+            doc.circle(W/2, 95, 38);
+            doc.circle(W/2, 95, 25);
+            doc.circle(W/2, 95, 12);
+            
+            // Cruz Astral / Compass Rose (Líneas Cardinales)
+            doc.setDrawColor(197, 160, 89); // Oro
+            doc.line(W/2, 50, W/2, 140);
+            doc.line(W/2 - 45, 95, W/2 + 45, 95);
+
+            // Cruz Astral Diagonal (Navegación / Relocalización)
+            doc.setDrawColor(0, 180, 216); // Cian
+            doc.line(W/2 - 32, 95 - 32, W/2 + 32, 95 + 32);
+            doc.line(W/2 - 32, 95 + 32, W/2 + 32, 95 - 32);
+            
+            // Estrellas / Constelaciones decorativas
+            doc.setFillColor(255, 255, 255);
+            doc.circle(W/2 - 20, 75, 0.4, 'F');
+            doc.circle(W/2 + 25, 80, 0.5, 'F');
+            doc.circle(W/2 - 30, 110, 0.3, 'F');
+            doc.circle(W/2 + 15, 120, 0.4, 'F');
+            doc.circle(W/2 + 35, 100, 0.6, 'F');
+
+            // Título Principal
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('times', 'bold');
+            doc.setFontSize(30);
+            doc.text('O R B I T A E', W/2, 150, { align: 'center' });
+
+            doc.setTextColor(0, 180, 216); // Cian
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
-            doc.text(`Destino: ${cityName}`, margin, y);
-            y += 8;
-            doc.setFontSize(8);
-            doc.setTextColor(140, 140, 160);
+            doc.setFontSize(15);
+            doc.text('DESTINOS & RELOCALIZACIÓN', W/2, 159, { align: 'center' });
+
+            // Subtítulo
+            doc.setTextColor(230, 230, 250); // Muted Lavender
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.text('REPORTE DE ASTROCARTOGRAFÍA Y ALINEACIÓN CELESTIAL', W/2, 168, { align: 'center' });
+
+            // Tarjeta de Presentación / Información del Usuario y Destino
+            doc.setFillColor(10, 25, 45); // Deep cyan/blue background
+            doc.roundedRect(W/2 - 65, 195, 130, 52, 4, 4, 'F');
+            doc.setDrawColor(0, 180, 216); // Cian border
+            doc.setLineWidth(0.45);
+            doc.roundedRect(W/2 - 65, 195, 130, 52, 4, 4, 'D');
+
+            doc.setTextColor(0, 180, 216); // Cian
+            doc.setFont('times', 'bold');
+            doc.setFontSize(10.5);
+            doc.text('VIAJERO & DESTINO', W/2, 203, { align: 'center' });
+
+            doc.setTextColor(240, 240, 250);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            const username = document.getElementById('greeting-username')?.innerText || 'Viajero';
+            doc.text(username.toUpperCase(), W/2, 210, { align: 'center' });
+
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9.5);
+            doc.text(cityName.toUpperCase(), W/2, 217, { align: 'center' });
+
+            doc.setTextColor(170, 170, 190);
             doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.text(`Nacimiento: ${birthDate} - ${birthTime} hs (${birthCity})`, W/2, 225, { align: 'center' });
+
+            let destLat = '-';
+            let destLon = '-';
             if (activeDestCoords) {
-                doc.text(`Coordenadas: ${activeDestCoords.lat.toFixed(4)}° lat, ${activeDestCoords.lon.toFixed(4)}° lon`, margin, y);
+                destLat = activeDestCoords.lat.toFixed(4);
+                destLon = activeDestCoords.lon.toFixed(4);
+            } else {
+                destLat = parseFloat(document.getElementById('lat-input')?.value || 0).toFixed(4);
+                destLon = parseFloat(document.getElementById('lon-input')?.value || 0).toFixed(4);
             }
-            y += 10;
+            doc.text(`Coords Destino: ${destLat}° lat, ${destLon}° lon`, W/2, 231, { align: 'center' });
+
+            const dateStr = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+            doc.text(`Generado: ${dateStr}`, W/2, 237, { align: 'center' });
+
+            // Pie de página de portada
+            doc.setTextColor(100, 100, 120);
+            doc.setFontSize(7.5);
+            doc.text('Calculado científicamente en base a efemérides de la NASA (VSOP87)', W/2, 272, { align: 'center' });
+
+            // ── FIN PORTADA ──────────────────────────────────────────────────────────────────
+            doc.addPage();
+            let y = 20;
+
+            // ── Encabezado Páginas Interiores ──
+            function drawHeader(title) {
+                doc.setDrawColor(200, 225, 235);
+                doc.setLineWidth(0.3);
+                doc.line(margin, 16, W - margin, 16);
+                
+                doc.setTextColor(15, 118, 110); // Teal oscuro
+                doc.setFont('times', 'bold');
+                doc.setFontSize(10);
+                doc.text('ORBITAE DESTINOS', margin, 12);
+                
+                doc.setTextColor(120, 120, 140);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text(title, W - margin - doc.getTextWidth(title), 12);
+            }
+
+            // ── Datos de nacimiento y destino (Estilo elegante en hoja clara) ──
+            doc.setFillColor(245, 250, 252); // Fondo cian muy suave
+            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'F');
+            doc.setDrawColor(200, 225, 235);
+            doc.setLineWidth(0.4);
+            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'D');
+
+            doc.setTextColor(15, 118, 110);
+            doc.setFontSize(10);
+            doc.setFont('times', 'bold');
+            doc.text('DATOS DE REFERENCIA', margin + 6, y + 7);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(80, 80, 100);
+            doc.text(`Origen: ${birthCity} (Nacimiento: ${birthDate} ${birthTime}hs)`, margin + 6, y + 14);
+            doc.text(`Destino Analizado: ${cityName} (${destLat}°, ${destLon}°)`, margin + 6, y + 20);
+
+            y += 34;
 
             // ── Influencias planetarias (tomadas del DOM) ───────────────────────────────
             const influenceItems = document.querySelectorAll('.influence-item');
 
             if (influenceItems.length === 0) {
                 // Zona neutra
-                doc.setFillColor(10, 50, 20);
-                doc.roundedRect(margin, y, W - margin*2, 22, 4, 4, 'F');
-                doc.setTextColor(102, 187, 106);
-                doc.setFont('helvetica', 'bold');
+                const blockH = 26;
+                doc.setFillColor(240, 253, 250); // Menta suave
+                doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
+                doc.setDrawColor(204, 251, 241); // Borde menta
+                doc.setLineWidth(0.3);
+                doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
+
+                doc.setTextColor(13, 148, 136); // Teal oscuro
+                doc.setFont('times', 'bold');
                 doc.setFontSize(11);
-                doc.text('ZONA NEUTRA', margin + 6, y + 9);
+                doc.text('ZONA NEUTRA', margin + 6, y + 8);
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
-                doc.setTextColor(180, 220, 180);
-                doc.text('No hay lineas planetarias activas cerca de este lugar.', margin + 6, y + 16);
-                y += 30;
+                doc.setTextColor(50, 70, 65);
+                doc.text('No hay líneas planetarias activas cruzando cerca de esta ubicación geográfica.', margin + 6, y + 16);
+                y += blockH + 6;
             } else {
                 influenceItems.forEach((item, i) => {
                     const header = cleanTextForPDF(item.querySelector('.influence-header span:first-child')?.textContent || '');
                     const badge  = cleanTextForPDF(item.querySelector('.popup-badge')?.textContent || '');
                     const desc   = cleanTextForPDF(item.querySelector('p')?.textContent || '');
 
-                    const blockH = 30 + Math.ceil(doc.splitTextToSize(desc, W - margin*2 - 12).length * 5);
-                    if (y + blockH > 275) { doc.addPage(); y = 20; }
+                    const descLines = doc.splitTextToSize(desc, W - margin*2 - 12);
+                    const blockH = 6 + 5 + 4 + (descLines.length * 4.5) + 6;
 
-                    const bgR = i % 2 === 0 ? [18,10,30] : [14,8,24];
-                    doc.setFillColor(...bgR);
+                    if (y + blockH > 275) { 
+                        doc.addPage(); 
+                        y = 20; 
+                    }
+
+                    const bgFill = i % 2 === 0 ? [245, 250, 253] : [253, 249, 245];
+                    const borderDraw = i % 2 === 0 ? [210, 230, 240] : [240, 225, 210];
+
+                    doc.setFillColor(...bgFill);
                     doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
+                    doc.setDrawColor(...borderDraw);
+                    doc.setLineWidth(0.35);
+                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
 
-                    doc.setTextColor(186, 85, 211);
+                    const headerColor = i % 2 === 0 ? [15, 118, 110] : [140, 95, 20];
+                    doc.setTextColor(...headerColor);
+                    doc.setFont('times', 'bold');
+                    doc.setFontSize(10.5);
+                    doc.text(header, margin + 6, y + 7.5);
+
+                    doc.setTextColor(110, 110, 130);
                     doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(10);
-                    doc.text(header, margin + 6, y + 8);
-
-                    doc.setTextColor(140, 140, 160);
-                    doc.setFont('helvetica', 'normal');
                     doc.setFontSize(8);
-                    doc.text(badge, W - margin - doc.getTextWidth(badge) - 6, y + 8);
+                    doc.text(badge, W - margin - doc.getTextWidth(badge) - 6, y + 7.5);
 
-                    doc.setTextColor(210, 210, 230);
+                    doc.setTextColor(60, 60, 75);
+                    doc.setFont('helvetica', 'normal');
                     doc.setFontSize(8.5);
-                    const lines = doc.splitTextToSize(desc, W - margin*2 - 12);
-                    doc.text(lines, margin + 6, y + 16);
+                    doc.text(descLines, margin + 6, y + 14.5);
 
                     y += blockH + 4;
                 });
             }
 
-            // ── Pie de página ───────────────────────────────────────────────────────────────────────
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let p = 1; p <= totalPages; p++) {
-                doc.setPage(p);
-                doc.setFontSize(7);
-                doc.setTextColor(80, 80, 100);
-                doc.text('Orbitae - Astrocartografía Interactiva', margin, 290);
-                doc.text(`Pagina ${p} de ${totalPages}`, W - margin - 20, 290);
+            // Pie de página y cabecera en todas las páginas (excepto portada)
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 2; i <= pageCount; i++) {
+                doc.setPage(i);
+                drawHeader('INFORME DE RELOCALIZACIÓN');
+                doc.setFontSize(8);
+                doc.setTextColor(120, 120, 140);
+                doc.text(`Página ${i} de ${pageCount}`, W / 2, 287, { align: 'center' });
+                doc.text('Orbitae — Astrocartografía e Interpretación', margin, 287);
             }
 
             // ── Guardar ─────────────────────────────────────────────────────────────────────────────
