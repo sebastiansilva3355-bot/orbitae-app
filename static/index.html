@@ -2676,6 +2676,27 @@
                                 <span id="daily-streak-count" style="font-size: 10px; font-weight: 700; color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.4); background: rgba(255, 167, 38, 0.15); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(255, 167, 38, 0.3);">1 día</span>
                             </div>
                         </div>
+
+                        <!-- Módulo Adicional: Horóscopo del Día -->
+                        <div style="background: linear-gradient(135deg, rgba(233, 30, 99, 0.3) 0%, rgba(156, 39, 176, 0.15) 100%); border-radius: 12px; padding: 1px; margin-bottom: 12px; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);">
+                            <div id="daily-horoscope-card" style="background: linear-gradient(135deg, #090918 0%, #170717 100%); border-radius: 11px; padding: 12px 14px; position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; background: radial-gradient(circle, rgba(233, 30, 99, 0.2) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
+                                <div style="font-size: 8.5px; font-weight: 700; color: #f472b6; display: flex; align-items: center; gap: 5px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px;">
+                                    <i class="fa-solid fa-moon" style="color: #f472b6;"></i> Horóscopo de hoy · <span id="horoscope-sign-name" style="color: #ffffff; font-weight: 800;">Cargando...</span>
+                                </div>
+                                <p id="daily-horoscope-text" style="font-size: 10.5px; color: rgba(255, 255, 255, 0.9); margin: 0 0 8px 0; line-height: 1.45;">
+                                    Ingresa tus datos en la pestaña "Mi Carta" para ver tu predicción diaria.
+                                </p>
+                                <div style="display: flex; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
+                                    <div style="flex: 1; font-size: 9.5px; color: rgba(255, 255, 255, 0.8); display: flex; align-items: center; gap: 4px;">
+                                        <span id="horoscope-tip-love"><i class="fa-solid fa-heart" style="color: #f43f5e;"></i> Amor: —</span>
+                                    </div>
+                                    <div style="flex: 1; font-size: 9.5px; color: rgba(255, 255, 255, 0.8); display: flex; align-items: center; gap: 4px;">
+                                        <span id="horoscope-tip-work"><i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> Trabajo: —</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div style="text-align: right; margin-top: 6px;">
                             <a href="#" onclick="switchTab('daily'); return false;" style="font-size: 9.5px; color: var(--accent-teal); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s;" onmouseover="this.style.color='#80e2f0'" onmouseout="this.style.color='var(--accent-teal)'">
@@ -5780,6 +5801,204 @@
                 affFooterEl.innerText = `Generada a partir de Sol en ${sunSign}${planetLabel} · Se renueva cada 24hs`;
             }
             if (affUserNameEl) affUserNameEl.innerText = name;
+            
+            try {
+                generateDailyHoroscope();
+            } catch (e) {
+                console.error("Error al generar horóscopo diario:", e);
+            }
+        }
+
+        // ── GENERAR HORÓSCOPO DIARIO (VALIDACIÓN LEAN & MOCK) ───────────────
+        function generateDailyHoroscope() {
+            let sunSign = 'Aries';
+            if (natalPlanets && natalPlanets['Sun'] !== undefined) {
+                const sunLon = natalPlanets['Sun'];
+                sunSign = getZodiacSign(sunLon).name;
+            }
+            
+            const signIcons = {
+                'Aries': '♈', 'Tauro': '♉', 'Géminis': '♊', 'Cáncer': '♋',
+                'Leo': '♌', 'Virgo': '♍', 'Libra': '♎', 'Escorpio': '♏',
+                'Sagitario': '♐', 'Capricornio': '♑', 'Acuario': '♒', 'Piscis': '♓'
+            };
+            
+            const signIcon = signIcons[sunSign] || '🌟';
+            const signEl = document.getElementById('horoscope-sign-name');
+            if (signEl) signEl.innerHTML = `${signIcon} ${sunSign}`;
+
+            // Seed based on current date to keep it stable today but change tomorrow
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            
+            // Simple pseudo-random generator
+            function randomFromSeed(s, range) {
+                const x = Math.sin(s) * 10000;
+                return Math.floor((x - Math.floor(x)) * range);
+            }
+            
+            let signOffset = 0;
+            for (let i = 0; i < sunSign.length; i++) {
+                signOffset += sunSign.charCodeAt(i);
+            }
+            
+            const finalSeed = seed + signOffset;
+
+            // Daily horoscope text database
+            const generalOpenings = [
+                "Hoy las alineaciones planetarias te impulsan a",
+                "El clima celeste de este día te invita a",
+                "Sentirás una fuerte influencia cósmica para",
+                "La energía del día favorece que puedas",
+                "Es un momento propicio para",
+                "Los astros te sugieren centrarte en",
+                "Hoy es un día para enfocarte en"
+            ];
+            
+            const generalBodies = {
+                'Aries': [
+                    "dar rienda suelta a tus impulsos creativos y canalizar el exceso de energía física. Evita las discusiones acaloradas y canaliza tu fuego interior en metas claras.",
+                    "liderar un nuevo proyecto sin esperar la aprobación ajena. Tu valentía natural será tu mejor aliada para sortear las pequeñas trabas de la jornada.",
+                    "tomar decisiones rápidas pero pensadas. El Sol en armonía con tu signo potencia tu carisma y capacidad de convencer a otros."
+                ],
+                'Tauro': [
+                    "disfrutar de los placeres simples de la vida y afianzar tus bases materiales. Un ritmo pausado te dará la claridad que necesitas para tus finanzas.",
+                    "revisar tus prioridades de ahorro. Tu perseverancia y sentido práctico te permitirán resolver un asunto pendiente con paciencia.",
+                    "conectar con la tierra y la naturaleza. Excelente día para reorganizar tus espacios y buscar el confort que tanto valoras."
+                ],
+                'Géminis': [
+                    "abrir canales de comunicación y expresar tus ideas. Tu mente ágil captará oportunidades que otros pasan por alto, pero mantén el foco.",
+                    "conectar con viejos amigos o socios comerciales. Tu carisma verbal está al máximo; úsalo para negociar acuerdos importantes.",
+                    "aprender algo nuevo o iniciar una lectura inspiradora. El dinamismo mental de hoy te permitirá procesar mucha información rápido."
+                ],
+                'Cáncer': [
+                    "escuchar a tu intuición y resguardar tu espacio íntimo. Tu sensibilidad estará a flor de piel; nutre tu paz espiritual antes de reaccionar.",
+                    "dedicarle tiempo a tu hogar y a los lazos familiares. La Luna favorece la introspección y la sanación emocional de viejos patrones.",
+                    "establecer límites saludables con el entorno. La energía del día te pide cuidarte y darte el confort emocional que mereces."
+                ],
+                'Leo': [
+                    "brillar con autenticidad y asumir tu rol protagónico. Tu calidez natural atraerá miradas y oportunidades de colaboración.",
+                    "compartir tu entusiasmo y generosidad con tu círculo. No temas mostrar tu talento; hoy tienes luz verde para destacar.",
+                    "conectar con proyectos creativos que te apasionen. Los astros potencian tu autoexpresión y tu capacidad de contagiar alegría."
+                ],
+                'Virgo': [
+                    "ordenar tus rutinas y perfeccionar detalles cotidianos. Tu capacidad analítica resolverá con elegancia cualquier desorden imprevisto.",
+                    "cuidar tu salud y adoptar hábitos más limpios. El día te pide simplificar tareas complejas para no saturar tu mente.",
+                    "planificar a largo plazo con datos reales. Tu atención minuciosa te permitirá corregir un error antes de que crezca."
+                ],
+                'Libra': [
+                    "buscar la armonía y mediar en situaciones de tensión. Tu tacto y diplomacia natural serán indispensables hoy en tu entorno.",
+                    "embellecer tu espacio de vida y buscar el equilibrio estético. Un encuentro social te traerá paz y renovación energética.",
+                    "tomar decisiones evaluando ambas caras de la moneda, pero sin caer en la parálisis por análisis. Confía en tu sentido de justicia."
+                ],
+                'Escorpio': [
+                    "bucear en tus emociones profundas y transmutar bloqueos. Tu magnetismo está muy alto; úsalo para regenerar situaciones estancadas.",
+                    "resolver un misterio o investigar un asunto financiero complejo. Tu intuición te guiará directo a la verdad de las cosas.",
+                    "soltar viejos resentimientos y renacer con más fuerza. La energía cósmica te apoya para hacer cierres definitivos y sanar."
+                ],
+                'Sagitario': [
+                    "expandir tus horizontes mentales y buscar nuevas verdades. Tu optimismo natural contagiará a otros y abrirá puertas de viajes.",
+                    "planificar una aventura o estudiar un tema filosófico. No te dejes atrapar por detalles pequeños, mira la imagen completa.",
+                    "compartir tu visión con entusiasmo. Tu espíritu libre encontrará caminos originales para resolver problemas cotidianos."
+                ],
+                'Capricornio': [
+                    "consolidar tus metas prácticas y avanzar con disciplina. Tu paciencia inquebrantable dará frutos sólidos, mantén el rumbo.",
+                    "asumir responsabilidades importantes con la frente en alto. Tus superiores o clientes valorarán tu madurez y compromiso real.",
+                    "organizar tus finanzas y estructurar tu agenda. El día te pide pragmatismo y enfoque en lo duradero."
+                ],
+                'Acuario': [
+                    "innovar en tu rutina y proponer soluciones poco convencionales. Tu mente futurista encontrará alternativas geniales.",
+                    "colaborar con grupos o causas comunitarias. Tu independencia brilla hoy al conectarte con personas que comparten tu visión.",
+                    "romper con viejas estructuras limitantes. Atrévete a marcar tu propio camino con originalidad y libertad mental."
+                ],
+                'Piscis': [
+                    "fluir con los acontecimientos y confiar en tu profunda sensibilidad espiritual. Meditar o crear arte te traerá paz absoluta.",
+                    "conectar de alma a alma con quienes te rodean. Tu empatía sanará tensiones, pero recuerda proteger tu propio campo energético.",
+                    "soñar en grande y visualizar tus deseos. El universo te invita a conectar con la magia de la sincronización cósmica."
+                ]
+            };
+            
+            const generalClosings = [
+                "Mantén la calma y confía en el proceso astral.",
+                "Es un excelente día para actuar con confianza.",
+                "Usa esta energía para avanzar sin prisa pero sin pausa.",
+                "Un enfoque centrado te dará los mejores resultados hoy.",
+                "La clave del éxito estará en tu flexibilidad.",
+                "Deja que los astros guíen tu intuición natural."
+            ];
+
+            const loveTips = {
+                'Aries': ["Iniciativa y pasión.", "Evita la impulsividad.", "Habla con el corazón."],
+                'Tauro': ["Paciencia y caricias.", "Seguridad en la pareja.", "Disfruta de la intimidad."],
+                'Géminis': ["Charlas estimulantes.", "Coqueteo intelectual.", "Comparte tus ideas."],
+                'Cáncer': ["Espacio acogedor.", "Nutrición emocional.", "Paz en el hogar."],
+                'Leo': ["Detalles generosos.", "Muestra tu afecto.", "Diversión compartida."],
+                'Virgo': ["Gestos serviciales.", "Escucha atenta.", "Detalles prácticos."],
+                'Libra': ["Armonía compartida.", "Cita romántica.", "Equilibrio mutuo."],
+                'Escorpio': ["Pasión intensa.", "Entrega absoluta.", "Conversación profunda."],
+                'Sagitario': ["Aventura de a dos.", "Espacio libre.", "Risas compartidas."],
+                'Capricornio': ["Lazos firmes.", "Lealtad y respeto.", "Planes a futuro."],
+                'Acuario': ["Amistad de base.", "Espacio y libertad.", "Originalidad."],
+                'Piscis': ["Conexión de almas.", "Gestos románticos.", "Empatía mutua."]
+            };
+
+            const workTips = {
+                'Aries': ["Toma el liderazgo.", "Evita apurarte.", "Metas claras hoy."],
+                'Tauro': ["Paso a paso firme.", "Planifica gastos.", "Constancia."],
+                'Géminis': ["Negociaciones claras.", "Anota tus ideas.", "Haz contactos."],
+                'Cáncer': ["Confía en tu olfato.", "Trabajo enfocado.", "Protege tu paz."],
+                'Leo': ["Muestra tu talento.", "Organiza tu equipo.", "Se el anfitrión."],
+                'Virgo': ["Organiza carpetas.", "Corrige errores.", "Precisión."],
+                'Libra': ["Negocia acuerdos.", "Busca consensos.", "Trabajo estético."],
+                'Escorpio': ["Investiga a fondo.", "Estrategia silenciosa.", "Negocios."],
+                'Sagitario': ["Mira el panorama.", "Aprende del día.", "Optimismo."],
+                'Capricornio': ["Cumple tus tareas.", "Pragmatismo total.", "Ahorro."],
+                'Acuario': ["Idea soluciones.", "Trabajo grupal.", "Usa tecnología."],
+                'Piscis': ["Visualiza el logro.", "Trabajo creativo.", "Fluye sin estrés."]
+            };
+
+            const idxOpening = randomFromSeed(finalSeed, generalOpenings.length);
+            const signTexts = generalBodies[sunSign] || generalBodies['Aries'];
+            const idxBody = randomFromSeed(finalSeed + 1, signTexts.length);
+            const idxClosing = randomFromSeed(finalSeed + 2, generalClosings.length);
+
+            const horoscopeText = `${generalOpenings[idxOpening]} ${signTexts[idxBody]} ${generalClosings[idxClosing]}`;
+
+            const loveTexts = loveTips[sunSign] || loveTips['Aries'];
+            const idxLove = randomFromSeed(finalSeed + 3, loveTexts.length);
+            const loveTip = `Amor: ${loveTexts[idxLove]}`;
+
+            const workTexts = workTips[sunSign] || workTips['Aries'];
+            const idxWork = randomFromSeed(finalSeed + 4, workTexts.length);
+            const workTip = `Trabajo: ${workTexts[idxWork]}`;
+
+            const textEl = document.getElementById('daily-horoscope-text');
+            const loveEl = document.getElementById('horoscope-tip-love');
+            const workEl = document.getElementById('horoscope-tip-work');
+
+            if (textEl) textEl.innerText = horoscopeText;
+            if (loveEl) loveEl.innerHTML = `<i class="fa-solid fa-heart" style="color: #f43f5e;"></i> ${loveTip}`;
+            if (workEl) workEl.innerHTML = `<i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> ${workTip}`;
+        }
+
+        // ── VERIFICACIÓN DE CÓDIGO DE ACTIVACIÓN PREMIUM ──────────────────────
+        function verifyActivationCode() {
+            const input = document.getElementById('activation-code-input');
+            if (!input) return;
+            const code = input.value.trim().toUpperCase();
+            if (code === 'ORBITAE_PRO' || code === 'ORBITAE2026') {
+                localStorage.setItem('orbitae_premium_unlocked', 'true');
+                showToast('✨ ¡Felicidades! Has desbloqueado la versión Premium de Orbitae.');
+                updateCityBadge();
+                closeUpgradeModal();
+                if (typeof updateDailyForecast === 'function') {
+                    updateDailyForecast();
+                }
+            } else if (code === '') {
+                showToast('❌ Por favor ingresa un código.');
+            } else {
+                showToast('❌ Código inválido. Verifica tu comprobante.');
+            }
         }
 
         function updateStreakCounter() {
@@ -9850,7 +10069,17 @@
                class="upgrade-btn-primary" style="display:block; text-decoration:none; text-align:center;">
                 ✨ Apoyar el Proyecto
             </a>
-            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()">
+            
+            <!-- Entrada de Código de Activación Premium (Monetización / Validación Lean) -->
+            <div style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; text-align: left;">
+                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">¿Ya tenés un código de activación?</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="activation-code-input" placeholder="Ingresá tu código de compra..." style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 10px; color: white; flex: 1; outline: none;">
+                    <button onclick="verifyActivationCode()" style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 6px 12px; border-radius: 6px; font-size: 9px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s;" onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">Activar</button>
+                </div>
+            </div>
+
+            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 10px;">
                 Volver — esperar al próximo mes
             </button>
         </div>
