@@ -751,54 +751,39 @@
             text-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
         }
 
-            /* Estilos del Bottom Sheet para Móvil */
+        /* ── BOTTOM SHEET — solo en móvil sobreescribe el modal de escritorio ── */
+        @media (max-width: 768px) {
             .more-sheet-overlay {
-                position: fixed;
-                inset: 0;
+                align-items: flex-end;
+                justify-content: stretch;
                 background: rgba(0, 0, 0, 0.6);
                 backdrop-filter: blur(4px);
-                z-index: 3000;
-                display: none;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                align-items: flex-end;
-            }
-            .more-sheet-overlay.show {
-                display: flex;
-                opacity: 1;
             }
             .more-sheet-content {
                 width: 100%;
-                background: #14141f; /* BG Card */
+                background: #14141f;
+                border: none;
                 border-top: 1px solid rgba(255,255,255,0.08);
                 border-radius: 20px 20px 0 0;
                 padding: 16px 20px 30px 20px;
+                box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
                 transform: translateY(100%);
                 transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-                box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
             }
             .more-sheet-overlay.show .more-sheet-content {
                 transform: translateY(0);
             }
-            .more-sheet-header {
-                text-align: center;
-                margin-bottom: 16px;
-            }
             .more-sheet-drag-handle {
+                display: block;
                 width: 40px;
                 height: 4px;
                 background: rgba(255,255,255,0.2);
                 border-radius: 2px;
                 margin: 0 auto 12px auto;
             }
-            .more-sheet-header h3 {
-                font-family: 'Cinzel', serif;
-                font-size: 13px;
-                font-weight: 700;
-                color: #e0b0ff;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                margin: 0;
+            .more-sheet-header {
+                text-align: center;
+                margin-bottom: 16px;
             }
             .more-sheet-body {
                 display: flex;
@@ -813,26 +798,27 @@
                 color: #ffffff;
                 font-size: 13px;
                 font-weight: 600;
-                text-align: left;
-                cursor: pointer;
                 display: flex;
+                flex-direction: row;
                 align-items: center;
                 gap: 12px;
-                width: 100%;
-                outline: none;
-                transition: all 0.2s;
+                transform: none;
+                box-shadow: none;
             }
             .more-sheet-item:hover, .more-sheet-item:active {
                 background: rgba(155, 93, 229, 0.08);
                 border-color: rgba(155, 93, 229, 0.3);
                 color: #e0b0ff;
+                transform: none;
             }
             .more-sheet-item i {
                 font-size: 16px;
                 width: 20px;
                 text-align: center;
                 color: #e0b0ff;
+                text-shadow: none;
             }
+        }
 
             /* --- MEJORAS DE ACCESIBILIDAD: AUMENTO DE FUENTES EN MÓVIL --- */
             .info-row {
