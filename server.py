@@ -230,10 +230,10 @@ async def log_error(request: Request):
     return {"status": "ok"}
 
 
-@app.get("/health")
-async def health():
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health(request: Request):
     """Endpoint de salud para Render — evita que el servicio duerma por inactividad."""
-    logger.info("❤️ Health check ping received")
+    logger.info(f"❤️ Health check ping received ({request.method})")
     return {"status": "ok", "app": "Orbitae"}
 
 
