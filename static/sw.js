@@ -1,8 +1,8 @@
-// AstroMap Service Worker — Offline Cache v26
-const CACHE_NAME = 'orbitae-v26';
+// Orbitae Service Worker — Offline Cache v27
+const CACHE_NAME = 'orbitae-v27';
 
 // Archivos a cachear al instalar (App Shell)
-// NOTA: astro.html NO está aquí — siempre se sirve directo del servidor (no-cache)
+// NOTA: index.html NO está aquí — siempre se sirve directo del servidor (no-cache)
 const PRECACHE_ASSETS = [
     '/static/leaflet.css',
     '/static/leaflet.js',
@@ -57,7 +57,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Nunca cachear astro.html — siempre red para tener PDF generator actualizado
+    // Nunca cachear index.html — siempre red para tener PDF generator actualizado
     if (url.pathname === '/static/index.html' || url.pathname === '/astro' || url.pathname === '/') {
         event.respondWith(fetch(event.request));
         return;

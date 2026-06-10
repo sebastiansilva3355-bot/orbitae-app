@@ -30,14 +30,14 @@
       "name": "Calcular mi carta natal",
       "short_name": "Mi Carta",
       "description": "Ingresá tus datos de nacimiento y calculá tus líneas astrales",
-      "url": "/static/astro.html#origen",
+      "url": "/astro#origen",
       "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Explorar destinos",
       "short_name": "Explorar",
       "description": "Analizá cualquier ciudad del mundo",
-      "url": "/static/astro.html#explorar",
+      "url": "/astro#explorar",
       "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]

@@ -4150,7 +4150,7 @@
         }
 
         // ── LOCAL STORAGE: Guardar y restaurar datos de nacimiento ───────────
-        const ASTRO_BIRTH_KEY = 'astromap_birth_v1';
+        const ASTRO_BIRTH_KEY = 'orbitae_birth_v1';
 
         function saveBirthData() {
             try {
@@ -4170,7 +4170,13 @@
 
         function restoreBirthData() {
             try {
-                const raw = localStorage.getItem(ASTRO_BIRTH_KEY);
+                let raw = localStorage.getItem(ASTRO_BIRTH_KEY);
+                if (!raw) {
+                    raw = localStorage.getItem('astromap_birth_v1');
+                    if (raw) {
+                        localStorage.setItem(ASTRO_BIRTH_KEY, raw);
+                    }
+                }
                 if (!raw) return false; // Primera vez
                 const data = JSON.parse(raw);
                 if (data.date)  { const el = document.getElementById('date-input');     if (el) el.value = data.date; }
@@ -6378,7 +6384,7 @@
                             <i class="fa-solid fa-file-pdf" style="font-size:15px;"></i>
                             Descargar PDF Carta Natal
                         </button>
-                        <a class="btn-support" href="https://link.mercadopago.com.ar/astromap" target="_blank" rel="noopener" style="width:100%;text-align:center;justify-content:center;padding:12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#ffffff;font-size:11px;font-weight:700;">
+                        <a class="btn-support" href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener" style="width:100%;text-align:center;justify-content:center;padding:12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#ffffff;font-size:11px;font-weight:700;">
                             <i class="fa-solid fa-heart" style="color:#ff6e6e;"></i> Apoyar Proyecto
                         </a>
                     </div>
@@ -6441,12 +6447,18 @@
         //  SISTEMA DE LÍMITE DE CIUDADES GRATUITAS
         // ─────────────────────────────────────────────────────────────────────
         const FREE_CITY_LIMIT = 3;
-        const CITY_LIMIT_KEY  = 'astromap_city_usage';
+        const CITY_LIMIT_KEY  = 'orbitae_city_usage';
 
         function getCityUsage() {
             try {
                 const currentMonth = new Date().toISOString().slice(0, 7); // "2026-06"
-                const raw = localStorage.getItem(CITY_LIMIT_KEY);
+                let raw = localStorage.getItem(CITY_LIMIT_KEY);
+                if (!raw) {
+                    raw = localStorage.getItem('astromap_city_usage');
+                    if (raw) {
+                        localStorage.setItem(CITY_LIMIT_KEY, raw);
+                    }
+                }
                 if (raw) {
                     const data = JSON.parse(raw);
                     if (data.month === currentMonth) return data;
@@ -9833,7 +9845,7 @@
                     <span>Apoyás el desarrollo de la app</span>
                 </li>
             </ul>
-            <a href="https://paypal.me/astromap" target="_blank" rel="noopener"
+            <a href="https://paypal.me/orbitae" target="_blank" rel="noopener"
                onclick="closeUpgradeModal()"
                class="upgrade-btn-primary" style="display:block; text-decoration:none; text-align:center;">
                 ✨ Apoyar el Proyecto

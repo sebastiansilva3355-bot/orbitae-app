@@ -1,4 +1,4 @@
-# AstroMap — Servidor de producción (solo astrocartografía)
+# Orbitae — Servidor de producción (solo astrocartografía)
 # Este archivo es INDEPENDIENTE del server.py de trading.
 # Se usa para desplegar en Render.com / Railway / cualquier hosting.
 
