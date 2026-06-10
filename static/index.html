@@ -2695,6 +2695,14 @@
                                         <span id="horoscope-tip-work"><i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> Trabajo: —</span>
                                     </div>
                                 </div>
+                                <div style="display: flex; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px; margin-top: 8px; justify-content: space-between; align-items: center;">
+                                    <button onclick="shareHoroscope()" style="background: rgba(244, 114, 182, 0.12); border: 1px solid rgba(244, 114, 182, 0.3); color: #f472b6; font-size: 8.5px; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; outline: none; display: flex; align-items: center; gap: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(244, 114, 182, 0.25)'" onmouseout="this.style.background='rgba(244, 114, 182, 0.12)'">
+                                        <i class="fa-solid fa-share-nodes"></i> Compartir
+                                    </button>
+                                    <button id="btn-enable-notifications" onclick="requestNotificationPermission()" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-gray); font-size: 8.5px; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; outline: none; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                                        <i class="fa-solid fa-bell"></i> Activar Alertas
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
@@ -4112,6 +4120,12 @@
                 }
                 buildPlanetFilters();
                 checkOnboardingHelp();
+                
+                try {
+                    updateNotificationButton();
+                } catch (e) {
+                    console.error("Error al inicializar botón de notificaciones:", e);
+                }
 
                 // Verificar estado del onboarding de personalización
                 const savedName = localStorage.getItem('orbitae_name');
@@ -5998,6 +6012,85 @@
                 showToast('❌ Por favor ingresa un código.');
             } else {
                 showToast('❌ Código inválido. Verifica tu comprobante.');
+            }
+        }
+
+        // ── COMPARTIR HORÓSCOPO DIARIO (WEB SHARE API) ────────────────────────
+        function shareHoroscope() {
+            let sunSign = 'Aries';
+            if (natalPlanets && natalPlanets['Sun'] !== undefined) {
+                const sunLon = natalPlanets['Sun'];
+                sunSign = getZodiacSign(sunLon).name;
+            }
+            const textEl = document.getElementById('daily-horoscope-text');
+            const text = textEl ? textEl.innerText : '';
+            
+            const shareText = `🔮 Mi Horóscopo de hoy en Orbitae (${sunSign}):\n\n"${text}"\n\n🗺️ Calculá tu carta natal y destinos gratis en: ${window.location.origin}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mi Horóscopo en Orbitae',
+                    text: shareText,
+                    url: window.location.origin
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast('📋 Copiado al portapapeles. ¡Ya podés pegarlo donde quieras!');
+                }).catch(err => {
+                    showToast('❌ No se pudo copiar al portapapeles.');
+                });
+            }
+        }
+
+        // ── NOTIFICACIONES LOCALES PWA ────────────────────────────────────────
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showToast('❌ Este navegador no soporta notificaciones.');
+                return;
+            }
+            
+            Notification.requestPermission().then(permission => {
+                updateNotificationButton();
+                if (permission === 'granted') {
+                    showToast('🔔 ¡Alertas activadas con éxito!');
+                    try {
+                        new Notification('Orbitae — Clima Astral', {
+                            body: '¡Alertas activadas! Te avisaremos cuando los planetas cambien de posición.',
+                            icon: '/static/icons/icon-192.png'
+                        });
+                    } catch (e) {
+                        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                            navigator.serviceWorker.ready.then(registration => {
+                                registration.showNotification('Orbitae — Clima Astral', {
+                                    body: '¡Alertas activadas! Te avisaremos cuando los planetas cambien de posición.',
+                                    icon: '/static/icons/icon-192.png'
+                                });
+                            });
+                        }
+                    }
+                } else if (permission === 'denied') {
+                    showToast('❌ Alertas bloqueadas. Habilítalas en la configuración de tu navegador.');
+                }
+            });
+        }
+        
+        function updateNotificationButton() {
+            const btn = document.getElementById('btn-enable-notifications');
+            if (!btn) return;
+            if (!('Notification' in window)) {
+                btn.style.display = 'none';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                btn.innerHTML = `<i class="fa-solid fa-bell-slash" style="color:var(--accent-teal);"></i> Alertas Activas`;
+                btn.style.background = 'rgba(0, 188, 212, 0.08)';
+                btn.style.borderColor = 'rgba(0, 188, 212, 0.25)';
+                btn.style.color = 'var(--accent-teal)';
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-bell"></i> Activar Alertas`;
+                btn.style.background = 'rgba(255, 255, 255, 0.04)';
+                btn.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                btn.style.color = 'var(--text-gray)';
             }
         }
 
