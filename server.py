@@ -220,6 +220,16 @@ async def privacy_policy():
     return HTMLResponse(content=html)
 
 
+@app.post("/api/log-error")
+async def log_error(request: Request):
+    try:
+        data = await request.json()
+        logger.error(f"❌ CLIENT ERROR: {data.get('message')} at {data.get('filename')}:{data.get('lineno')}:{data.get('colno')}\nStack: {data.get('error')}")
+    except Exception as e:
+        logger.error(f"Error parsing client error: {e}")
+    return {"status": "ok"}
+
+
 @app.get("/health")
 async def health():
     """Endpoint de salud para Render — evita que el servicio duerma por inactividad."""

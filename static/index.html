@@ -2076,7 +2076,7 @@
 
     <!-- SPLASH SCREEN -->
     <div id="splash-screen">
-        <div class="splash-logo" onclick="handleSplashLogoClick()" style="cursor: pointer;">🌟</div>
+        <div class="splash-logo" onclick="handleSplashLogoClick()" style="cursor: pointer;"><img src="/static/icons/logo.png" style="width:100%; height:100%; object-fit:cover; border-radius:28px;"></div>
         <div class="splash-title">Orbitae</div>
         <div class="splash-sub">Astrocartografía, Sinastría & Carta Natal</div>
         <div class="splash-bar-wrap">
@@ -8980,7 +8980,121 @@
             (d.crossingsWithCities||[]).slice(0,5).forEach((c, idx) => {
                 const loc = c.nearestCity
                     ? (c.minDist < 8.0 ? T(c.nearestCity.name+', '+c.nearestCity.country) : T('Región de '+c.nearestCity.name+', '+c.nearestCity.country))
-                    : (c.lat.toFixed(1)+', '+c.lon.toFixed(1));        function submitAIQuery() {
+                    : (c.lat.toFixed(1)+', '+c.lon.toFixed(1));
+                const desc = T(getEncounterDescription(c.p1Planet,c.p2Planet,purpose));
+                const catL = lls[idx]||'Punto de encuentro';
+                const dL   = doc.splitTextToSize(desc, cW - 10);
+                const lH   = 6 + dL.length * 4.5 + 4;
+                
+                fc(CW); doc.roundedRect(mg, locY, cW, lH, 2, 2, 'F');
+                fc(CT); doc.rect(mg, locY, 3, lH, 'F');
+                dc(CT); doc.roundedRect(mg, locY, cW, lH, 2, 2, 'S');
+                
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CT);
+                doc.text(loc, mg + 6, locY + 4.5);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7); tc(CO);
+                doc.text(catL, W - mg - doc.getTextWidth(catL) - 3, locY + 4.5);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
+                doc.text(dL, mg + 6, locY + 9);
+                locY += lH + 3.5;
+            });
+
+            // Final footer page 4
+            fc(CP); doc.rect(0, H - 18, W, 18, 'F');
+            doc.setFont('helvetica', 'italic'); doc.setFontSize(7); tc([195, 190, 230]);
+            doc.text('Orbitae  -  Astrocartografia Interactiva  -  Los datos se personalizan con las cartas natales reales de cada usuario.', W/2, H - 10, {align:'center'});
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); tc([160, 155, 200]);
+            doc.text('Pag. ' + pgNum, W - mg - 8, H - 4);
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-AR').replace(/\//g,'-');
+            const timeStr = String(now.getHours()).padStart(2,'0') + '-' + 
+                            String(now.getMinutes()).padStart(2,'0') + '-' + 
+                            String(now.getSeconds()).padStart(2,'0');
+            doc.save('Orbitae_Compatibilidad_' + dateStr + '_' + timeStr + '.pdf');
+            showToast('PDF descargado correctamente.');
+        }
+
+
+        function getLineIntersection(p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y) {
+            let x0 = p0_x;
+            let y0 = p0_y;
+            let x1 = p1_x;
+            let y1 = p1_y;
+            
+            let x2 = p2_x;
+            if (Math.abs(x2 - x0) > 180) x2 += (x2 < x0) ? 360 : -360;
+            let y2 = p2_y;
+            
+            let x3 = p3_x;
+            if (Math.abs(x3 - x0) > 180) x3 += (x3 < x0) ? 360 : -360;
+            let y3 = p3_y;
+            
+            let s1_x = x1 - x0;
+            let s1_y = y1 - y0;
+            let s2_x = x3 - x2;
+            let s2_y = y3 - y2;
+            
+            let s = (-s1_y * (x0 - x2) + s1_x * (y0 - y2)) / (-s2_x * s1_y + s1_x * s2_y);
+            let t = ( s2_x * (y0 - y2) - s2_y * (x0 - x2)) / (-s2_x * s1_y + s1_x * s2_y);
+            
+            if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+                let intX = x0 + (t * s1_x);
+                let intY = y0 + (t * s1_y);
+                
+                intX = (intX + 180) % 360;
+                if (intX < 0) intX += 360;
+                intX -= 180;
+                
+                return { lat: intY, lon: intX };
+            }
+            return null;
+        }
+
+        // ── CONSULTAS IA POR OBJETIVO DE VIDA ────────────────────────────────
+        let aiSearchTimeout;
+        function onAICitySearchInput() {
+            clearTimeout(aiSearchTimeout);
+            aiSearchTimeout = setTimeout(performAICitySearch, 600);
+        }
+
+        function performAICitySearch() {
+            const q = document.getElementById('ai-city-search').value;
+            if (q.length < 3) return;
+            
+            const dropdown = document.getElementById('ai-search-results');
+            dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">Buscando...</div>';
+            dropdown.style.display = 'block';
+            
+            fetch(getGeocodeUrl(q))
+                .then(res => res.json())
+                .then(data => {
+                    dropdown.innerHTML = '';
+                    if (data.length === 0) {
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">No se encontraron resultados.</div>';
+                        return;
+                    }
+                    
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.innerText = item.display_name;
+                        
+                        div.onclick = () => {
+                            document.getElementById('ai-city-search').value = item.display_name.split(',')[0];
+                            document.getElementById('ai-city-lat').value = item.lat;
+                            document.getElementById('ai-city-lon').value = item.lon;
+                            dropdown.style.display = 'none';
+                        };
+                        dropdown.appendChild(div);
+                    });
+                })
+                .catch(() => {
+                    dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:red;">Error en la conexión.</div>';
+                });
+        }
+
+        function submitAIQuery() {
             const cityName = document.getElementById('ai-city-search').value;
             const lat = parseFloat(document.getElementById('ai-city-lat').value);
             const lon = parseFloat(document.getElementById('ai-city-lon').value);
