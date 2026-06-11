@@ -24,6 +24,8 @@
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- SDK de PayPal para Suscripciones -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAA0Jivw-zoOWaAqsFIMsjyFsCQvBGme7gmQX1fdr_JKoUI_emgoDiqlZ2kn_-0GSC69ngLKCDTiFV6lBc&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
 
 
     <!-- Flatpickr para selectores de fecha/hora estilizados y unificados -->
@@ -6864,7 +6866,7 @@
             if (usage.cities.includes(cityKey)) return true;
 
             if (usage.count >= FREE_CITY_LIMIT) {
-                openUpgradeModal();
+                openUpgradeModal(true);
                 return false; // Bloquear
             }
 
@@ -6886,29 +6888,28 @@
         // ─────────────────────────────────────────────────────────────────────
         //  MODAL DE UPGRADE (REDESIGN)
         // ─────────────────────────────────────────────────────────────────────
-        function openUpgradeModal() {
+        function openUpgradeModal(isLimit = false) {
             const usage = getCityUsage();
             const el = document.getElementById('upgrade-modal-overlay');
-            if (el) {
-                el.innerHTML = `
-                    <div class="modal-content upgrade-design">
-                        <button class="close-btn" onclick="closeUpgradeModal()">&times;</button>
-                        <div class="header">
-                            <h3>Orbitae PRO</h3>
-                            <p>Desbloquea todo el potencial de tu carta natal</p>
-                        </div>
-                        <div class="features">
-                            <div class="feat"><i class="fa-solid fa-check"></i> Reportes PDF ilimitados</div>
-                            <div class="feat"><i class="fa-solid fa-check"></i> Análisis de relocalización sin límites</div>
-                            <div class="feat"><i class="fa-solid fa-check"></i> Interpretación IA completa</div>
-                        </div>
-                        <input type="text" id="activation-code-input" placeholder="Ingresa tu código de activación">
-                        <button id="activation-verify-btn" onclick="verifyActivationCode()" class="action-btn">Activar Acceso PRO</button>
-                        <p class="footer-link">¿No tienes un código? Obtén tu acceso en orbitae.com</p>
-                    </div>
-                `;
-                el.classList.add('visible');
+            const titleEl = document.getElementById('upgrade-modal-title');
+            const subtitleEl = document.getElementById('upgrade-modal-subtitle');
+            const counterEl = document.getElementById('upgrade-month-counter');
+            
+            if (isLimit) {
+                if (titleEl) titleEl.textContent = 'Límite Alcanzado';
+                if (subtitleEl) subtitleEl.innerHTML = 'Usaste tus <strong>3 consultas gratuitas</strong> de este mes.<br>El contador se resetea el 1º de cada mes.';
+                if (counterEl) {
+                    counterEl.style.display = 'inline-flex';
+                    counterEl.innerHTML = `<i class="fa-solid fa-calendar-day"></i> <span>${usage.count}/${FREE_CITY_LIMIT} ciudades usadas este mes</span>`;
+                }
+            } else {
+                if (titleEl) titleEl.textContent = 'Orbitae Premium';
+                if (subtitleEl) subtitleEl.textContent = 'Acceso completo a todas las funciones de la app.';
+                if (counterEl) {
+                    counterEl.style.display = 'none';
+                }
             }
+            if (el) el.classList.add('visible');
         }
 
         function closeUpgradeModal() {
@@ -9993,90 +9994,48 @@
                     div.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:4px; flex: 1;">
                             <span style="font-weight:500; color:rgba(255,255,255,0.95); font-size:10.5px; line-height:1.4;">${transitText}</span>
-                            <span style="color:var(--text-gray); font-size:9px; display:f    <!-- MODAL DE UPGRADE / PLAN PREMIUM -->
-    <div id="upgrade-modal-overlay" onclick="if(event.target===this)closeUpgradeModal()">
-        <div class="upgrade-modal">
-            <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
+                            <span style="color:var(--text-gray); font-size:9px; display:flex; align-items:center; gap:6px;">
+                                <span><i class="fa-solid fa-clock"></i> ${dayText}</span>
+                                <span>•</span>
+                                <span>Aspecto: ${alert.transit} en ${alert.type} a ${alert.natal} natal</span>
+                            </span>
+                        </div>
+                        <span class="transit-badge" style="background:${badgeColor}; color:${badgeTextCol}; border: 1px solid rgba(${alert.weight > 0 ? '76,175,80' : '239,83,80'}, 0.2); font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">${badgeText}</span>
+                    `;
+                    listContainer.appendChild(div);
+                });
+            } catch (err) {
+                console.error("Error al calcular tránsitos semanales:", err);
+            }
+        }
+    </script>
 
-            <!-- Header -->
-            <div style="text-align:center; padding: 0 8px 16px;">
-                <div style="font-size: 38px; line-height:1; margin-bottom: 8px;">&#10024;</div>
-                <div class="upgrade-title" style="margin-bottom: 6px;">Orbitae Premium</div>
-                <p class="upgrade-subtitle" style="font-size:12px; line-height:1.5;">
-                    Acceso completo a todas las funciones de la app.
-                </p>
-                <div style="display:inline-flex; align-items:baseline; gap:4px; background:rgba(186,85,211,0.12); border:1px solid rgba(186,85,211,0.35); border-radius:20px; padding:6px 20px; margin-top:6px;">
-                    <span style="font-size:26px; font-weight:900; color:#e0b0ff;">USD&nbsp;4.99</span>
-                    <span style="font-size:11px; color:rgba(255,255,255,0.45);">pago único</span>
+    <!-- MODAL DE AYUDA Y ONBOARDING -->
+    <div class="help-modal-overlay" id="help-modal-overlay">
+        <div class="help-modal">
+            <div class="help-modal-header">
+                <h2><i class="fa-solid fa-bahai" style="color: #00bcd4; margin-right: 6px;"></i> Bienvenido a Orbitae</h2>
+                <button class="close-modal-btn" onclick="closeHelpModal()">&times;</button>
+            </div>
+            <div class="help-modal-body">
+                <div class="help-modal-section" style="margin-bottom: 16px; background: rgba(186, 85, 211, 0.05); border: 1px solid rgba(186, 85, 211, 0.2); padding: 12px 16px; border-radius: 12px;">
+                    <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #ffffff;">
+                        <strong>Orbitae</strong> es una suite avanzada de inteligencia astrológica y precisión astronómica. Diseñada para profesionales y entusiastas, fusiona el trazado geográfico de influencias planetarias con la carta natal completa y el análisis de dinámicas vinculares en tiempo real.
+                    </p>
                 </div>
-            </div>
-
-            <!-- Beneficios -->
-            <div class="upgrade-counter" style="margin-bottom:12px;">
-                <i class="fa-solid fa-calendar-day"></i>
-                <span id="upgrade-month-counter">3/3 ciudades usadas este mes</span>
-            </div>
-
-            <ul class="upgrade-features" style="margin-bottom:16px;">
-                <li><div class="feat-icon">&#128506;&#65039;</div><span>Consultas <strong>ilimitadas</strong> de destinos en el mapa</span></li>
-                <li><div class="feat-icon">&#128196;</div><span><strong>3 reportes PDF</strong>: Carta Natal, Compatibilidad y Destino</span></li>
-                <li><div class="feat-icon">&#127775;</div><span>Sin anuncios, sin límites mensuales</span></li>
-                <li><div class="feat-icon">&#10084;&#65039;</div><span>Aportás al desarrollo de la app</span></li>
-            </ul>
-
-            <!-- Botones de pago -->
-            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
-                <a href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener"
-                   onclick="closeUpgradeModal()"
-                   class="upgrade-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; text-align:center;">
-                    &#129299; Pagar con Mercado Pago (ARS)
-                </a>
-                <a href="https://paypal.me/orbitae/4.99" target="_blank" rel="noopener"
-                   onclick="closeUpgradeModal()"
-                   style="display:flex; align-items:center; justify-content:center; gap:10px; padding:12px 20px; background:rgba(0,112,243,0.15); border:1px solid rgba(0,112,243,0.4); border-radius:12px; color:#67adf4; font-size:12px; font-weight:700; text-decoration:none; text-align:center; transition:all 0.2s;"
-                   onmouseover="this.style.background='rgba(0,112,243,0.25)'" onmouseout="this.style.background='rgba(0,112,243,0.15)'">
-                    &#128142; Pagar con PayPal (USD)
-                </a>
-            </div>
-
-            <!-- Separador -->
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
-                <span style="font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;">Ya pagaste?</span>
-                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
-            </div>
-
-            <!-- Activación con código (server-validated) -->
-            <div style="margin-bottom: 10px;">
-                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing:0.5px;">Ingresá tu código de activación:</label>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="activation-code-input"
-                        placeholder="Código recibido por WhatsApp/Email..."
-                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: white; flex: 1; outline: none; letter-spacing:1px; font-family:'Inter',sans-serif;"
-                        onkeydown="if(event.key==='Enter') verifyActivationCode()">
-                    <button id="activation-verify-btn" onclick="verifyActivationCode()"
-                        style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 9px 14px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s; white-space:nowrap;"
-                        onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">
-                        Activar
-                    </button>
+                
+                <div class="help-modal-section" style="margin-bottom: 16px;">
+                    <h3><i class="fa-solid fa-microscope" style="color: #00bcd4; margin-right: 6px;"></i> Precisión Científica de la NASA</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-gray);">
+                        Olvídate de aproximaciones. Orbitae ejecuta el motor matemático <strong>astronomy.js</strong> localmente para calcular órbitas planetarias reales bajo el modelo VSOP87 de la NASA. Cada línea, aspecto, tránsito y sinastría se procesa al instante con máxima precisión geográfica y temporal.
+                    </p>
                 </div>
-                <p style="font-size:9px; color:rgba(255,255,255,0.3); margin-top:5px; line-height:1.4;">Recibis el código automáticamente tras confirmar el pago. Dudas: <a href="mailto:orbitae.app@gmail.com" style="color:#ba55d3;">orbitae.app@gmail.com</a></p>
-            </div>
 
-            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 4px;">
-                Ahora no &mdash; volver
-            </button>
-
-            <!-- Footer legal -->
-            <div style="text-align:center; margin-top:12px;">
-                <a href="/privacidad" target="_blank" style="font-size:9px; color:rgba(255,255,255,0.25); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.15);">Política de Privacidad</a>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
-                         <span style="font-size: 14px;">🗺️</span>
+                <div class="help-modal-section">
+                    <h3><i class="fa-solid fa-circle-play" style="color: #ba55d3; margin-right: 6px;"></i> ¿Qué puedes hacer en la aplicación?</h3>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px;">
+                        <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
+                            <span style="font-size: 14px;">🗺️</span>
                             <div>
                                 <strong style="color: #ffffff; font-size: 12px;">Astrocartografía Interactiva</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Visualiza cómo influyen tus líneas planetarias de nacimiento en cualquier rincón del mapa mundial (ASC, MC, DSC, IC).</p>
@@ -10115,55 +10074,119 @@
         </div>
     </div>
 
-    <!-- MODAL DE UPGRADE / LÍMITE GRATUITO -->
+    <!-- MODAL DE UPGRADE / PLAN PREMIUM -->
     <div id="upgrade-modal-overlay" onclick="if(event.target===this)closeUpgradeModal()">
         <div class="upgrade-modal">
             <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
-            <div class="upgrade-stars">🌟</div>
-            <div class="upgrade-title">Límite Alcanzado</div>
-            <p class="upgrade-subtitle">Usaste tus <strong>3 consultas gratuitas</strong> de este mes.<br>El contador se resetea el 1º de cada mes.</p>
-            <div class="upgrade-counter">
-                <i class="fa-solid fa-calendar-day"></i>
-                <span id="upgrade-month-counter">3/3 ciudades usadas este mes</span>
-            </div>
-            <ul class="upgrade-features">
-                <li>
-                    <div class="feat-icon">🗺️</div>
-                    <span>Consultas <strong>ilimitadas</strong> de ciudades</span>
-                </li>
-                <li>
-                    <div class="feat-icon">📄</div>
-                    <span>Reportes PDF descargables</span>
-                </li>
-                <li>
-                    <div class="feat-icon">⚡</div>
-                    <span>Acceso anticipado a funciones nuevas</span>
-                </li>
-                <li>
-                    <div class="feat-icon">❤️</div>
-                    <span>Apoyás el desarrollo de la app</span>
-                </li>
-            </ul>
-            <a href="https://paypal.me/orbitae" target="_blank" rel="noopener"
-               onclick="closeUpgradeModal()"
-               class="upgrade-btn-primary" style="display:block; text-decoration:none; text-align:center;">
-                ✨ Apoyar el Proyecto
-            </a>
-            
-            <!-- Entrada de Código de Activación Premium (Monetización / Validación Lean) -->
-            <div style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; text-align: left;">
-                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">¿Ya tenés un código de activación?</label>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="activation-code-input" placeholder="Ingresá tu código de compra..." style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 10px; color: white; flex: 1; outline: none;">
-                    <button onclick="verifyActivationCode()" style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 6px 12px; border-radius: 6px; font-size: 9px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s;" onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">Activar</button>
+
+            <!-- Header -->
+            <div style="text-align:center; padding: 0 8px 16px;">
+                <div style="font-size: 38px; line-height:1; margin-bottom: 8px;">🔮</div>
+                <div class="upgrade-title" id="upgrade-modal-title">Orbitae Premium</div>
+                <p class="upgrade-subtitle" id="upgrade-modal-subtitle">
+                    Acceso completo a todas las funciones de la app.
+                </p>
+                <div style="display:inline-flex; align-items:baseline; gap:4px; background:rgba(186,85,211,0.12); border:1px solid rgba(186,85,211,0.35); border-radius:20px; padding:6px 20px; margin-top:6px;">
+                    <span style="font-size:26px; font-weight:900; color:#e0b0ff;">USD&nbsp;2.99</span>
+                    <span style="font-size:11px; color:rgba(255,255,255,0.45);">/ mes</span>
                 </div>
             </div>
 
-            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 10px;">
-                Volver — esperar al próximo mes
+            <!-- Beneficios -->
+            <div class="upgrade-counter" id="upgrade-month-counter" style="margin-bottom:12px; display:none;">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>3/3 ciudades usadas este mes</span>
+            </div>
+
+            <ul class="upgrade-features" style="margin-bottom:16px;">
+                <li><div class="feat-icon">🗺️</div><span>Consultas <strong>ilimitadas</strong> de destinos en el mapa</span></li>
+                <li><div class="feat-icon">📄</div><span>Reportes PDF descargables ilimitados</span></li>
+                <li><div class="feat-icon">🔮</div><span>Guías e interpretaciones de IA completas</span></li>
+                <li><div class="feat-icon">⚡</div><span>Acceso ilimitado a todas las herramientas</span></li>
+            </ul>
+
+            <!-- Botones de pago -->
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+                <!-- Contenedor del Botón de Paypal -->
+                <div id="paypal-button-container-subscription" style="margin-top: 8px; min-height: 100px;"></div>
+                
+                <!-- Botón Mercado Pago -->
+                <a href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener"
+                   onclick="closeUpgradeModal()"
+                   class="upgrade-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; text-align:center; background: #009ee3;">
+                    &#129299; Pagar con Mercado Pago (ARS)
+                </a>
+            </div>
+
+            <!-- Separador -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+                <span style="font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;">¿Ya tenés un código?</span>
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+            </div>
+
+            <!-- Activación con código (server-validated) -->
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing:0.5px;">Ingresá tu código de activación:</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="activation-code-input"
+                        placeholder="Código recibido por WhatsApp/Email..."
+                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: white; flex: 1; outline: none; letter-spacing:1px; font-family:'Inter',sans-serif;"
+                        onkeydown="if(event.key==='Enter') verifyActivationCode()">
+                    <button id="activation-verify-btn" onclick="verifyActivationCode()"
+                        style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 9px 14px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s; white-space:nowrap;"
+                        onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">
+                        Activar
+                    </button>
+                </div>
+                <p style="font-size:9px; color:rgba(255,255,255,0.3); margin-top:5px; line-height:1.4;">Recibís el código automáticamente tras confirmar el pago. Dudas: <a href="mailto:orbitae.app@gmail.com" style="color:#ba55d3;">orbitae.app@gmail.com</a></p>
+            </div>
+
+            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 4px;">
+                Ahora no &mdash; volver
             </button>
+
+            <!-- Footer legal -->
+            <div style="text-align:center; margin-top:12px;">
+                <a href="/privacidad" target="_blank" style="font-size:9px; color:rgba(255,255,255,0.25); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.15);">Política de Privacidad</a>
+            </div>
         </div>
     </div>
 
+    <!-- Inicializador de PayPal Suscripciones -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof paypal !== 'undefined') {
+                paypal.Buttons({
+                    style: {
+                        shape: 'rect',
+                        color: 'gold',
+                        layout: 'vertical',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function(data, actions) {
+                        return actions.subscription.create({
+                            plan_id: 'P-55W80757HF211482RNIVJ6VQ'
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        localStorage.setItem('orbitae_premium_unlocked', 'true');
+                        showToast('✨ ¡Suscripción activada! Bienvenido a Orbitae Premium.');
+                        closeUpgradeModal();
+                        updateCityBadge();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    },
+                    onError: function(err) {
+                        console.error('PayPal error:', err);
+                        showToast('❌ Ocurrió un error con PayPal. Intente nuevamente.');
+                    }
+                }).render('#paypal-button-container-subscription');
+            } else {
+                console.error("PayPal SDK no cargado.");
+            }
+        });
+    </script>
 </body>
 </html>
