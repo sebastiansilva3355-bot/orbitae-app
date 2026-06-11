@@ -6021,7 +6021,90 @@
             if (workEl) workEl.innerHTML = `<i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> ${workTip}`;
         }
 
-        // ── VERIFICACIÓN DE TOKEN DE ACTIVACIÓN PREMIUM (server-side) ─────────────────
+        // ══════════════════════════════════════════════════════════════════
+        //  SISTEMA DE PREMIUM SEGURO — validación server-side
+        //  El estado premium vive en el servidor (SQLite).
+        //  En localStorage solo guardamos el session_token (UUID opaco).
+        //  Nadie puede hackear el premium escribiendo en la consola.
+        // ══════════════════════════════════════════════════════════════════
+
+        /**
+         * Activa el premium en el cliente guardando el session_token del servidor.
+         * NUNCA llamar directamente — usar solo tras confirmación del servidor.
+         */
+        function _activatePremiumLocally(sessionToken) {
+            if (!sessionToken) return;
+            localStorage.setItem('orbitae_session_token', sessionToken);
+            localStorage.setItem('orbitae_premium_unlocked', 'true');
+            localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
+        }
+
+        /**
+         * Revoca el premium local (no afecta el servidor).
+         */
+        function _revokePremiumLocally() {
+            localStorage.removeItem('orbitae_session_token');
+            localStorage.removeItem('orbitae_premium_unlocked');
+            localStorage.removeItem('orbitae_premium_verified_at');
+        }
+
+        /**
+         * Verifica contra el servidor si el session_token guardado es válido.
+         * Llama al callback con true/false.
+         */
+        async function verifyPremiumWithServer() {
+            const sessionToken = localStorage.getItem('orbitae_session_token');
+            if (!sessionToken) {
+                _revokePremiumLocally();
+                return false;
+            }
+            try {
+                const resp = await fetch('/api/premium/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_token: sessionToken })
+                });
+                const data = await resp.json();
+                if (data.premium) {
+                    localStorage.setItem('orbitae_premium_unlocked', 'true');
+                    localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
+                    return true;
+                } else {
+                    // Token inválido o expirado — revocar
+                    _revokePremiumLocally();
+                    updateCityBadge();
+                    return false;
+                }
+            } catch (e) {
+                // Sin conexión: usar caché local (máx 24h)
+                const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
+                const cacheOk = (Date.now() - verifiedAt) < 86400000; // 24 horas
+                return cacheOk && localStorage.getItem('orbitae_premium_unlocked') === 'true';
+            }
+        }
+
+        // Verificar premium con servidor al cargar (no bloquea la UI)
+        (function initPremiumVerification() {
+            const sessionToken = localStorage.getItem('orbitae_session_token');
+            if (sessionToken) {
+                // Solo re-verificar si pasaron más de 4 horas desde la última verificación
+                const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
+                const shouldRecheck = (Date.now() - verifiedAt) > 14400000; // 4 horas
+                if (shouldRecheck) {
+                    verifyPremiumWithServer().then(valid => {
+                        if (!valid) {
+                            console.log('Sesión premium expirada o inválida.');
+                        }
+                    });
+                }
+            } else if (localStorage.getItem('orbitae_premium_unlocked') === 'true') {
+                // Tiene el flag pero no el token → fraude o datos viejos → revocar
+                _revokePremiumLocally();
+                updateCityBadge();
+            }
+        })();
+
+        // ── VERIFICACIÓN DE TOKEN DE ACTIVACIÓN MANUAL ─────────────────────────
         async function verifyActivationCode() {
             const input = document.getElementById('activation-code-input');
             if (!input) return;
@@ -6039,8 +6122,8 @@
                     body: JSON.stringify({ token })
                 });
                 const data = await resp.json();
-                if (data.valid) {
-                    localStorage.setItem('orbitae_premium_unlocked', 'true');
+                if (data.valid && data.session_token) {
+                    _activatePremiumLocally(data.session_token);
                     showToast('✨ ¡Premium activado! Bienvenido/a al acceso completo.');
                     updateCityBadge();
                     closeUpgradeModal();
@@ -6055,7 +6138,7 @@
             }
         }
 
-        // ── PROCESAMIENTO DE PAGO CON MERCADO PAGO ────────────────────────────
+        // ── PAGO CON MERCADO PAGO ─────────────────────────────────────────────
         async function payWithMercadoPago() {
             const btn = document.getElementById('mp-pay-btn');
             if (btn) {
@@ -6081,43 +6164,61 @@
             }
         }
 
-        // ── ACTIVACIÓN POR URL PARAM (post-pago redirect) ────────────────────────
+        // ── VERIFICACIÓN POST-PAGO (redirect de MP o token en URL) ───────────
         (function checkURLActivation() {
             const params = new URLSearchParams(window.location.search);
+
+            // Token de activación manual en URL (ej: enlace enviado por email)
             const token = params.get('token');
-            if (token && localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
-                // Limpiar la URL inmediatamente para que no quede visible
+            if (token && !localStorage.getItem('orbitae_session_token')) {
                 window.history.replaceState({}, '', window.location.pathname);
                 fetch('/api/activate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: token.toUpperCase() })
                 }).then(r => r.json()).then(data => {
-                    if (data.valid) {
-                        localStorage.setItem('orbitae_premium_unlocked', 'true');
+                    if (data.valid && data.session_token) {
+                        _activatePremiumLocally(data.session_token);
                         setTimeout(() => {
                             showToast('✨ ¡Premium activado automáticamente! Bienvenido/a.');
                             updateCityBadge();
-                        }, 2000);
+                        }, 1500);
                     }
                 }).catch(() => {});
             }
 
-            const mpStatus = params.get('status') || params.get('collection_status');
-            if (mpStatus === 'approved' && localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
+            // Redirect de Mercado Pago — verificar payment_id con el servidor
+            const mpFlag = params.get('mp');
+            const paymentId = params.get('payment_id') || params.get('collection_id');
+
+            if (mpFlag === 'success' && paymentId) {
+                // Limpiar URL inmediatamente
                 window.history.replaceState({}, '', window.location.pathname);
-                localStorage.setItem('orbitae_premium_unlocked', 'true');
-                setTimeout(() => {
-                    showToast('✨ ¡Premium activado! Gracias por tu compra con Mercado Pago.');
-                    updateCityBadge();
-                    setTimeout(() => { location.reload(); }, 1500);
-                }, 1000);
-            } else if (mpStatus === 'rejected' || mpStatus === 'cancelled') {
+                // Mostrar loader y verificar pago con el servidor
+                showToast('⏳ Verificando tu pago...');
+                fetch(`/api/mp/verify-payment?payment_id=${encodeURIComponent(paymentId)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.approved && data.session_token) {
+                            _activatePremiumLocally(data.session_token);
+                            setTimeout(() => {
+                                showToast('✨ ¡Premium activado! Gracias por tu compra con Mercado Pago.');
+                                updateCityBadge();
+                                setTimeout(() => { location.reload(); }, 1500);
+                            }, 500);
+                        } else {
+                            showToast('⏳ Pago en proceso. Si ya acreditó, escribinos a orbitae.app@gmail.com');
+                        }
+                    })
+                    .catch(() => {
+                        showToast('⚠️ No pudimos verificar el pago. Escribinos a orbitae.app@gmail.com');
+                    });
+            } else if (mpFlag === 'failure') {
                 window.history.replaceState({}, '', window.location.pathname);
                 showToast('❌ El pago fue rechazado o cancelado. Intentá de nuevo.');
-            } else if (mpStatus === 'pending' || mpStatus === 'in_process') {
+            } else if (mpFlag === 'pending') {
                 window.history.replaceState({}, '', window.location.pathname);
-                showToast('⏳ El pago está pendiente de acreditación.');
+                showToast('⏳ El pago está pendiente de acreditación. Te notificaremos.');
             }
         })();
 
@@ -10195,7 +10296,7 @@
         </div>
     </div>
 
-    <!-- Inicializador de PayPal Suscripciones -->
+    <!-- Inicializador de PayPal Suscripciones (con validación server-side) -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof paypal !== 'undefined') {
@@ -10212,13 +10313,33 @@
                         });
                     },
                     onApprove: function(data, actions) {
-                        localStorage.setItem('orbitae_premium_unlocked', 'true');
-                        showToast('✨ ¡Suscripción activada! Bienvenido a Orbitae Premium.');
-                        closeUpgradeModal();
-                        updateCityBadge();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
+                        // Mostrar loading mientras validamos con el servidor
+                        showToast('⏳ Validando suscripción...');
+                        const subscriptionId = data.subscriptionID;
+
+                        // Validar subscription_id contra la API de PayPal via nuestro servidor
+                        fetch('/api/paypal/validate-subscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ subscription_id: subscriptionId })
+                        })
+                        .then(r => r.json())
+                        .then(result => {
+                            if (result.valid && result.session_token) {
+                                _activatePremiumLocally(result.session_token);
+                                showToast('✨ ¡Suscripción activada! Bienvenido/a a Orbitae Premium.');
+                                closeUpgradeModal();
+                                updateCityBadge();
+                                setTimeout(() => { location.reload(); }, 1500);
+                            } else {
+                                showToast('⚠️ Error al validar. Contactá: orbitae.app@gmail.com');
+                                console.error('PayPal validation failed:', result);
+                            }
+                        })
+                        .catch(err => {
+                            console.error('PayPal validation error:', err);
+                            showToast('⚠️ Error de red. Contactá: orbitae.app@gmail.com');
+                        });
                     },
                     onError: function(err) {
                         console.error('PayPal error:', err);
