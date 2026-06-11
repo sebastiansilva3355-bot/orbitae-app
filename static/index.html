@@ -2165,7 +2165,7 @@
             <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; margin-bottom: 14px;" title="Haz clic 5 veces aquí para activar Premium">
                 <h1 style="display: flex; align-items: center; justify-content: space-between; margin: 0; line-height: 1.2;">
                     <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 1.2px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 21px;">✦ ORBITAE</span>
-                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);">v3.4 · PDF 4 Pág</span>
+                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);">v3.5 · PDF 4 Pág</span>
                 </h1>
                 <div class="panel-subtitle" id="rotating-subtitle" style="margin-top: 6px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Inter', sans-serif; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; line-height: 1.4;">
                     <span class="sub-hl active" data-index="0" onclick="switchTab('cities')" style="transition: all 0.4s ease; color: #00e5ff; text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); font-weight: 800; cursor: pointer; padding: 2px 4px; border-radius: 4px; background: rgba(0, 229, 255, 0.08);">Astrocartografía</span>
@@ -6812,9 +6812,23 @@
                 `;
                 
                 if (alignments.length > 0) {
-                    popupContent += `<p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px;">Tiene <strong>${alignments.length} influencias planetarias</strong> activas. Lee el reporte en el panel lateral.</p>`;
+                    popupContent += `
+                        <p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px; color:#ccc;">
+                            Tiene <strong>${alignments.length} influencias planetarias</strong> activas.
+                        </p>
+                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%); border:none; border-radius:6px; color:#ffffff; font-size:10px; font-weight:bold; cursor:pointer;">
+                            <i class="fa-solid fa-file-pdf"></i> Ver Reporte y PDF
+                        </button>
+                    `;
                 } else {
-                    popupContent += `<p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px; color: #2e7d32;"><strong>Zona Neutra:</strong> Influencia tranquila y estable.</p>`;
+                    popupContent += `
+                        <p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px; color: #81c784;">
+                            <strong>Zona Neutra:</strong> Influencia tranquila y estable.
+                        </p>
+                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:rgba(0,188,212,0.2); border:1px solid rgba(0,188,212,0.4); border-radius:6px; color:#00bcd4; font-size:10px; font-weight:bold; cursor:pointer;">
+                            <i class="fa-solid fa-file-pdf"></i> Ver Reporte y PDF
+                        </button>
+                    `;
                 }
                 popupContent += `</div>`;
                 
