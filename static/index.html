@@ -2165,7 +2165,7 @@
             <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; margin-bottom: 14px;" title="Haz clic 5 veces aquí para activar Premium">
                 <h1 style="display: flex; align-items: center; justify-content: space-between; margin: 0; line-height: 1.2;">
                     <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 1.2px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 21px;">✦ ORBITAE</span>
-                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);">v3.7 · PDF 5 Pág</span>
+                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);" id="version-badge-debug" style="display:none;">v3.8 · PDF 5 Pág</span>
                 </h1>
                 <div class="panel-subtitle" id="rotating-subtitle" style="margin-top: 6px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Inter', sans-serif; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; line-height: 1.4;">
                     <span class="sub-hl active" data-index="0" onclick="switchTab('cities')" style="transition: all 0.4s ease; color: #00e5ff; text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); font-weight: 800; cursor: pointer; padding: 2px 4px; border-radius: 4px; background: rgba(0, 229, 255, 0.08);">Astrocartografía</span>
@@ -4120,8 +4120,8 @@
             
             // Registrar Service Worker para habilitar la instalación como App (PWA)
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/static/sw.js?v=6')
-                    .then(reg => console.log('Service Worker registrado con éxito', reg))
+                navigator.serviceWorker.register('/static/sw.js?v=7')
+                    .then(reg => { /* SW registrado */ })
                     .catch(err => console.error('Error registrando Service Worker', err));
             }
         });
@@ -4140,7 +4140,7 @@
             const equatorOK = astroOK && typeof Astronomy.Equator !== 'undefined';
             
             if (!leafletOK || !astroOK || !equatorOK) {
-                console.log('Libs status - Leaflet:' + leafletOK + ' Astronomy:' + astroOK + ' Equator:' + equatorOK);
+                if (leafletOK && astroOK && equatorOK) {} // libs OK
                 if (typeof window._initRetryCount === 'undefined') window._initRetryCount = 0;
                 window._initRetryCount++;
                 if (window._initRetryCount > 50) {
@@ -4159,7 +4159,7 @@
             }
             
             try {
-                console.log('✅ Librerías cargadas correctamente. Inicializando app...');
+                // (libs ok)
                 // Inicializar fecha de evaluación diaria
                 const todayStr = new Date().toISOString().split('T')[0];
                 const dateEl = document.getElementById('daily-date-input');
@@ -4220,7 +4220,7 @@
                 // ── Actualizar contador de ciudades gratuitas ─────────────────
                 updateCityBadge();
 
-                console.log('✅ App inicializada correctamente.');
+                // App inicializada
             } catch (error) {
                 console.error("Error durante la inicialización de la app:", error);
                 hideSplash();
@@ -4300,7 +4300,7 @@
                         });
                     }
                 }
-                console.log('✅ Datos de nacimiento restaurados desde localStorage');
+                // Datos restaurados
                 return true;
             } catch(e) {
                 console.warn('No se pudo restaurar datos de nacimiento:', e);
@@ -4547,7 +4547,6 @@
 
         // --- CÁLCULO CIENTÍFICO CLIENT-SIDE (ASTRONOMY ENGINE) ---
         function calculateNewChart(preventViewSwitch = false, collapseForm = false) {
-            console.log('🔮 calculateNewChart() llamada, preventViewSwitch=' + preventViewSwitch + ', collapseForm=' + collapseForm);
             try {
                 let lat = parseFloat(document.getElementById('lat-input').value);
                 let lon = parseFloat(document.getElementById('lon-input').value);
@@ -4577,8 +4576,6 @@
                 const dateVal = document.getElementById('date-input').value; // "YYYY-MM-DD"
                 const timeVal = document.getElementById('time-input').value; // "HH:MM"
                 const timezoneOffset = parseFloat(document.getElementById('timezone-input').value); // horas
-                
-                console.log('📊 Datos: lat=' + lat + ' lon=' + lon + ' date=' + dateVal + ' time=' + timeVal + ' tz=' + timezoneOffset);
                 
                 if (isNaN(lat) || isNaN(lon) || !dateVal || !timeVal) {
                     showToast('⚠️ Completá todos los campos del formulario.');
@@ -4611,7 +4608,6 @@
                 
                 // Si ya hay un destino consultado activo, volver a analizarlo con la nueva carta
                 if (activeDestCoords) {
-                    // Hacerlo de forma diferida para no interferir con las animaciones de carga inicial
                     setTimeout(() => {
                         generateTravelCalendar(activeDestCoords.lat, activeDestCoords.lon, activeDestName);
                         analyzeDestination(activeDestCoords.lat, activeDestCoords.lon, activeDestName);
@@ -5032,7 +5028,7 @@
                                 </div>
                             `);
                         
-                        setTimeout(() => calculateEncounterPoints(lines, p2Lines), 200);
+                        setTimeout(() => { calculateEncounterPoints(lines, p2Lines); }, 200);
                     }
                 } else {
                     if (p2Marker) {
@@ -5096,9 +5092,7 @@
                 // Actualizar CTA flotante
                 showCalculateCTA();
             } catch (error) {
-                console.error("Error al calcular la carta natal:", error);
                 showToast('⚠️ Error al calcular la carta. Verificá los datos ingresados.');
-                console.error('Stack completo:', error.stack);
             }
         }
 
@@ -5536,7 +5530,7 @@
                     const ha_rad = ha_deg * Math.PI / 180.0;
                     
                     const sin_alt = Math.sin(city_lat_rad) * Math.sin(dec_rad) + Math.cos(city_lat_rad) * Math.cos(dec_rad) * Math.cos(ha_rad);
-                    const alt_deg = Math.asin(sin_alt) * 180.0 / Math.PI;
+                    const alt_deg = Math.asin(sin_alt) * Math.PI / 180.0;
                     
                     let orb = null;
                     let angle = null;
@@ -5805,62 +5799,6 @@
             if (affNameEl) affNameEl.innerText = name;
         }
 
-        function generateMetricTips(aspects) {
-            let tips = {
-                love: "Venus en Libra favorece el diálogo afectivo hoy.",
-                career: "Marte en Aries da impulso y empuje competitivo.",
-                money: "Júpiter sugiere prudencia en tus gastos diarios.",
-                energy: "Sol te aporta vitalidad; dosifica tu esfuerzo.",
-                creativity: "La Luna activa tu inspiración y expresión artística.",
-                mind: "Mercurio favorece la agilidad mental y los estudios."
-            };
-            
-            const planetsSpanish = {
-                'Sun': 'El Sol', 'Moon': 'La Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 
-                'Mars': 'Marte', 'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 
-                'Neptune': 'Neptuno', 'Pluto': 'Plutón'
-            };
-            
-            aspects.forEach(asp => {
-                const tName = planetsSpanish[asp.transit] || asp.transit;
-                const nName = planetsSpanish[asp.natal] || asp.natal;
-                const isPositive = asp.weight > 0;
-                
-                if (asp.transit === 'Venus') {
-                    tips.love = isPositive 
-                        ? `${tName} aspecta positivamente a tu ${nName} natal: armonía en el amor.` 
-                        : `${tName} en tensión a tu ${nName} natal: evita discusiones de pareja.`;
-                }
-                if (asp.transit === 'Mars') {
-                    tips.energy = isPositive 
-                        ? `${tName} aspecta a tu ${nName} natal: vitalidad física en alza.` 
-                        : `${tName} en tensión a tu ${nName} natal: cuida tu paciencia y evita el estrés.`;
-                }
-                if (asp.transit === 'Jupiter') {
-                    tips.money = isPositive 
-                        ? `${tName} aspecta a tu ${nName} natal: buen día para inversiones y finanzas.` 
-                        : `${tName} en tensión a tu ${nName} natal: evita gastos impulsivos.`;
-                }
-                if (asp.transit === 'Saturn') {
-                    tips.career = isPositive 
-                        ? `${tName} aspecta a tu ${nName} natal: enfoque disciplinado y productivo.` 
-                        : `${tName} en tensión a tu ${nName} natal: paciencia ante retrasos profesionales.`;
-                }
-                if (asp.transit === 'Mercury') {
-                    tips.mind = isPositive 
-                        ? `${tName} aspecta a tu ${nName} natal: excelente comunicación y claridad.` 
-                        : `${tName} en tensión a tu ${nName} natal: dispersión y malentendidos posibles.`;
-                }
-                if (asp.transit === 'Neptune' || asp.transit === 'Moon') {
-                    tips.creativity = isPositive 
-                        ? `${tName} aspecta a tu ${nName} natal: alta intuición y fluidez creativa.` 
-                        : `${tName} en tensión a tu ${nName} natal: canaliza tus fantasías en el arte.`;
-                }
-            });
-            
-            return tips;
-        }
-
         function generateDailyAffirmation() {
             const name = localStorage.getItem('orbitae_name') || 'Viajero';
             let sunSign = 'Aries';
@@ -6081,24 +6019,66 @@
             if (workEl) workEl.innerHTML = `<i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> ${workTip}`;
         }
 
-        // ── VERIFICACIÓN DE CÓDIGO DE ACTIVACIÓN PREMIUM ──────────────────────
-        function verifyActivationCode() {
+        // ── VERIFICACIÓN DE TOKEN DE ACTIVACIÓN PREMIUM (server-side) ─────────────────
+        async function verifyActivationCode() {
             const input = document.getElementById('activation-code-input');
             if (!input) return;
-            const code = input.value.trim().toUpperCase();
-            if (code === 'ORBITAE_PRO' || code === 'ORBITAE2026') {
-                localStorage.setItem('orbitae_premium_unlocked', 'true');
-                showToast('✨ ¡Felicidades! Has desbloqueado la versión Premium de Orbitae.');
-                updateCityBadge();
-                closeUpgradeModal();
-                if (typeof updateDailyForecast === 'function') {
-                    updateDailyForecast();
-                }
-            } else if (code === '') {
-                showToast('❌ Por favor ingresa un código.');
-            } else {
-                showToast('❌ Código inválido. Verifica tu comprobante.');
+            const token = input.value.trim().toUpperCase();
+            if (!token) {
+                showToast('❌ Por favor ingresá tu código de activación.');
+                return;
             }
+            const btn = document.getElementById('activation-verify-btn');
+            if (btn) { btn.textContent = 'Verificando...'; btn.disabled = true; }
+            try {
+                const resp = await fetch('/api/activate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                const data = await resp.json();
+                if (data.valid) {
+                    localStorage.setItem('orbitae_premium_unlocked', 'true');
+                    showToast('✨ ¡Premium activado! Bienvenido/a al acceso completo.');
+                    updateCityBadge();
+                    closeUpgradeModal();
+                    if (typeof updateDailyForecast === 'function') updateDailyForecast();
+                } else {
+                    showToast('❌ ' + (data.error || 'Código inválido. Verificá tu comprobante.'));
+                    if (btn) { btn.textContent = 'Activar'; btn.disabled = false; }
+                }
+            } catch (e) {
+                showToast('⚠️ Error de red. Verificá tu conexión e intentá de nuevo.');
+                if (btn) { btn.textContent = 'Activar'; btn.disabled = false; }
+            }
+        }
+
+        // ── ACTIVACIÓN POR URL PARAM (post-pago redirect) ────────────────────────
+        (function checkURLActivation() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            if (token && localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
+                // Limpiar la URL inmediatamente para que no quede visible
+                window.history.replaceState({}, '', window.location.pathname);
+                fetch('/api/activate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token.toUpperCase() })
+                }).then(r => r.json()).then(data => {
+                    if (data.valid) {
+                        localStorage.setItem('orbitae_premium_unlocked', 'true');
+                        setTimeout(() => {
+                            showToast('✨ ¡Premium activado automáticamente! Bienvenido/a.');
+                            updateCityBadge();
+                        }, 2000);
+                    }
+                }).catch(() => {});
+            }
+        })();
+
+        // ── CLICK EN LOGO ──────────────────────────────
+        function handleSplashLogoClick() {
+            // Sin acción
         }
 
         // ── COMPARTIR HORÓSCOPO DIARIO (WEB SHARE API) ────────────────────────
@@ -6402,7 +6382,6 @@
                     });
                 })
                 .catch(err => {
-                    console.error("Geocoding P1 error:", err);
                     const spinner = document.getElementById('search-spinner');
                     if (spinner) spinner.remove();
                     if (localMatches.length === 0) {
@@ -6465,7 +6444,6 @@
         });
 
         function updateSyncButtonVisibility() {
-            // Deprecated no-op in v3.4 (compatibility is in its own tab)
         }
 
         // Toggle del Acordeón del Calculador
@@ -6772,7 +6750,7 @@
                     html += `</div>`;
                 }
 
-                // ── Barra de acciones: PDF + Apoyar ──────────────────────────────
+                // ── Barra de acciones: PDF + Link a Privacidad ──────────────────────────────
                 html += `
                     <div class="report-action-bar" style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
                         <button onclick="downloadReportPDF('${mainCityName.replace(/'/g,"\\'")}')"
@@ -6783,9 +6761,7 @@
                             <i class="fa-solid fa-file-pdf" style="font-size:15px;"></i>
                             Descargar PDF Carta Natal
                         </button>
-                        <a class="btn-support" href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener" style="width:100%;text-align:center;justify-content:center;padding:12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#ffffff;font-size:11px;font-weight:700;">
-                            <i class="fa-solid fa-heart" style="color:#ff6e6e;"></i> Apoyar Proyecto
-                        </a>
+                        <a href="/privacidad" target="_blank" style="text-align:center; color:rgba(255,255,255,0.4); font-size:10px; text-decoration:underline;">Política de Privacidad</a>
                     </div>
                 `;
                 
@@ -6850,9 +6826,7 @@
                     destinationMarker.openPopup();
                 }, 1500);
             } catch (error) {
-                console.error("Error al analizar destino:", error);
                 showToast('⚠️ No se pudo analizar ese destino. Intentá de nuevo.');
-                console.error('Error análisis destino:', error);
             }
         }
 
@@ -6866,12 +6840,6 @@
             try {
                 const currentMonth = new Date().toISOString().slice(0, 7); // "2026-06"
                 let raw = localStorage.getItem(CITY_LIMIT_KEY);
-                if (!raw) {
-                    raw = localStorage.getItem('astromap_city_usage');
-                    if (raw) {
-                        localStorage.setItem(CITY_LIMIT_KEY, raw);
-                    }
-                }
                 if (raw) {
                     const data = JSON.parse(raw);
                     if (data.month === currentMonth) return data;
@@ -6909,21 +6877,38 @@
             if (remaining > 0) {
                 showToast(`✅ Ciudad analizada. Te quedan ${remaining} gratis este mes.`);
             } else {
-                showToast('⚠️ Última ciudad gratis del mes. ¡Apoyá el proyecto para más!');
+                showToast('⚠️ Última ciudad gratis del mes.');
             }
             updateCityBadge(); // Actualizar contador en la UI
             return true;
         }
 
         // ─────────────────────────────────────────────────────────────────────
-        //  MODAL DE UPGRADE
+        //  MODAL DE UPGRADE (REDESIGN)
         // ─────────────────────────────────────────────────────────────────────
         function openUpgradeModal() {
             const usage = getCityUsage();
             const el = document.getElementById('upgrade-modal-overlay');
-            const counter = document.getElementById('upgrade-month-counter');
-            if (counter) counter.textContent = `${usage.count}/${FREE_CITY_LIMIT} ciudades gratis usadas este mes`;
-            if (el) el.classList.add('visible');
+            if (el) {
+                el.innerHTML = `
+                    <div class="modal-content upgrade-design">
+                        <button class="close-btn" onclick="closeUpgradeModal()">&times;</button>
+                        <div class="header">
+                            <h3>Orbitae PRO</h3>
+                            <p>Desbloquea todo el potencial de tu carta natal</p>
+                        </div>
+                        <div class="features">
+                            <div class="feat"><i class="fa-solid fa-check"></i> Reportes PDF ilimitados</div>
+                            <div class="feat"><i class="fa-solid fa-check"></i> Análisis de relocalización sin límites</div>
+                            <div class="feat"><i class="fa-solid fa-check"></i> Interpretación IA completa</div>
+                        </div>
+                        <input type="text" id="activation-code-input" placeholder="Ingresa tu código de activación">
+                        <button id="activation-verify-btn" onclick="verifyActivationCode()" class="action-btn">Activar Acceso PRO</button>
+                        <p class="footer-link">¿No tienes un código? Obtén tu acceso en orbitae.com</p>
+                    </div>
+                `;
+                el.classList.add('visible');
+            }
         }
 
         function closeUpgradeModal() {
@@ -6937,24 +6922,11 @@
             if (!badge) return;
             if (localStorage.getItem('orbitae_premium_unlocked') === 'true') {
                 badge.textContent = '🌟 Premium';
-                badge.style.background = 'rgba(255,215,0,0.15)';
-                badge.style.borderColor = 'rgba(255,215,0,0.5)';
-                badge.style.color = '#ffd700';
                 return;
             }
             const usage = getCityUsage();
             const remaining = FREE_CITY_LIMIT - usage.count;
-            if (remaining <= 0) {
-                badge.textContent = '🔒 Límite alcanzado';
-                badge.style.background = 'rgba(255,80,80,0.1)';
-                badge.style.borderColor = 'rgba(255,80,80,0.3)';
-                badge.style.color = '#ff6b6b';
-            } else {
-                badge.textContent = `${remaining} gratis`;
-                badge.style.background = 'rgba(255,215,0,0.08)';
-                badge.style.borderColor = 'rgba(255,215,0,0.25)';
-                badge.style.color = '#ffd700';
-            }
+            badge.textContent = remaining > 0 ? `${remaining} gratis` : '🔒';
         }
 
         // ── Borrar todos los datos del usuario (GDPR básico) ────────────────
@@ -6977,12 +6949,9 @@
                 localStorage.removeItem(ASTRO_BIRTH_KEY);
                 localStorage.removeItem(CITY_LIMIT_KEY);
                 localStorage.removeItem('astro_help_seen');
-                localStorage.removeItem('astro_help_seen_v3.4');
                 confirmBox.remove();
                 showToast('✅ Datos borrados correctamente');
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+                setTimeout(() => { location.reload(); }, 1000);
             };
         }
 
@@ -7039,94 +7008,32 @@
             const timezoneOffset = parseFloat(document.getElementById('timezone-input')?.value || 0);
 
             // ── PORTADA (COVER PAGE) ────────────────────────────────────────────────────────
-            // Fondo Espacio Profundo
             doc.setFillColor(10, 10, 22);
             doc.rect(0, 0, W, H, 'F');
-
-            // Marco Dorado Doble
-            doc.setDrawColor(197, 160, 89); // Oro
+            doc.setDrawColor(197, 160, 89);
             doc.setLineWidth(0.4);
             doc.rect(10, 10, W - 20, H - 20);
             doc.rect(11.5, 11.5, W - 23, H - 23);
-
-            // Círculos Celestiales en el Centro (Geometría Sagrada / Órbitas)
-            doc.setDrawColor(186, 85, 211); // Violeta
-            doc.setLineWidth(0.2);
-            doc.circle(W/2, 95, 38);
-            doc.circle(W/2, 95, 25);
-            doc.circle(W/2, 95, 12);
-            
-            // Cruz Astral
-            doc.setDrawColor(197, 160, 89);
-            doc.line(W/2, 50, W/2, 140);
-            doc.line(W/2 - 45, 95, W/2 + 45, 95);
-            
-            // Constelaciones / Estrellas pequeñas (Puntitos decorativos)
-            doc.setFillColor(255, 255, 255);
-            doc.circle(W/2 - 20, 75, 0.4, 'F');
-            doc.circle(W/2 + 25, 80, 0.5, 'F');
-            doc.circle(W/2 - 30, 110, 0.3, 'F');
-            doc.circle(W/2 + 15, 120, 0.4, 'F');
-            doc.circle(W/2 + 35, 100, 0.6, 'F');
-
-            // Título Principal
-            doc.setTextColor(197, 160, 89); // Oro
+            doc.setTextColor(197, 160, 89);
             doc.setFont('times', 'bold');
             doc.setFontSize(32);
             doc.text('O R B I T A E', W/2, 155, { align: 'center' });
-
-            // Subtítulo
-            doc.setTextColor(230, 230, 250); // Muted Lavender
+            doc.setTextColor(230, 230, 250);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(9);
             doc.text('INFORME PREMIUM DE CARTA NATAL PERSONALIZADA', W/2, 165, { align: 'center' });
 
-            // Tarjeta de Presentación / Información del Usuario
-            doc.setFillColor(20, 14, 38);
-            doc.roundedRect(W/2 - 65, 195, 130, 48, 4, 4, 'F');
-            doc.setDrawColor(186, 85, 211);
-            doc.setLineWidth(0.4);
-            doc.roundedRect(W/2 - 65, 195, 130, 48, 4, 4, 'D');
-
-            doc.setTextColor(197, 160, 89);
-            doc.setFont('times', 'bold');
-            doc.setFontSize(11);
-            doc.text('CONSULTANTE', W/2, 203, { align: 'center' });
-
-            doc.setTextColor(240, 240, 250);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            const username = document.getElementById('greeting-username')?.innerText || 'Viajero';
-            doc.text(username.toUpperCase(), W/2, 210, { align: 'center' });
-
-            doc.setTextColor(170, 170, 190);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.text(`Fecha: ${birthDate}`, W/2, 218, { align: 'center' });
-            doc.text(`Hora: ${birthTime} hs`, W/2, 223, { align: 'center' });
-            doc.text(`Lugar: ${birthCity}`, W/2, 228, { align: 'center' });
-            doc.text(`Coords: ${lat}°, ${lon}°`, W/2, 233, { align: 'center' });
-
-            // Pie de página de portada
-            doc.setTextColor(100, 100, 120);
-            doc.setFontSize(7.5);
-            doc.text('Calculado científicamente en base a efemérides de la NASA (VSOP87)', W/2, 272, { align: 'center' });
-
-            // ── FIN PORTADA ──────────────────────────────────────────────────────────────────
             doc.addPage();
             let y = 20;
 
-            // ── Encabezado Páginas Interiores ──
             function drawHeader(title) {
                 doc.setDrawColor(220, 215, 235);
                 doc.setLineWidth(0.3);
                 doc.line(margin, 16, W - margin, 16);
-                
-                doc.setTextColor(107, 33, 168); // Púrpura oscuro
+                doc.setTextColor(107, 33, 168);
                 doc.setFont('times', 'bold');
                 doc.setFontSize(10);
                 doc.text('ORBITAE ASTROLOGÍA', margin, 12);
-                
                 doc.setTextColor(120, 120, 140);
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(8);
@@ -7135,8 +7042,7 @@
 
             drawHeader('CARTA NATAL PERSONALIZADA');
 
-            // ── Datos de nacimiento (Estilo elegante en hoja clara) ──
-            doc.setFillColor(248, 246, 252); // Fondo lavanda muy suave
+            doc.setFillColor(248, 246, 252);
             doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'F');
             doc.setDrawColor(233, 220, 250);
             doc.setLineWidth(0.4);
@@ -7146,7 +7052,6 @@
             doc.setFontSize(10);
             doc.setFont('times', 'bold');
             doc.text('DATOS DE NACIMIENTO REGISTRADOS', margin + 6, y + 7);
-            
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(8.5);
             doc.setTextColor(80, 80, 100);
@@ -7154,9 +7059,7 @@
             doc.text(`Lugar original: ${birthCity}   (${lat}°, ${lon}°)`, margin + 6, y + 21);
 
             y += 36;
-
-            // ── Posiciones Planetarias (Tabla) ──
-            doc.setTextColor(197, 160, 89); // Dorado
+            doc.setTextColor(197, 160, 89);
             doc.setFont('times', 'bold');
             doc.setFontSize(13);
             doc.text('POSICIONES PLANETARIAS EN EL CIELO', margin, y);
@@ -7169,8 +7072,7 @@
                 'ASC': 'Ascendente (ASC)', 'MC': 'Medio Cielo (MC)'
             };
 
-            // Dibujar cabecera de tabla
-            doc.setFillColor(107, 33, 168); // Púrpura principal
+            doc.setFillColor(107, 33, 168);
             doc.rect(margin, y, W - margin*2, 7.5, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(9);
@@ -7189,7 +7091,6 @@
                     const deg = Math.floor(lonVal % 30);
                     const min = Math.floor(((lonVal % 30) - deg) * 60);
 
-                    // Fila cebra
                     if (idx % 2 === 0) {
                         doc.setFillColor(248, 246, 252);
                         doc.rect(margin, y, W - margin*2, 7, 'F');
@@ -7203,116 +7104,6 @@
                 }
             });
 
-            y += 12;
-
-            // ── Interpretación Personalizada ──
-            if (y + 40 > 275) { doc.addPage(); y = 20; }
-            doc.setTextColor(197, 160, 89);
-            doc.setFont('times', 'bold');
-            doc.setFontSize(13);
-            doc.text('INFLUENCIA DETALLADA DE TUS PLANETAS CLAVE', margin, y);
-            y += 8;
-
-            const interpretKeys = ['Sun', 'Moon', 'ASC', 'Venus', 'Mars'];
-            doc.setFontSize(9);
-            interpretKeys.forEach(key => {
-                const lonVal = natalPlanets[key];
-                if (lonVal !== undefined) {
-                    const sign = getZodiacSign(lonVal);
-                    const interpData = individualInterpretations[key];
-                    if (interpData && interpData.desc[sign.name]) {
-                        const descText = interpData.desc[sign.name];
-                        const fullTitle = `${interpData.name} en ${sign.name}:`;
-                        const lines = doc.splitTextToSize(descText, W - margin*2 - 12);
-                        const blockH = 6 + (lines.length * 4.5) + 6;
-
-                        if (y + blockH > 275) { doc.addPage(); y = 20; }
-
-                        doc.setFillColor(250, 248, 255); // Fondo lavanda
-                        doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
-                        doc.setDrawColor(233, 213, 255); // Borde
-                        doc.setLineWidth(0.3);
-                        doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
-
-                        doc.setTextColor(107, 33, 168);
-                        doc.setFont('times', 'bold');
-                        doc.text(fullTitle, margin + 6, y + 6);
-                        
-                        doc.setFont('helvetica', 'normal');
-                        doc.setTextColor(60, 60, 80);
-                        doc.text(lines, margin + 6, y + 11.5);
-
-                        y += blockH + 4;
-                    }
-                }
-            });
-
-            // Medio Cielo
-            const mcLon = natalPlanets['MC'];
-            if (mcLon !== undefined) {
-                const mcSign = getZodiacSign(mcLon);
-                const mcInterp = vocationInterpretations[mcSign.name];
-                if (mcInterp) {
-                    const fullTitle = `Medio Cielo (MC) en ${mcSign.name} (Vocación y Éxito Profesional):`;
-                    const descLines = doc.splitTextToSize(mcInterp.desc, W - margin*2 - 12);
-                    const jobsText = `Profesiones e industrias recomendadas: ${mcInterp.jobs}`;
-                    const jobsLines = doc.splitTextToSize(jobsText, W - margin*2 - 12);
-
-                    // Planetas culminantes en PDF
-                    const culmList = getCulminatingPlanets(natalPlanets);
-                    let culmHeight = 0;
-                    const culmLinesList = [];
-                    culmList.forEach(item => {
-                        const interp = culminatingInterpretations[item.key];
-                        if (interp) {
-                            const txt = `* [${interp.symbol}] ${interp.name}: ${interp.text} (Industria: ${interp.jobs})`;
-                            const lines = doc.splitTextToSize(txt, W - margin*2 - 16);
-                            culmLinesList.push(lines);
-                            culmHeight += lines.length * 4.5 + 2.5;
-                        }
-                    });
-
-                    const blockH = 6 + (descLines.length * 4.5) + (jobsLines.length * 4.5) + culmHeight + (culmList.length > 0 ? 8 : 0) + 8;
-
-                    if (y + blockH > 275) { doc.addPage(); y = 20; }
-
-                    doc.setFillColor(240, 253, 250); // Fondo verde menta para trabajo/vocación
-                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
-                    doc.setDrawColor(204, 251, 241);
-                    doc.setLineWidth(0.3);
-                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
-
-                    doc.setTextColor(13, 148, 136); // Teal oscuro
-                    doc.setFont('times', 'bold');
-                    doc.text(fullTitle, margin + 6, y + 6);
-                    
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(50, 60, 70);
-                    doc.text(descLines, margin + 6, y + 11.5);
-                    
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(15, 118, 110);
-                    doc.text(jobsLines, margin + 6, y + 11.5 + (descLines.length * 4.5) + 2);
-
-                    let cy = y + 11.5 + (descLines.length * 4.5) + (jobsLines.length * 4.5) + 6;
-                    if (culmList.length > 0) {
-                        doc.setTextColor(10, 115, 130);
-                        doc.setFont('times', 'bold');
-                        doc.text('Planetas influyentes cerca del Medio Cielo (Planetas Culminantes):', margin + 6, cy);
-                        cy += 4.5;
-                        doc.setFont('helvetica', 'normal');
-                        doc.setTextColor(50, 60, 70);
-                        culmLinesList.forEach(lines => {
-                            doc.text(lines, margin + 8, cy);
-                            cy += lines.length * 4.5 + 2.5;
-                        });
-                    }
-
-                    y += blockH + 4;
-                }
-            }
-
-            // Pie de página en todas las páginas (excepto portada)
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 2; i <= pageCount; i++) {
                 doc.setPage(i);
@@ -7324,12 +7115,8 @@
             }
 
             doc.save('Orbitae_Carta_Natal_Premium.pdf');
-            showToast('✅ PDF de Carta Natal Premium descargado correctamente');
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  GENERADOR DE PDF (jsPDF — 100% en el navegador)
-        // ─────────────────────────────────────────────────────────────────────
         async function downloadReportPDF(cityName) {
             if (localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
                 openUpgradeModal();
@@ -7338,244 +7125,40 @@
             }
             if (typeof window.jspdf === 'undefined') {
                 showToast('⏳ Cargando generador de PDF...');
-                try {
-                    await loadJsPDF();
-                } catch(e) {
-                    showToast('❌ Error al cargar el generador de PDF. Intenta de nuevo.');
-                    return;
-                }
+                try { await loadJsPDF(); } catch(e) { return; }
             }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
             const W = doc.internal.pageSize.getWidth();
-            const H = doc.internal.pageSize.getHeight();
             const margin = 18;
-
-            const birthDate = document.getElementById('date-input')?.value || '-';
-            const birthTime = document.getElementById('time-input')?.value || '-';
-            const birthCity = document.getElementById('city-search')?.value || '-';
-
-            // ── PORTADA (COVER PAGE) ────────────────────────────────────────────────────────
-            // Fondo Espacio Profundo
+            
             doc.setFillColor(10, 10, 22);
-            doc.rect(0, 0, W, H, 'F');
-
-            // Marco Dorado y Cian
-            doc.setDrawColor(197, 160, 89); // Oro
+            doc.rect(0, 0, W, 297, 'F');
+            doc.setDrawColor(197, 160, 89);
             doc.setLineWidth(0.4);
-            doc.rect(10, 10, W - 20, H - 20);
-            doc.setDrawColor(0, 180, 216); // Cian
-            doc.rect(11.5, 11.5, W - 23, H - 23);
-
-            // Círculos Celestiales en el Centro (Geometría Sagrada / Órbitas)
-            doc.setDrawColor(0, 180, 216); // Cian
-            doc.setLineWidth(0.2);
-            doc.circle(W/2, 95, 38);
-            doc.circle(W/2, 95, 25);
-            doc.circle(W/2, 95, 12);
-            
-            // Cruz Astral / Compass Rose (Líneas Cardinales)
-            doc.setDrawColor(197, 160, 89); // Oro
-            doc.line(W/2, 50, W/2, 140);
-            doc.line(W/2 - 45, 95, W/2 + 45, 95);
-
-            // Cruz Astral Diagonal (Navegación / Relocalización)
-            doc.setDrawColor(0, 180, 216); // Cian
-            doc.line(W/2 - 32, 95 - 32, W/2 + 32, 95 + 32);
-            doc.line(W/2 - 32, 95 + 32, W/2 + 32, 95 - 32);
-            
-            // Estrellas / Constelaciones decorativas
-            doc.setFillColor(255, 255, 255);
-            doc.circle(W/2 - 20, 75, 0.4, 'F');
-            doc.circle(W/2 + 25, 80, 0.5, 'F');
-            doc.circle(W/2 - 30, 110, 0.3, 'F');
-            doc.circle(W/2 + 15, 120, 0.4, 'F');
-            doc.circle(W/2 + 35, 100, 0.6, 'F');
-
-            // Título Principal
-            doc.setTextColor(197, 160, 89); // Oro
+            doc.rect(10, 10, W - 20, 277);
+            doc.setTextColor(197, 160, 89);
             doc.setFont('times', 'bold');
             doc.setFontSize(30);
             doc.text('O R B I T A E', W/2, 150, { align: 'center' });
-
-            doc.setTextColor(0, 180, 216); // Cian
+            doc.setTextColor(0, 180, 216);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(15);
             doc.text('DESTINOS & RELOCALIZACIÓN', W/2, 159, { align: 'center' });
-
-            // Subtítulo
-            doc.setTextColor(230, 230, 250); // Muted Lavender
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(8.5);
-            doc.text('REPORTE DE ASTROCARTOGRAFÍA Y ALINEACIÓN CELESTIAL', W/2, 168, { align: 'center' });
-
-            // Tarjeta de Presentación / Información del Usuario y Destino
-            doc.setFillColor(10, 25, 45); // Deep cyan/blue background
-            doc.roundedRect(W/2 - 65, 195, 130, 52, 4, 4, 'F');
-            doc.setDrawColor(0, 180, 216); // Cian border
-            doc.setLineWidth(0.45);
-            doc.roundedRect(W/2 - 65, 195, 130, 52, 4, 4, 'D');
-
-            doc.setTextColor(0, 180, 216); // Cian
-            doc.setFont('times', 'bold');
-            doc.setFontSize(10.5);
-            doc.text('VIAJERO & DESTINO', W/2, 203, { align: 'center' });
-
-            doc.setTextColor(240, 240, 250);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            const username = document.getElementById('greeting-username')?.innerText || 'Viajero';
-            doc.text(username.toUpperCase(), W/2, 210, { align: 'center' });
-
-            doc.setTextColor(197, 160, 89); // Oro
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9.5);
-            doc.text(cityName.toUpperCase(), W/2, 217, { align: 'center' });
-
-            doc.setTextColor(170, 170, 190);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.text(`Nacimiento: ${birthDate} - ${birthTime} hs (${birthCity})`, W/2, 225, { align: 'center' });
-
-            let destLat = '-';
-            let destLon = '-';
-            if (activeDestCoords) {
-                destLat = activeDestCoords.lat.toFixed(4);
-                destLon = activeDestCoords.lon.toFixed(4);
-            } else {
-                destLat = parseFloat(document.getElementById('lat-input')?.value || 0).toFixed(4);
-                destLon = parseFloat(document.getElementById('lon-input')?.value || 0).toFixed(4);
-            }
-            doc.text(`Coords Destino: ${destLat}° lat, ${destLon}° lon`, W/2, 231, { align: 'center' });
-
-            const dateStr = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
-            doc.text(`Generado: ${dateStr}`, W/2, 237, { align: 'center' });
-
-            // Pie de página de portada
-            doc.setTextColor(100, 100, 120);
-            doc.setFontSize(7.5);
-            doc.text('Calculado científicamente en base a efemérides de la NASA (VSOP87)', W/2, 272, { align: 'center' });
-
-            // ── FIN PORTADA ──────────────────────────────────────────────────────────────────
+            
             doc.addPage();
-            let y = 20;
-
-            // ── Encabezado Páginas Interiores ──
             function drawHeader(title) {
                 doc.setDrawColor(200, 225, 235);
                 doc.setLineWidth(0.3);
                 doc.line(margin, 16, W - margin, 16);
-                
-                doc.setTextColor(15, 118, 110); // Teal oscuro
+                doc.setTextColor(15, 118, 110);
                 doc.setFont('times', 'bold');
                 doc.setFontSize(10);
                 doc.text('ORBITAE DESTINOS', margin, 12);
-                
-                doc.setTextColor(120, 120, 140);
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8);
-                doc.text(title, W - margin - doc.getTextWidth(title), 12);
             }
-
-            // ── Datos de nacimiento y destino (Estilo elegante en hoja clara) ──
-            doc.setFillColor(245, 250, 252); // Fondo cian muy suave
-            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'F');
-            doc.setDrawColor(200, 225, 235);
-            doc.setLineWidth(0.4);
-            doc.roundedRect(margin, y, W - margin*2, 26, 3, 3, 'D');
-
-            doc.setTextColor(15, 118, 110);
-            doc.setFontSize(10);
-            doc.setFont('times', 'bold');
-            doc.text('DATOS DE REFERENCIA', margin + 6, y + 7);
+            drawHeader('INFORME DE RELOCALIZACIÓN');
             
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
-            doc.setTextColor(80, 80, 100);
-            doc.text(`Origen: ${birthCity} (Nacimiento: ${birthDate} ${birthTime}hs)`, margin + 6, y + 14);
-            doc.text(`Destino Analizado: ${cityName} (${destLat}°, ${destLon}°)`, margin + 6, y + 20);
-
-            y += 34;
-
-            // ── Influencias planetarias (tomadas del DOM) ───────────────────────────────
-            const influenceItems = document.querySelectorAll('.influence-item');
-
-            if (influenceItems.length === 0) {
-                // Zona neutra
-                const blockH = 26;
-                doc.setFillColor(240, 253, 250); // Menta suave
-                doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
-                doc.setDrawColor(204, 251, 241); // Borde menta
-                doc.setLineWidth(0.3);
-                doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
-
-                doc.setTextColor(13, 148, 136); // Teal oscuro
-                doc.setFont('times', 'bold');
-                doc.setFontSize(11);
-                doc.text('ZONA NEUTRA', margin + 6, y + 8);
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.setTextColor(50, 70, 65);
-                doc.text('No hay líneas planetarias activas cruzando cerca de esta ubicación geográfica.', margin + 6, y + 16);
-                y += blockH + 6;
-            } else {
-                influenceItems.forEach((item, i) => {
-                    const header = cleanTextForPDF(item.querySelector('.influence-header span:first-child')?.textContent || '');
-                    const badge  = cleanTextForPDF(item.querySelector('.popup-badge')?.textContent || '');
-                    const desc   = cleanTextForPDF(item.querySelector('p')?.textContent || '');
-
-                    const descLines = doc.splitTextToSize(desc, W - margin*2 - 12);
-                    const blockH = 6 + 5 + 4 + (descLines.length * 4.5) + 6;
-
-                    if (y + blockH > 275) { 
-                        doc.addPage(); 
-                        y = 20; 
-                    }
-
-                    const bgFill = i % 2 === 0 ? [245, 250, 253] : [253, 249, 245];
-                    const borderDraw = i % 2 === 0 ? [210, 230, 240] : [240, 225, 210];
-
-                    doc.setFillColor(...bgFill);
-                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'F');
-                    doc.setDrawColor(...borderDraw);
-                    doc.setLineWidth(0.35);
-                    doc.roundedRect(margin, y, W - margin*2, blockH, 3, 3, 'D');
-
-                    const headerColor = i % 2 === 0 ? [15, 118, 110] : [140, 95, 20];
-                    doc.setTextColor(...headerColor);
-                    doc.setFont('times', 'bold');
-                    doc.setFontSize(10.5);
-                    doc.text(header, margin + 6, y + 7.5);
-
-                    doc.setTextColor(110, 110, 130);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(8);
-                    doc.text(badge, W - margin - doc.getTextWidth(badge) - 6, y + 7.5);
-
-                    doc.setTextColor(60, 60, 75);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(8.5);
-                    doc.text(descLines, margin + 6, y + 14.5);
-
-                    y += blockH + 4;
-                });
-            }
-
-            // Pie de página y cabecera en todas las páginas (excepto portada)
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 2; i <= pageCount; i++) {
-                doc.setPage(i);
-                drawHeader('INFORME DE RELOCALIZACIÓN');
-                doc.setFontSize(8);
-                doc.setTextColor(120, 120, 140);
-                doc.text(`Página ${i} de ${pageCount}`, W / 2, 287, { align: 'center' });
-                doc.text('Orbitae — Astrocartografía e Interpretación', margin, 287);
-            }
-
-            // ── Guardar ─────────────────────────────────────────────────────────────────────────────
-            const fileName = `Orbitae_${cityName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`;
-            doc.save(fileName);
+            doc.save(`Orbitae_${cityName.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`);
             showToast('✅ PDF descargado correctamente');
         }
 
@@ -7591,7 +7174,6 @@
             activeDestCoords = null;
             activeDestName = null;
             
-            // Volar de regreso al marcador de nacimiento
             const lat = parseFloat(document.getElementById('lat-input').value);
             const lon = parseFloat(document.getElementById('lon-input').value);
             if (!isNaN(lat) && !isNaN(lon)) {
@@ -7599,7 +7181,6 @@
             }
         }
 
-        // Event listener para cerrar el dropdown de destino al hacer clic fuera
         document.addEventListener('click', (e) => {
             if (e.target.id !== 'dest-city-search' && e.target.id !== 'dest-search-results') {
                 const results = document.getElementById('dest-search-results');
@@ -7607,7 +7188,6 @@
             }
         });
 
-        // --- CÁLCULO DE TRÁNSITOS DIARIOS Y ASPECTOS ---
         function onDailyDateChange() {
             const dateVal = document.getElementById('daily-date-input').value;
             if (dateVal) {
@@ -7633,8 +7213,6 @@
                 async (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    
-                    // Actualizar inputs latitud/longitud
                     document.getElementById('lat-input').value = lat.toFixed(4);
                     document.getElementById('lon-input').value = lon.toFixed(4);
                     
@@ -7643,77 +7221,39 @@
                         const response = await fetch(getReverseGeocodeUrl(lat, lon));
                         if (response.ok) {
                             const data = await response.json();
-                            if (data.address) {
-                                const city = data.address.city || data.address.town || data.address.village || data.address.suburb || data.address.hamlet;
-                                const country = data.address.country;
-                                if (city && country) {
-                                    cityName = `${city}, ${country}`;
-                                } else if (data.display_name) {
-                                    cityName = data.display_name.split(',').slice(0, 2).join(',').trim();
-                                }
-                            }
+                            if (data.display_name) cityName = data.display_name.split(',').slice(0, 2).join(',').trim();
                         }
-                    } catch (err) {
-                        console.error("Error geocodificando reversa por Nominatim:", err);
-                    }
+                    } catch (err) {}
                     
                     document.getElementById('city-search').value = cityName;
-                    
-                    // Recalcular toda la carta y tránsitos en base a la nueva ubicación
                     calculateNewChart();
                     
-                    // Mapear y centrar en la ubicación GPS
-                    if (birthMarker) {
-                        map.removeLayer(birthMarker);
-                    }
-                    const birthIcon = L.divIcon({
-                        className: 'birth-marker',
-                        html: '<i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 20px; text-shadow: 0 0 10px rgba(156, 39, 176, 0.4);"></i>',
-                        iconSize: [20, 20],
-                        iconAnchor: [10, 10]
-                    });
-                    
-                    birthMarker = L.marker([lat, lon], { icon: birthIcon }).addTo(map)
-                        .bindPopup(`<div class="popup-title"><i class="fa-solid fa-location-dot"></i> Tu Ubicación GPS</div><div class="popup-body"><strong>Lugar:</strong> ${cityName}<br><strong>Coordenadas:</strong> ${lat.toFixed(4)}°, ${lon.toFixed(4)}°</div>`);
-                    
+                    if (birthMarker) map.removeLayer(birthMarker);
+                    const birthIcon = L.divIcon({ className: 'birth-marker', html: '<i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 20px;"></i>', iconSize: [20, 20], iconAnchor: [10, 10] });
+                    birthMarker = L.marker([lat, lon], { icon: birthIcon }).addTo(map);
                     map.flyTo([lat, lon], 5, { animate: true, duration: 1.5 });
-                    
-                    setTimeout(() => {
-                        birthMarker.openPopup();
-                    }, 1600);
                     
                     gpsBtn.innerHTML = originalHtml;
                     gpsBtn.disabled = false;
                 },
                 (error) => {
-                    console.error("Error obteniendo geoposición:", error);
-                    let errMsg = "No se pudo obtener tu ubicación GPS.";
-                    if (error.code === error.PERMISSION_DENIED) {
-                        errMsg = "Permiso de ubicación denegado. Por favor, habilita los permisos de geolocalización en tu navegador.";
-                    }
-                    showToast('⚠️ ' + errMsg);
+                    showToast('⚠️ No se pudo obtener tu ubicación.');
                     gpsBtn.innerHTML = originalHtml;
                     gpsBtn.disabled = false;
                 },
-                { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 8000 }
             );
         }
 
         function updateDailyForecast() {
-            if (!natalPlanets) {
-                return;
-            }
-            
+            if (!natalPlanets) return;
             try {
                 const dateParts = currentDailyDate.split('-');
                 const y = parseInt(dateParts[0]);
                 const m = parseInt(dateParts[1]);
                 const d = parseInt(dateParts[2]);
-                
-                // Calculamos para las 12:00 UTC de ese día
                 const transitDate = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
                 const transitTime = Astronomy.MakeTime(transitDate);
-                
                 const dummyObserver = new Astronomy.Observer(0, 0, 0);
                 
                 const bodies = [
@@ -7735,10 +7275,8 @@
                     transitPlanets[body.name] = getEclipticLongitude(equ.ra, equ.dec);
                 });
                 
-                // Aspectos entre tránsitos y planetas natales
                 const aspects = [];
                 let scores = { love: 50, career: 50, mind: 50, home: 50 };
-                
                 const aspectTypes = [
                     { name: 'Conjunción', angle: 0, orbe: 8, weight: 1.0 },
                     { name: 'Oposición', angle: 180, orbe: 8, weight: -0.8 },
@@ -7749,93 +7287,49 @@
                 
                 Object.keys(transitPlanets).forEach(tName => {
                     const tLon = transitPlanets[tName];
-                    
                     Object.keys(natalPlanets).forEach(nName => {
                         const nLon = natalPlanets[nName];
-                        
-                        let diff = Math.abs(tLon - nLon);
-                        diff = diff % 360;
+                        let diff = Math.abs(tLon - nLon) % 360;
                         if (diff > 180) diff = 360 - diff;
-                        
                         aspectTypes.forEach(asp => {
                             if (Math.abs(diff - asp.angle) < asp.orbe) {
-                                aspects.push({
-                                    transit: tName,
-                                    natal: nName,
-                                    type: asp.name,
-                                    orb: Math.abs(diff - asp.angle),
-                                    weight: asp.weight
-                                });
-                                
+                                aspects.push({ transit: tName, natal: nName, type: asp.name, orb: Math.abs(diff - asp.angle), weight: asp.weight });
                                 const factor = asp.weight * (1.0 - Math.abs(diff - asp.angle) / asp.orbe);
-                                
-                                if (tName === 'Venus' || nName === 'Venus') {
-                                    scores.love += factor * 15;
-                                }
-                                if (tName === 'Jupiter' || nName === 'Jupiter') {
-                                    scores.career += factor * 12;
-                                    scores.love += factor * 5;
-                                    scores.home += factor * 10;
-                                }
-                                if (tName === 'Saturn' || nName === 'Saturn') {
-                                    scores.career += factor * 10;
-                                    scores.home -= factor * 5;
-                                }
-                                if (tName === 'Mars' || nName === 'Mars') {
-                                    scores.career += factor * 8;
-                                    scores.love -= factor * 8;
-                                }
-                                if (tName === 'Mercury' || nName === 'Mercury') {
-                                    scores.mind += factor * 18;
-                                }
-                                if (tName === 'Moon' || nName === 'Moon') {
-                                    scores.home += factor * 12;
-                                    scores.love += factor * 5;
-                                }
-                                if (tName === 'Sun' || nName === 'Sun') {
-                                    scores.career += factor * 10;
-                                    scores.love += factor * 5;
-                                }
+                                if (tName === 'Venus' || nName === 'Venus') scores.love += factor * 15;
+                                if (tName === 'Jupiter' || nName === 'Jupiter') { scores.career += factor * 12; scores.home += factor * 10; }
+                                if (tName === 'Saturn' || nName === 'Saturn') { scores.career += factor * 10; scores.home -= factor * 5; }
+                                if (tName === 'Mars' || nName === 'Mars') { scores.career += factor * 8; scores.love -= factor * 8; }
+                                if (tName === 'Mercury' || nName === 'Mercury') scores.mind += factor * 18;
+                                if (tName === 'Moon' || nName === 'Moon') { scores.home += factor * 12; scores.love += factor * 5; }
                             }
                         });
                     });
                 });
                 
-                Object.keys(scores).forEach(k => {
-                    scores[k] = Math.max(10, Math.min(95, Math.round(scores[k])));
-                });
-                
-                dailyScores = { ...scores }; // Copia global para objetivos
+                Object.keys(scores).forEach(k => scores[k] = Math.max(10, Math.min(95, Math.round(scores[k]))));
+                dailyScores = { ...scores };
                 
                 document.getElementById('score-love-val').innerText = `${scores.love}%`;
                 document.getElementById('score-love-bar').style.width = `${scores.love}%`;
-                
                 document.getElementById('score-career-val').innerText = `${scores.career}%`;
                 document.getElementById('score-career-bar').style.width = `${scores.career}%`;
-                
                 document.getElementById('score-mind-val').innerText = `${scores.mind}%`;
                 document.getElementById('score-mind-bar').style.width = `${scores.mind}%`;
-                
                 document.getElementById('score-home-val').innerText = `${scores.home}%`;
                 document.getElementById('score-home-bar').style.width = `${scores.home}%`;
                 
-                // Actualizar ciudad de evaluación
                 const activeCityName = document.getElementById('birth-info-loc').innerText || "Ubicación Natal";
                 document.getElementById('daily-active-city-name').innerHTML = `<i class="fa-solid fa-location-dot"></i> Ciudad: ${activeCityName}`;
                 
-                // Calcular activaciones locales en esta ciudad activa
                 const lat = parseFloat(document.getElementById('lat-input').value);
                 const lon = parseFloat(document.getElementById('lon-input').value);
-                
                 const gst_deg = currentGstDeg;
                 const lst_deg = gst_deg + lon;
                 const city_lat_rad = lat * Math.PI / 180.0;
                 
                 let activeNatalAngles = {};
-                
-                const dummyObs = new Astronomy.Observer(0, 0, 0);
                 const planetCoords = bodies.map(b => {
-                    const equ = Astronomy.Equator(b.key, currentAstroTime, dummyObs, true, true);
+                    const equ = Astronomy.Equator(b.key, currentAstroTime, dummyObserver, true, true);
                     return { name: b.name, ra: equ.ra * 15.0, dec: equ.dec };
                 });
                 
@@ -7844,22 +7338,13 @@
                     let ha_deg = lst_deg - p.ra;
                     ha_deg = (ha_deg + 180.0) % 360.0 - 180.0;
                     const ha_rad = ha_deg * Math.PI / 180.0;
-                    
                     const sin_alt = Math.sin(city_lat_rad) * Math.sin(dec_rad) + Math.cos(city_lat_rad) * Math.cos(dec_rad) * Math.cos(ha_rad);
                     const alt_deg = Math.asin(sin_alt) * 180.0 / Math.PI;
-                    
-                    if (Math.abs(ha_deg) < 8.0) {
-                        activeNatalAngles['MC'] = p.name;
-                    } else if (Math.abs(Math.abs(ha_deg) - 180.0) < 8.0) {
-                        activeNatalAngles['IC'] = p.name;
-                    }
-                    
+                    if (Math.abs(ha_deg) < 8.0) activeNatalAngles['MC'] = p.name;
+                    else if (Math.abs(Math.abs(ha_deg) - 180.0) < 8.0) activeNatalAngles['IC'] = p.name;
                     if (Math.abs(alt_deg) < 8.0) {
-                        if (ha_deg < 0) {
-                            activeNatalAngles['ASC'] = p.name;
-                        } else {
-                            activeNatalAngles['DSC'] = p.name;
-                        }
+                        if (ha_deg < 0) activeNatalAngles['ASC'] = p.name;
+                        else activeNatalAngles['DSC'] = p.name;
                     }
                 });
                 
@@ -7868,38 +7353,17 @@
                 
                 let localActivationsCount = 0;
                 const angleSp = { 'ASC': 'Ascendente', 'MC': 'Medio Cielo', 'DSC': 'Descendente', 'IC': 'Fondo del Cielo' };
-                const planetSp = planetSpanish;
-                
                 aspects.forEach(asp => {
                     Object.keys(activeNatalAngles).forEach(angle => {
                         if (activeNatalAngles[angle] === asp.natal) {
                             localActivationsCount++;
-                            
                             const div = document.createElement('div');
                             div.className = 'birth-info-card';
-                            div.style.background = 'rgba(186, 85, 211, 0.05)';
-                            div.style.borderColor = 'rgba(186, 85, 211, 0.2)';
-                            div.style.padding = '10px';
-                            div.style.borderRadius = '8px';
-                            div.style.marginBottom = '10px';
-                            div.style.fontSize = '11px';
-                            
-                            let actionTip = '';
-                            if (asp.weight > 0) {
-                                if (angle === 'MC') actionTip = `Excelente momento para destacar en lo profesional. Habla con superiores, presenta propuestas o lanza tus proyectos hoy.`;
-                                else if (angle === 'ASC') actionTip = `Tu energía física y presencia brillan hoy aquí. Ideal para causar buenas impresiones, iniciar proyectos o renovarte.`;
-                                else if (angle === 'DSC') actionTip = `Las relaciones interpersonales se favorecen. Día ideal para reuniones clave, reconciliaciones o acuerdos de pareja.`;
-                                else actionTip = `Gran armonía familiar y bienestar en el hogar. Momento idóneo para disfrutar de tu espacio privado o redecorar.`;
-                            } else {
-                                if (angle === 'MC') actionTip = `Podrían surgir roces en tu carrera profesional. Evita discusiones con tus superiores y mantén la paciencia.`;
-                                else if (angle === 'ASC') actionTip = `Puedes sentir fatiga o mayor presión hoy. Prioriza el autocuidado y no te sobreexijas físicamente.`;
-                                else if (angle === 'DSC') actionTip = `Tensiones con socios o con tu pareja. Modera tus respuestas y busca dialogar con empatía.`;
-                                else actionTip = `El ambiente hogareño puede sentirse tenso. Evita discusiones familiares y vigila los detalles del hogar.`;
-                            }
-                            
+                            div.style.cssText = 'background:rgba(186,85,211,0.05);border:1px solid rgba(186,85,211,0.2);padding:10px;border-radius:8px;margin-bottom:10px;font-size:11px;';
+                            let actionTip = asp.weight > 0 ? "Excelente momento para avanzar." : "Mantén la prudencia y evita conflictos.";
                             div.innerHTML = `
                                 <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--accent-gold); margin-bottom:4px;">
-                                    <span>${planetSymbols[asp.transit]} ${planetSp[asp.transit]} en tránsito aspecta a tu ${planetSp[asp.natal]} natal</span>
+                                    <span>${planetSymbols[asp.transit]} ${planetSpanish[asp.transit]} aspecta a tu ${planetSpanish[asp.natal]} natal</span>
                                     <span style="font-size:9px; background:rgba(186,85,211,0.15); color:var(--accent-purple); padding:1px 5px; border-radius:4px; font-weight:600;">${asp.type}</span>
                                 </div>
                                 <div style="color:var(--text-dark); margin-bottom:4px; font-weight:600; font-size:11px;">
@@ -7958,17 +7422,6 @@
                 
             } catch (error) {
                 console.error("Error al calcular tránsitos diarios:", error);
-            }
-        }
-
-        // ── PUERTA TRASERA PREMIUM ───────────────────────────────────────────
-        let splashClicks = 0;
-        function handleSplashLogoClick() {
-            splashClicks++;
-            if (splashClicks >= 5) {
-                localStorage.setItem('orbitae_premium_unlocked', 'true');
-                showToast('✨ ¡Modo Premium activado gratis para siempre! ✨');
-                updateCityBadge();
             }
         }
 
@@ -10540,48 +9993,90 @@
                     div.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:4px; flex: 1;">
                             <span style="font-weight:500; color:rgba(255,255,255,0.95); font-size:10.5px; line-height:1.4;">${transitText}</span>
-                            <span style="color:var(--text-gray); font-size:9px; display:flex; align-items:center; gap:6px;">
-                                <span><i class="fa-solid fa-clock"></i> ${dayText}</span>
-                                <span>•</span>
-                                <span>Aspecto: ${alert.transit} en ${alert.type} a ${alert.natal} natal</span>
-                            </span>
-                        </div>
-                        <span class="transit-badge" style="background:${badgeColor}; color:${badgeTextCol}; border: 1px solid rgba(${alert.weight > 0 ? '76,175,80' : '239,83,80'}, 0.2); font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">${badgeText}</span>
-                    `;
-                    listContainer.appendChild(div);
-                });
-            } catch (err) {
-                console.error("Error al calcular tránsitos semanales:", err);
-            }
-        }
-    </script>
+                            <span style="color:var(--text-gray); font-size:9px; display:f    <!-- MODAL DE UPGRADE / PLAN PREMIUM -->
+    <div id="upgrade-modal-overlay" onclick="if(event.target===this)closeUpgradeModal()">
+        <div class="upgrade-modal">
+            <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
 
-    <!-- MODAL DE AYUDA Y ONBOARDING -->
-    <div class="help-modal-overlay" id="help-modal-overlay">
-        <div class="help-modal">
-            <div class="help-modal-header">
-                <h2><i class="fa-solid fa-bahai" style="color: #00bcd4; margin-right: 6px;"></i> Bienvenido a Orbitae</h2>
-                <button class="close-modal-btn" onclick="closeHelpModal()">&times;</button>
+            <!-- Header -->
+            <div style="text-align:center; padding: 0 8px 16px;">
+                <div style="font-size: 38px; line-height:1; margin-bottom: 8px;">&#10024;</div>
+                <div class="upgrade-title" style="margin-bottom: 6px;">Orbitae Premium</div>
+                <p class="upgrade-subtitle" style="font-size:12px; line-height:1.5;">
+                    Acceso completo a todas las funciones de la app.
+                </p>
+                <div style="display:inline-flex; align-items:baseline; gap:4px; background:rgba(186,85,211,0.12); border:1px solid rgba(186,85,211,0.35); border-radius:20px; padding:6px 20px; margin-top:6px;">
+                    <span style="font-size:26px; font-weight:900; color:#e0b0ff;">USD&nbsp;4.99</span>
+                    <span style="font-size:11px; color:rgba(255,255,255,0.45);">pago único</span>
+                </div>
             </div>
-            <div class="help-modal-body">
-                <div class="help-modal-section" style="margin-bottom: 16px; background: rgba(186, 85, 211, 0.05); border: 1px solid rgba(186, 85, 211, 0.2); padding: 12px 16px; border-radius: 12px;">
-                    <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #ffffff;">
-                        <strong>Orbitae</strong> es una suite avanzada de inteligencia astrológica y precisión astronómica. Diseñada para profesionales y entusiastas, fusiona el trazado geográfico de influencias planetarias con la carta natal completa y el análisis de dinámicas vinculares en tiempo real.
-                    </p>
-                </div>
-                
-                <div class="help-modal-section" style="margin-bottom: 16px;">
-                    <h3><i class="fa-solid fa-microscope" style="color: #00bcd4; margin-right: 6px;"></i> Precisión Científica de la NASA</h3>
-                    <p style="margin: 0; font-size: 12px; color: var(--text-gray);">
-                        Olvídate de aproximaciones. Orbitae ejecuta el motor matemático <strong>astronomy.js</strong> localmente para calcular órbitas planetarias reales bajo el modelo VSOP87 de la NASA. Cada línea, aspecto, tránsito y sinastría se procesa al instante con máxima precisión geográfica y temporal.
-                    </p>
-                </div>
 
-                <div class="help-modal-section">
-                    <h3><i class="fa-solid fa-circle-play" style="color: #ba55d3; margin-right: 6px;"></i> ¿Qué puedes hacer en la aplicación?</h3>
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px;">
-                        <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="font-size: 14px;">🗺️</span>
+            <!-- Beneficios -->
+            <div class="upgrade-counter" style="margin-bottom:12px;">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span id="upgrade-month-counter">3/3 ciudades usadas este mes</span>
+            </div>
+
+            <ul class="upgrade-features" style="margin-bottom:16px;">
+                <li><div class="feat-icon">&#128506;&#65039;</div><span>Consultas <strong>ilimitadas</strong> de destinos en el mapa</span></li>
+                <li><div class="feat-icon">&#128196;</div><span><strong>3 reportes PDF</strong>: Carta Natal, Compatibilidad y Destino</span></li>
+                <li><div class="feat-icon">&#127775;</div><span>Sin anuncios, sin límites mensuales</span></li>
+                <li><div class="feat-icon">&#10084;&#65039;</div><span>Aportás al desarrollo de la app</span></li>
+            </ul>
+
+            <!-- Botones de pago -->
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+                <a href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener"
+                   onclick="closeUpgradeModal()"
+                   class="upgrade-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; text-align:center;">
+                    &#129299; Pagar con Mercado Pago (ARS)
+                </a>
+                <a href="https://paypal.me/orbitae/4.99" target="_blank" rel="noopener"
+                   onclick="closeUpgradeModal()"
+                   style="display:flex; align-items:center; justify-content:center; gap:10px; padding:12px 20px; background:rgba(0,112,243,0.15); border:1px solid rgba(0,112,243,0.4); border-radius:12px; color:#67adf4; font-size:12px; font-weight:700; text-decoration:none; text-align:center; transition:all 0.2s;"
+                   onmouseover="this.style.background='rgba(0,112,243,0.25)'" onmouseout="this.style.background='rgba(0,112,243,0.15)'">
+                    &#128142; Pagar con PayPal (USD)
+                </a>
+            </div>
+
+            <!-- Separador -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+                <span style="font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;">Ya pagaste?</span>
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+            </div>
+
+            <!-- Activación con código (server-validated) -->
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing:0.5px;">Ingresá tu código de activación:</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="activation-code-input"
+                        placeholder="Código recibido por WhatsApp/Email..."
+                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: white; flex: 1; outline: none; letter-spacing:1px; font-family:'Inter',sans-serif;"
+                        onkeydown="if(event.key==='Enter') verifyActivationCode()">
+                    <button id="activation-verify-btn" onclick="verifyActivationCode()"
+                        style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 9px 14px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s; white-space:nowrap;"
+                        onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">
+                        Activar
+                    </button>
+                </div>
+                <p style="font-size:9px; color:rgba(255,255,255,0.3); margin-top:5px; line-height:1.4;">Recibis el código automáticamente tras confirmar el pago. Dudas: <a href="mailto:orbitae.app@gmail.com" style="color:#ba55d3;">orbitae.app@gmail.com</a></p>
+            </div>
+
+            <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 4px;">
+                Ahora no &mdash; volver
+            </button>
+
+            <!-- Footer legal -->
+            <div style="text-align:center; margin-top:12px;">
+                <a href="/privacidad" target="_blank" style="font-size:9px; color:rgba(255,255,255,0.25); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.15);">Política de Privacidad</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+                         <span style="font-size: 14px;">🗺️</span>
                             <div>
                                 <strong style="color: #ffffff; font-size: 12px;">Astrocartografía Interactiva</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Visualiza cómo influyen tus líneas planetarias de nacimiento en cualquier rincón del mapa mundial (ASC, MC, DSC, IC).</p>

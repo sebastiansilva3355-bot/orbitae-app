@@ -1,5 +1,5 @@
-// Orbitae Service Worker — Offline Cache v37
-const CACHE_NAME = 'orbitae-v37';
+// Orbitae Service Worker — Offline Cache v38
+const CACHE_NAME = 'orbitae-v38';
 
 // Archivos a cachear al instalar (App Shell)
 // NOTA: index.html NO está aquí — siempre se sirve directo del servidor (no-cache)
@@ -43,7 +43,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Solo manejar GET
+    // Solo manejar GET (POST y otros pasan directo al servidor)
     if (event.request.method !== 'GET') return;
 
     // Estrategia Network First para rutas de API del servidor

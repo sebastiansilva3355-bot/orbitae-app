@@ -5,8 +5,11 @@
 import os
 import sys
 import logging
-from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, HTMLResponse
+import uuid
+import hashlib
+import datetime
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -36,7 +39,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -60,6 +63,99 @@ import urllib.request
 import urllib.parse
 import json
 import threading
+
+# ── SISTEMA DE TOKENS PREMIUM ───────────────────────────────────────────────
+TOKENS_FILE = "premium_tokens.json"
+tokens_lock = threading.Lock()
+
+# Contraseña de administrador (cambiala por una segura en producción)
+ADMIN_SECRET = os.environ.get("ORBITAE_ADMIN_SECRET", "orbitae-admin-2025")
+
+def load_tokens():
+    """Carga el archivo de tokens desde disco."""
+    if os.path.exists(TOKENS_FILE):
+        try:
+            with open(TOKENS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading tokens: {e}")
+    return {}
+
+def save_tokens(tokens: dict):
+    """Guarda el archivo de tokens en disco."""
+    try:
+        with tokens_lock:
+            with open(TOKENS_FILE, "w", encoding="utf-8") as f:
+                json.dump(tokens, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.error(f"Error saving tokens: {e}")
+
+@app.get("/api/admin/create-token")
+async def admin_create_token(secret: str, email: str = "", ref: str = ""):
+    """
+    Endpoint de administrador para crear un token de activación único.
+    Uso: GET /api/admin/create-token?secret=TU_CLAVE&email=cliente@email.com&ref=PAGO123
+    """
+    if secret != ADMIN_SECRET:
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    
+    token = str(uuid.uuid4()).replace("-", "").upper()[:16]
+    tokens = load_tokens()
+    tokens[token] = {
+        "created_at": datetime.datetime.utcnow().isoformat(),
+        "email": email,
+        "payment_ref": ref,
+        "used": False,
+        "used_at": None
+    }
+    save_tokens(tokens)
+    logger.info(f"Token creado: {token} para email={email} ref={ref}")
+    return {"token": token, "email": email, "ref": ref, "status": "created"}
+
+@app.post("/api/activate")
+async def activate_premium(request: Request):
+    """
+    Valida un token de activación. El token es de un solo uso.
+    Body JSON: { "token": "XXXXXXXXXXXXXXXX" }
+    """
+    try:
+        data = await request.json()
+        token = str(data.get("token", "")).strip().upper()
+    except Exception:
+        return JSONResponse({"valid": False, "error": "Formato inválido"}, status_code=400)
+    
+    if not token:
+        return JSONResponse({"valid": False, "error": "Token vacío"}, status_code=400)
+    
+    tokens = load_tokens()
+    
+    if token not in tokens:
+        logger.warning(f"Token inválido intentado: {token}")
+        return JSONResponse({"valid": False, "error": "Token no reconocido"})
+    
+    token_data = tokens[token]
+    
+    if token_data.get("used"):
+        logger.warning(f"Token ya usado: {token}")
+        return JSONResponse({"valid": False, "error": "Este token ya fue utilizado"})
+    
+    # Marcar como usado
+    tokens[token]["used"] = True
+    tokens[token]["used_at"] = datetime.datetime.utcnow().isoformat()
+    save_tokens(tokens)
+    
+    logger.info(f"Token activado exitosamente: {token} (email={token_data.get('email')})")
+    return JSONResponse({"valid": True, "message": "Premium activado correctamente"})
+
+@app.get("/api/admin/tokens")
+async def admin_list_tokens(secret: str):
+    """Lista todos los tokens (solo admin)."""
+    if secret != ADMIN_SECRET:
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    tokens = load_tokens()
+    return {"total": len(tokens), "tokens": tokens}
+
+# ────────────────────────────────────────────────────────────────────────────
 
 CACHE_FILE = "geocode_cache.json"
 geocode_cache = {}
@@ -175,12 +271,17 @@ async def privacy_policy():
                  padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 24px; }
         a { color: #ba55d3; }
         code { background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        .highlight { background: rgba(156,39,176,0.1); border: 1px solid rgba(156,39,176,0.25);
+                     border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
+        .back-btn { display: inline-block; margin-top: 32px; padding: 10px 24px;
+                    background: rgba(156,39,176,0.2); border: 1px solid rgba(156,39,176,0.4);
+                    color: #ba55d3; border-radius: 8px; text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
-    <h1>🌟 Política de Privacidad</h1>
+    <h1>&#127775; Política de Privacidad</h1>
     <span class="badge">Orbitae — Astrocartografía Interactiva</span>
-    <p><strong>Última actualización:</strong> Junio 2025</p>
+    <p><strong>Última actualización:</strong> Junio 2026</p>
 
     <h2>1. Información que recopilamos</h2>
     <p>Orbitae <strong>no recopila, almacena ni transmite</strong> ningún dato personal a
@@ -188,33 +289,50 @@ async def privacy_policy():
     <ul>
         <li><strong>Datos de nacimiento</strong> (fecha, hora, lugar): se guardan únicamente en el
         almacenamiento local de tu dispositivo (<code>localStorage</code>) y nunca se envían a ningún servidor.</li>
-        <li><strong>Ubicación GPS</strong>: solo se usa si vos elegís "Usar mi ubicación actual".
+        <li><strong>Ubicación GPS</strong>: solo se usa si elegís "Usar mi ubicación actual".
         No se almacena ni se envía a ningún servidor.</li>
+        <li><strong>Nombre de usuario</strong>: se guarda localmente en tu dispositivo solo para personalizar el saludo.</li>
         <li><strong>Datos de uso</strong>: no usamos analíticas, cookies de seguimiento ni publicidad.</li>
     </ul>
 
-    <h2>2. Servicios de terceros</h2>
+    <h2>2. Activación Premium</h2>
+    <div class="highlight">
+        <p>Al adquirir el plan Premium, enviás tu código de compra a nuestro servidor únicamente
+        para validar que el pago es legítimo. El servidor <strong>no guarda</strong> datos personales,
+        solo el código de transacción de pago para evitar su reutilización.</p>
+        <p style="margin-top:8px;">Una vez activado, el estado Premium se guarda en tu dispositivo.
+        Si borrás los datos de la app, deberás reactivar con tu código original.</p>
+    </div>
+
+    <h2>3. Servicios de terceros</h2>
     <ul>
         <li><strong>OpenStreetMap / Leaflet</strong>: para mostrar el mapa interactivo.</li>
-        <li><strong>Nominatim (OSM)</strong>: para buscar ciudades por nombre. Solo se envía el texto escrito.</li>
-        <li><strong>Google Fonts</strong>: para las tipografías. Se descarga la fuente la primera vez.</li>
-        <li><strong>cdnjs (Cloudflare)</strong>: para Font Awesome y jsPDF. Solo se descargan los archivos.</li>
+        <li><strong>Nominatim (OSM)</strong>: para buscar ciudades por nombre. Solo se envía el texto buscado.</li>
+        <li><strong>Mercado Pago / PayPal</strong>: procesamiento de pagos. Consultar sus políticas de privacidad.</li>
+        <li><strong>Google Fonts / cdnjs</strong>: para tipografías e íconos. Solo se descargan los archivos.</li>
     </ul>
 
-    <h2>3. Seguridad y datos locales</h2>
+    <h2>4. Seguridad y datos locales</h2>
     <p>Los datos guardados en tu dispositivo son accesibles solo por esta aplicación.
     No realizamos copias de seguridad en la nube. Podés borrar todos tus datos en cualquier
-    momento desde la pestaña <strong>Origen → Borrar mis datos</strong>.</p>
+    momento desde la pestaña <strong>Mi Carta → Borrar mis datos</strong>.</p>
 
-    <h2>4. Menores de edad</h2>
-    <p>Esta aplicación no está dirigida a menores de 13 años.</p>
+    <h2>5. Menores de edad</h2>
+    <p>Esta aplicación no está dirigida a menores de 13 años y no recopilamos intencionalmente
+    información de menores de esa edad.</p>
 
-    <h2>5. Cambios a esta política</h2>
-    <p>Cualquier cambio se publicará en esta misma página con la fecha actualizada.</p>
+    <h2>6. Cambios a esta política</h2>
+    <p>Cualquier cambio material se publicará en esta misma página con la fecha actualizada.
+    El uso continuado de la aplicación implica la aceptación de la política vigente.</p>
 
-    <h2>6. Contacto</h2>
-    <p>Para consultas sobre privacidad, contactanos a través de la página de la aplicación
-    en Google Play Store.</p>
+    <h2>7. Contacto</h2>
+    <p>Para consultas sobre privacidad o solicitudes de eliminación de datos:</p>
+    <ul>
+        <li>Email: <a href="mailto:orbitae.app@gmail.com">orbitae.app@gmail.com</a></li>
+        <li>Asunto: "Privacidad — [tu solicitud]"</li>
+    </ul>
+
+    <a href="/" class="back-btn">&#8592; Volver a la App</a>
 </body>
 </html>"""
     return HTMLResponse(content=html)
@@ -229,6 +347,16 @@ async def log_error(request: Request):
         logger.error(f"Error parsing client error: {e}")
     return {"status": "ok"}
 
+
+@app.middleware("http")
+async def add_post_cors(request: Request, call_next):
+    """Permitir POST desde la PWA para el endpoint /api/activate."""
+    response = await call_next(request)
+    if request.url.path == "/api/activate":
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
 
 @app.api_route("/health", methods=["GET", "HEAD"])
 async def health(request: Request):

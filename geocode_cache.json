@@ -172,5 +172,456 @@
         "-116.2546296"
       ]
     }
+  ],
+  "columbia": [
+    {
+      "place_id": 309817384,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 120027,
+      "lat": "4.0999170",
+      "lon": "-72.9088133",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 4,
+      "importance": 0.8332414433474805,
+      "addresstype": "country",
+      "name": "Colombia",
+      "display_name": "Colombia",
+      "boundingbox": [
+        "-4.2280906",
+        "16.0495518",
+        "-82.1243611",
+        "-66.8511118"
+      ]
+    },
+    {
+      "place_id": 341619512,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 194000,
+      "lat": "34.0007540",
+      "lon": "-81.0352313",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 16,
+      "importance": 0.621965039906015,
+      "addresstype": "city",
+      "name": "Columbia",
+      "display_name": "Columbia, Richland County, South Carolina, United States",
+      "boundingbox": [
+        "33.9432480",
+        "34.1315970",
+        "-81.1709780",
+        "-80.7038161"
+      ]
+    },
+    {
+      "place_id": 351258532,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 417770,
+      "lat": "41.0389186",
+      "lon": "-76.4191791",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5742076600559671,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Pennsylvania, United States",
+      "boundingbox": [
+        "40.7754277",
+        "41.3089417",
+        "-76.6407787",
+        "-76.2078051"
+      ]
+    },
+    {
+      "place_id": 344070314,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 447655,
+      "lat": "33.5313102",
+      "lon": "-82.2563979",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5448467759237415,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Georgia, United States",
+      "boundingbox": [
+        "33.3550190",
+        "33.7007870",
+        "-82.4423830",
+        "-82.0286601"
+      ]
+    },
+    {
+      "place_id": 303945714,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1210733,
+      "lat": "30.2097438",
+      "lon": "-82.6263633",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5381113888867576,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Florida, United States",
+      "boundingbox": [
+        "29.8255870",
+        "30.5977340",
+        "-82.8004770",
+        "-82.4525180"
+      ]
+    },
+    {
+      "place_id": 370718669,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1799443,
+      "lat": "43.4641929",
+      "lon": "-89.3478429",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5372746084109347,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Wisconsin, United States",
+      "boundingbox": [
+        "43.2809078",
+        "43.6435850",
+        "-89.7858090",
+        "-89.0044744"
+      ]
+    },
+    {
+      "place_id": 355731971,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1427757,
+      "lat": "42.2415027",
+      "lon": "-73.6723456",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5351624147872485,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, New York, United States",
+      "boundingbox": [
+        "41.9778100",
+        "42.5100340",
+        "-73.9296570",
+        "-73.3524420"
+      ]
+    },
+    {
+      "place_id": 328307082,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1150530,
+      "lat": "46.2947665",
+      "lon": "-117.9174697",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5248631282535132,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Washington, United States",
+      "boundingbox": [
+        "45.9988870",
+        "46.6247720",
+        "-118.2426400",
+        "-117.6031130"
+      ]
+    },
+    {
+      "place_id": 335414029,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1826820,
+      "lat": "33.1938586",
+      "lon": "-93.2344337",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.5063107999048054,
+      "addresstype": "county",
+      "name": "Columbia County",
+      "display_name": "Columbia County, Arkansas, United States",
+      "boundingbox": [
+        "33.0173046",
+        "33.4550505",
+        "-93.4905580",
+        "-92.9784645"
+      ]
+    }
+  ],
+  "columbia b": [
+    {
+      "place_id": 374133156,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 905941717,
+      "lat": "49.9039099",
+      "lon": "-97.1555962",
+      "class": "building",
+      "type": "apartments",
+      "place_rank": 30,
+      "importance": 7.238651102459781e-05,
+      "addresstype": "building",
+      "name": "Columbia Block",
+      "display_name": "Columbia Block, 853;859, Sherbrook Street, West Alexander, Winnipeg, Manitoba, R3A 1T2, Canada",
+      "boundingbox": [
+        "49.9037564",
+        "49.9040560",
+        "-97.1557769",
+        "-97.1553893"
+      ]
+    },
+    {
+      "place_id": 377161602,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 390867,
+      "lat": "55.0012510",
+      "lon": "-125.0024410",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 8,
+      "importance": 0.7448936325656426,
+      "addresstype": "state",
+      "name": "British Columbia",
+      "display_name": "British Columbia, Canada",
+      "boundingbox": [
+        "48.2245556",
+        "60.0020692",
+        "-139.0613278",
+        "-114.0541379"
+      ]
+    }
+  ],
+  "columbia br": [
+    {
+      "place_id": 306215941,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 195224813,
+      "lat": "16.2555136",
+      "lon": "-88.9428093",
+      "class": "waterway",
+      "type": "river",
+      "place_rank": 19,
+      "importance": 0.14670416800183103,
+      "addresstype": "river",
+      "name": "Columbia Branch",
+      "display_name": "Columbia Branch, San Pedro Columbia, Toledo, Belize",
+      "boundingbox": [
+        "16.2508522",
+        "16.2875123",
+        "-88.9794331",
+        "-88.9140596"
+      ]
+    },
+    {
+      "place_id": 306172944,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 195227127,
+      "lat": "16.2784481",
+      "lon": "-89.0502053",
+      "class": "waterway",
+      "type": "stream",
+      "place_rank": 22,
+      "importance": 0.10670416800183105,
+      "addresstype": "stream",
+      "name": "Columbia Branch",
+      "display_name": "Columbia Branch, Na Luûm Caj, Toledo, Belize",
+      "boundingbox": [
+        "16.2754886",
+        "16.3388165",
+        "-89.0977907",
+        "-88.9775043"
+      ]
+    },
+    {
+      "place_id": 338502737,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 873459324,
+      "lat": "39.3945154",
+      "lon": "-84.5714237",
+      "class": "man_made",
+      "type": "bridge",
+      "place_rank": 30,
+      "importance": 6.006942854958446e-05,
+      "addresstype": "man_made",
+      "name": "Columbia Bridge",
+      "display_name": "Columbia Bridge, Pershing Avenue, Rossville Historic District, Columbia Heights, Hamilton, Butler County, Ohio, 45013, United States",
+      "boundingbox": [
+        "39.3941296",
+        "39.3949189",
+        "-84.5726552",
+        "-84.5700264"
+      ]
+    },
+    {
+      "place_id": 338527715,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 204365066,
+      "lat": "39.3947678",
+      "lon": "-84.5724440",
+      "class": "bridge",
+      "type": "yes",
+      "place_rank": 30,
+      "importance": 6.006942854958446e-05,
+      "addresstype": "bridge",
+      "name": "Columbia Bridge",
+      "display_name": "Columbia Bridge, Pershing Avenue, Rossville Historic District, Columbia Heights, Hamilton, Butler County, Ohio, 45013, United States",
+      "boundingbox": [
+        "39.3946588",
+        "39.3948640",
+        "-84.5725684",
+        "-84.5723308"
+      ]
+    },
+    {
+      "place_id": 338564858,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 542543449,
+      "lat": "39.3943417",
+      "lon": "-84.5704276",
+      "class": "bridge",
+      "type": "yes",
+      "place_rank": 30,
+      "importance": 6.006942854958446e-05,
+      "addresstype": "bridge",
+      "name": "Columbia Bridge",
+      "display_name": "Columbia Bridge, Pershing Avenue, Rossville Historic District, South Hamilton, Hamilton, Butler County, Ohio, 45013, United States",
+      "boundingbox": [
+        "39.3943046",
+        "39.3943788",
+        "-84.5706503",
+        "-84.5702049"
+      ]
+    }
+  ],
+  "columbia brita": [
+    {
+      "place_id": 378945948,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 5324471829,
+      "lat": "49.2048182",
+      "lon": "-122.9061329",
+      "class": "railway",
+      "type": "station",
+      "place_rank": 30,
+      "importance": 0.39189118331215606,
+      "addresstype": "railway",
+      "name": "Columbia",
+      "display_name": "Columbia, Fourth Street, Downtown, New Westminster, Metro Vancouver Regional District, British Columbia, V3L 5M4, Canada",
+      "boundingbox": [
+        "49.1998182",
+        "49.2098182",
+        "-122.9111329",
+        "-122.9011329"
+      ]
+    },
+    {
+      "place_id": 378866324,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 11678160,
+      "lat": "49.2578915",
+      "lon": "-123.2429755",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 20,
+      "importance": 0.6222838486029556,
+      "addresstype": "suburb",
+      "name": "University of British Columbia",
+      "display_name": "University of British Columbia, Electoral Area A, Metro Vancouver Regional District, British Columbia, Canada",
+      "boundingbox": [
+        "49.2431313",
+        "49.2730071",
+        "-123.2622125",
+        "-123.2273623"
+      ]
+    },
+    {
+      "place_id": 376972497,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 5313574,
+      "lat": "52.1608944",
+      "lon": "-117.3086713",
+      "class": "natural",
+      "type": "glacier",
+      "place_rank": 22,
+      "importance": 0.4875278203641164,
+      "addresstype": "glacier",
+      "name": "Columbia Icefield",
+      "display_name": "Columbia Icefield, Area A (Kicking Horse/Kinbasket Lake), Improvement District No. 9, Alberta, Canada",
+      "boundingbox": [
+        "52.0805289",
+        "52.2652684",
+        "-117.4486756",
+        "-117.1602094"
+      ]
+    },
+    {
+      "place_id": 379042741,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 2218398,
+      "lat": "51.4783394",
+      "lon": "-117.9295767",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 12,
+      "importance": 0.46731997584895757,
+      "addresstype": "county",
+      "name": "Columbia-Shuswap Regional District",
+      "display_name": "Columbia-Shuswap Regional District, British Columbia, Canada",
+      "boundingbox": [
+        "50.4016867",
+        "52.5000492",
+        "-119.7107045",
+        "-116.2546296"
+      ]
+    }
+  ],
+  "columbia britanica": [
+    {
+      "place_id": 379234891,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 390867,
+      "lat": "55.0012510",
+      "lon": "-125.0024410",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 8,
+      "importance": 0.7448936325656426,
+      "addresstype": "state",
+      "name": "British Columbia",
+      "display_name": "British Columbia, Canada",
+      "boundingbox": [
+        "48.2245556",
+        "60.0020692",
+        "-139.0613278",
+        "-114.0541379"
+      ]
+    }
   ]
 }
