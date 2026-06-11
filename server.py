@@ -1,29 +1,29 @@
-# Orbitae — Servidor de producción (solo astrocartografía)
-# Este archivo es INDEPENDIENTE del server.py de trading.
-# Se usa para desplegar en Render.com / Railway / cualquier hosting.
+# Orbitae — Servidor de producción
+# Soporta PostgreSQL (producción en Render) y SQLite (desarrollo local).
 
 import os
 import sys
 import logging
 import uuid
-import hashlib
 import datetime
-import sqlite3
 import threading
-from contextlib import contextmanager
+import json
+import urllib.request
+import urllib.parse
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-# ── UTF-8 en cualquier SO ────────────────────────────────────────────────────
+# ── UTF-8 ─────────────────────────────────────────────────────────────────────
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
     except Exception:
         pass
 
-# ── LOGGING ──────────────────────────────────────────────────────────────────
+# ── LOGGING ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -31,118 +31,205 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ── APP ──────────────────────────────────────────────────────────────────────
-app = FastAPI(
-    title="Orbitae — Astrocartografía Interactiva",
-    description="Calculadora de líneas de nacimiento planetarias.",
-    version="2.0.0"
-)
+# ── BASE DE DATOS: PostgreSQL en producción, SQLite en local ──────────────────
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
+# Render usa "postgres://" pero psycopg2 necesita "postgresql://"
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# CORS (necesario para que la PWA funcione desde cualquier origen)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-)
+USE_POSTGRES = bool(DATABASE_URL)
+DB_FILE = "orbitae_premium.db"
+PH = "%s" if USE_POSTGRES else "?"   # placeholder según el motor
+db_lock = threading.Lock()
 
-# ── MIDDLEWARE: No-cache para HTML, cache para assets estáticos ───────────────
-@app.middleware("http")
-async def cache_control(request: Request, call_next):
-    response = await call_next(request)
-    path = request.url.path
-    if path.endswith(".html") or "sw.js" in path or path in ["/", "/astro", "/privacidad"]:
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        response.headers["Pragma"] = "no-cache"
-    elif path.endswith((".js", ".css", ".png", ".jpg", ".svg", ".woff2", ".json")):
-        if "icon" not in path:
-            response.headers["Cache-Control"] = "public, max-age=604800, immutable"
-    return response
+if USE_POSTGRES:
+    import psycopg2
+    import psycopg2.extras
+    logger.info("Base de datos: PostgreSQL")
+else:
+    import sqlite3
+    logger.info("Base de datos: SQLite (desarrollo local)")
 
-# ── GEOCODING PROXY CON CACHE ─────────────────────────────────────────────────
-import urllib.request
-import urllib.parse
-import json
+# ── HELPERS DE DB ─────────────────────────────────────────────────────────────
+
+def get_db():
+    """Devuelve una conexión a la base de datos activa."""
+    if USE_POSTGRES:
+        return psycopg2.connect(DATABASE_URL)
+    else:
+        conn = sqlite3.connect(DB_FILE, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+def db_fetchone(conn, query, params=()):
+    """Ejecuta una query y devuelve una fila como dict (o None)."""
+    if USE_POSTGRES:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    else:
+        cur = conn.cursor()
+    cur.execute(query, params)
+    row = cur.fetchone()
+    cur.close()
+    return dict(row) if row else None
+
+def db_fetchall(conn, query, params=()):
+    """Ejecuta una query y devuelve todas las filas como lista de dicts."""
+    if USE_POSTGRES:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    else:
+        cur = conn.cursor()
+    cur.execute(query, params)
+    rows = cur.fetchall()
+    cur.close()
+    return [dict(r) for r in rows]
+
+def db_execute(conn, query, params=()):
+    """Ejecuta una query de escritura (INSERT/UPDATE/DELETE)."""
+    cur = conn.cursor()
+    cur.execute(query, params)
+    cur.close()
+
+def db_upsert_session(conn, session_token, payment_method, payment_id, email, created_at, expires_at):
+    if USE_POSTGRES:
+        db_execute(conn, f"""
+            INSERT INTO premium_sessions
+                (session_token, payment_method, payment_id, email, created_at, expires_at, active)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1)
+            ON CONFLICT (session_token) DO UPDATE SET
+                payment_method = EXCLUDED.payment_method,
+                payment_id     = EXCLUDED.payment_id,
+                email          = EXCLUDED.email,
+                expires_at     = EXCLUDED.expires_at,
+                active         = 1
+        """, (session_token, payment_method, payment_id, email, created_at, expires_at))
+    else:
+        db_execute(conn, f"""
+            INSERT OR REPLACE INTO premium_sessions
+                (session_token, payment_method, payment_id, email, created_at, expires_at, active)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1)
+        """, (session_token, payment_method, payment_id, email, created_at, expires_at))
+
+def db_upsert_mp_payment(conn, payment_id, status, preference_id, session_token,
+                         amount, currency, created_at, raw_data):
+    if USE_POSTGRES:
+        db_execute(conn, f"""
+            INSERT INTO mp_payments
+                (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH})
+            ON CONFLICT (payment_id) DO UPDATE SET
+                status         = EXCLUDED.status,
+                session_token  = EXCLUDED.session_token,
+                raw_data       = EXCLUDED.raw_data
+        """, (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data))
+    else:
+        db_execute(conn, f"""
+            INSERT OR REPLACE INTO mp_payments
+                (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH})
+        """, (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data))
+
+def db_upsert_paypal_sub(conn, subscription_id, plan_id, status, session_token,
+                         email, created_at, raw_data):
+    if USE_POSTGRES:
+        db_execute(conn, f"""
+            INSERT INTO paypal_subscriptions
+                (subscription_id, plan_id, status, session_token, email, created_at, raw_data)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},{PH})
+            ON CONFLICT (subscription_id) DO UPDATE SET
+                status        = EXCLUDED.status,
+                session_token = EXCLUDED.session_token,
+                raw_data      = EXCLUDED.raw_data
+        """, (subscription_id, plan_id, status, session_token, email, created_at, raw_data))
+    else:
+        db_execute(conn, f"""
+            INSERT OR REPLACE INTO paypal_subscriptions
+                (subscription_id, plan_id, status, session_token, email, created_at, raw_data)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},{PH})
+        """, (subscription_id, plan_id, status, session_token, email, created_at, raw_data))
+
+def db_insert_token(conn, token, email, payment_ref, created_at):
+    if USE_POSTGRES:
+        db_execute(conn, f"""
+            INSERT INTO activation_tokens (token, email, payment_ref, used, created_at)
+            VALUES ({PH},{PH},{PH},0,{PH})
+            ON CONFLICT DO NOTHING
+        """, (token, email, payment_ref, created_at))
+    else:
+        db_execute(conn, f"""
+            INSERT OR IGNORE INTO activation_tokens (token, email, payment_ref, used, created_at)
+            VALUES ({PH},{PH},{PH},0,{PH})
+        """, (token, email, payment_ref, created_at))
+
+def init_db():
+    """Crea las tablas si no existen."""
+    statements = [
+        """CREATE TABLE IF NOT EXISTS premium_sessions (
+            session_token TEXT PRIMARY KEY,
+            payment_method TEXT NOT NULL,
+            payment_id TEXT,
+            email TEXT,
+            created_at TEXT NOT NULL,
+            expires_at TEXT,
+            active INTEGER DEFAULT 1
+        )""",
+        """CREATE TABLE IF NOT EXISTS mp_payments (
+            payment_id TEXT PRIMARY KEY,
+            status TEXT NOT NULL,
+            preference_id TEXT,
+            session_token TEXT,
+            amount REAL,
+            currency TEXT,
+            created_at TEXT NOT NULL,
+            raw_data TEXT
+        )""",
+        """CREATE TABLE IF NOT EXISTS paypal_subscriptions (
+            subscription_id TEXT PRIMARY KEY,
+            plan_id TEXT,
+            status TEXT NOT NULL,
+            session_token TEXT,
+            email TEXT,
+            created_at TEXT NOT NULL,
+            raw_data TEXT
+        )""",
+        """CREATE TABLE IF NOT EXISTS activation_tokens (
+            token TEXT PRIMARY KEY,
+            email TEXT,
+            payment_ref TEXT,
+            used INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            used_at TEXT
+        )""",
+        "CREATE INDEX IF NOT EXISTS idx_sessions_payment ON premium_sessions(payment_id)",
+        "CREATE INDEX IF NOT EXISTS idx_mp_session ON mp_payments(session_token)",
+    ]
+    with db_lock:
+        conn = get_db()
+        try:
+            for sql in statements:
+                db_execute(conn, sql)
+            conn.commit()
+            logger.info("Tablas de DB inicializadas correctamente.")
+        except Exception as e:
+            logger.error(f"Error inicializando DB: {e}")
+        finally:
+            conn.close()
+
+init_db()
 
 # ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
 MP_ACCESS_TOKEN = os.environ.get(
     "MP_ACCESS_TOKEN",
     "APP_USR-2055215287777718-061112-2e1047c21eeff9813b1474c0d8090923-172306186"
 )
-PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID", "BAA0Jivw-zoOWaAqsFIMsjyFsCQvBGme7gmQX1fdr_JKoUI_emgoDiqlZ2kn_-0GSC69ngLKCDTiFV6lBc")
-PAYPAL_SECRET = os.environ.get("PAYPAL_SECRET", "")  # Configurar en variables de entorno de Render
-BASE_URL = os.environ.get("BASE_URL", "https://orbitae-app.onrender.com")
-ADMIN_SECRET = os.environ.get("ORBITAE_ADMIN_SECRET", "orbitae-admin-2025")
+PAYPAL_CLIENT_ID = os.environ.get(
+    "PAYPAL_CLIENT_ID",
+    "BAA0Jivw-zoOWaAqsFIMsjyFsCQvBGme7gmQX1fdr_JKoUI_emgoDiqlZ2kn_-0GSC69ngLKCDTiFV6lBc"
+)
+PAYPAL_SECRET   = os.environ.get("PAYPAL_SECRET", "")
+BASE_URL        = os.environ.get("BASE_URL", "https://orbitae-app.onrender.com")
+ADMIN_SECRET    = os.environ.get("ORBITAE_ADMIN_SECRET", "orbitae-admin-2025")
 
-# ── BASE DE DATOS SQLite ──────────────────────────────────────────────────────
-DB_FILE = "orbitae_premium.db"
-db_lock = threading.Lock()
-
-def get_db():
-    conn = sqlite3.connect(DB_FILE, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    """Inicializa las tablas de la base de datos."""
-    with db_lock:
-        conn = get_db()
-        try:
-            conn.executescript("""
-                CREATE TABLE IF NOT EXISTS premium_sessions (
-                    session_token TEXT PRIMARY KEY,
-                    payment_method TEXT NOT NULL,
-                    payment_id TEXT,
-                    email TEXT,
-                    created_at TEXT NOT NULL,
-                    expires_at TEXT,
-                    active INTEGER DEFAULT 1
-                );
-
-                CREATE TABLE IF NOT EXISTS mp_payments (
-                    payment_id TEXT PRIMARY KEY,
-                    status TEXT NOT NULL,
-                    preference_id TEXT,
-                    session_token TEXT,
-                    amount REAL,
-                    currency TEXT,
-                    created_at TEXT NOT NULL,
-                    raw_data TEXT
-                );
-
-                CREATE TABLE IF NOT EXISTS paypal_subscriptions (
-                    subscription_id TEXT PRIMARY KEY,
-                    plan_id TEXT,
-                    status TEXT NOT NULL,
-                    session_token TEXT,
-                    email TEXT,
-                    created_at TEXT NOT NULL,
-                    raw_data TEXT
-                );
-
-                CREATE TABLE IF NOT EXISTS activation_tokens (
-                    token TEXT PRIMARY KEY,
-                    email TEXT,
-                    payment_ref TEXT,
-                    used INTEGER DEFAULT 0,
-                    created_at TEXT NOT NULL,
-                    used_at TEXT
-                );
-
-                CREATE INDEX IF NOT EXISTS idx_sessions_payment ON premium_sessions(payment_id);
-                CREATE INDEX IF NOT EXISTS idx_mp_session ON mp_payments(session_token);
-            """)
-            conn.commit()
-            logger.info("Base de datos inicializada correctamente.")
-        except Exception as e:
-            logger.error(f"Error inicializando DB: {e}")
-        finally:
-            conn.close()
-
-# Inicializar la DB al arrancar
-init_db()
-
-# ── MIGRACIÓN: cargar tokens JSON legacy a la DB ─────────────────────────────
+# ── TOKENS LEGACY (JSON) ──────────────────────────────────────────────────────
 TOKENS_FILE = "premium_tokens.json"
 tokens_lock = threading.Lock()
 
@@ -167,68 +254,82 @@ def save_tokens(tokens: dict):
 
 def create_premium_session(payment_method: str, payment_id: str = None,
                            email: str = None, months: int = 1) -> str:
-    """Crea una sesión premium en la DB y devuelve el session_token."""
+    """Crea una sesión premium en la DB y devuelve el session_token (UUID)."""
     session_token = str(uuid.uuid4())
     now = datetime.datetime.utcnow()
     expires = now + datetime.timedelta(days=30 * months)
     with db_lock:
         conn = get_db()
         try:
-            conn.execute(
-                """INSERT OR REPLACE INTO premium_sessions
-                   (session_token, payment_method, payment_id, email, created_at, expires_at, active)
-                   VALUES (?, ?, ?, ?, ?, ?, 1)""",
-                (session_token, payment_method, payment_id, email,
-                 now.isoformat(), expires.isoformat())
-            )
+            db_upsert_session(conn, session_token, payment_method, payment_id,
+                              email or "", now.isoformat(), expires.isoformat())
             conn.commit()
-            logger.info(f"Sesión premium creada: {session_token} método={payment_method} pago={payment_id}")
+            logger.info(f"Sesión premium creada: {session_token[:8]}… método={payment_method}")
         finally:
             conn.close()
     return session_token
 
 def is_valid_premium_session(session_token: str) -> bool:
-    """Verifica si un session_token es válido y no expiró."""
+    """Devuelve True si el session_token existe en DB, está activo y no expiró."""
     if not session_token:
         return False
     with db_lock:
         conn = get_db()
         try:
-            row = conn.execute(
-                "SELECT expires_at, active FROM premium_sessions WHERE session_token = ?",
+            row = db_fetchone(
+                conn,
+                f"SELECT expires_at, active FROM premium_sessions WHERE session_token = {PH}",
                 (session_token,)
-            ).fetchone()
+            )
         finally:
             conn.close()
-
-    if not row or not row["active"]:
+    if not row or not row.get("active"):
         return False
-
-    expires_at = row["expires_at"]
+    expires_at = row.get("expires_at")
     if expires_at:
         try:
-            exp = datetime.datetime.fromisoformat(expires_at)
-            if datetime.datetime.utcnow() > exp:
+            if datetime.datetime.utcnow() > datetime.datetime.fromisoformat(expires_at):
                 return False
         except Exception:
             pass
     return True
 
+# ── APP ───────────────────────────────────────────────────────────────────────
+app = FastAPI(
+    title="Orbitae — Astrocartografía Interactiva",
+    description="Calculadora de líneas de nacimiento planetarias.",
+    version="2.1.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
+@app.middleware("http")
+async def cache_control(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path.endswith(".html") or "sw.js" in path or path in ["/", "/astro", "/privacidad"]:
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+    elif path.endswith((".js", ".css", ".png", ".jpg", ".svg", ".woff2", ".json")):
+        if "icon" not in path:
+            response.headers["Cache-Control"] = "public, max-age=604800, immutable"
+    return response
+
 # ── ENDPOINTS: SESIÓN PREMIUM ─────────────────────────────────────────────────
 
 @app.post("/api/premium/check")
 async def check_premium(request: Request):
-    """
-    Verifica si un session_token tiene premium activo.
-    Body JSON: { "session_token": "uuid" }
-    Devuelve: { "premium": true/false }
-    """
+    """Verifica si un session_token tiene premium activo. Body: { session_token }"""
     try:
         data = await request.json()
         session_token = str(data.get("session_token", "")).strip()
     except Exception:
         return JSONResponse({"premium": False, "error": "Formato inválido"}, status_code=400)
-
     valid = is_valid_premium_session(session_token)
     return {"premium": valid}
 
@@ -236,40 +337,30 @@ async def check_premium(request: Request):
 
 @app.get("/api/admin/create-token")
 async def admin_create_token(secret: str, email: str = "", ref: str = ""):
-    """
-    Endpoint de administrador para crear un token de activación único.
-    Uso: GET /api/admin/create-token?secret=TU_CLAVE&email=cliente@email.com&ref=PAGO123
-    """
+    """Crea un token de activación manual. Solo admin."""
     if secret != ADMIN_SECRET:
         raise HTTPException(status_code=403, detail="Acceso denegado")
-
     token = str(uuid.uuid4()).replace("-", "").upper()[:16]
     now = datetime.datetime.utcnow().isoformat()
     with db_lock:
         conn = get_db()
         try:
-            conn.execute(
-                "INSERT INTO activation_tokens (token, email, payment_ref, used, created_at) VALUES (?, ?, ?, 0, ?)",
-                (token, email, ref, now)
-            )
+            db_insert_token(conn, token, email, ref, now)
             conn.commit()
         finally:
             conn.close()
-
-    # También guardar en JSON legacy por compatibilidad
+    # Guardar también en JSON legacy
     tokens = load_tokens()
     tokens[token] = {"created_at": now, "email": email, "payment_ref": ref, "used": False, "used_at": None}
     save_tokens(tokens)
-
-    logger.info(f"Token creado: {token} para email={email} ref={ref}")
+    logger.info(f"Token creado: {token} email={email} ref={ref}")
     return {"token": token, "email": email, "ref": ref, "status": "created"}
 
 @app.post("/api/activate")
 async def activate_premium(request: Request):
     """
-    Valida un token de activación manual (de un solo uso).
-    Body JSON: { "token": "XXXXXXXXXXXXXXXX" }
-    Devuelve: { "valid": true, "session_token": "uuid" }
+    Valida un token de activación manual (un solo uso).
+    Body: { token } → Devuelve { valid, session_token }
     """
     try:
         data = await request.json()
@@ -283,37 +374,33 @@ async def activate_premium(request: Request):
     with db_lock:
         conn = get_db()
         try:
-            row = conn.execute(
-                "SELECT * FROM activation_tokens WHERE token = ?", (token,)
-            ).fetchone()
+            row = db_fetchone(conn,
+                f"SELECT * FROM activation_tokens WHERE token = {PH}", (token,))
 
             if not row:
-                # Fallback: buscar en JSON legacy
+                # Fallback: buscar en JSON legacy y migrar
                 tokens = load_tokens()
                 if token not in tokens:
-                    logger.warning(f"Token inválido intentado: {token}")
+                    logger.warning(f"Token inválido: {token}")
                     return JSONResponse({"valid": False, "error": "Token no reconocido"})
                 token_data = tokens[token]
                 if token_data.get("used"):
                     return JSONResponse({"valid": False, "error": "Este token ya fue utilizado"})
-                # Migrar a DB
-                now = datetime.datetime.utcnow().isoformat()
-                conn.execute(
-                    "INSERT OR IGNORE INTO activation_tokens (token, email, payment_ref, used, created_at) VALUES (?, ?, ?, 0, ?)",
-                    (token, token_data.get("email", ""), token_data.get("payment_ref", ""), now)
-                )
+                db_insert_token(conn, token, token_data.get("email", ""),
+                                token_data.get("payment_ref", ""),
+                                datetime.datetime.utcnow().isoformat())
                 conn.commit()
-                row = conn.execute("SELECT * FROM activation_tokens WHERE token = ?", (token,)).fetchone()
+                row = db_fetchone(conn,
+                    f"SELECT * FROM activation_tokens WHERE token = {PH}", (token,))
 
-            if row["used"]:
+            if row.get("used"):
                 logger.warning(f"Token ya usado: {token}")
                 return JSONResponse({"valid": False, "error": "Este token ya fue utilizado"})
 
             # Marcar como usado
-            conn.execute(
-                "UPDATE activation_tokens SET used = 1, used_at = ? WHERE token = ?",
-                (datetime.datetime.utcnow().isoformat(), token)
-            )
+            db_execute(conn,
+                f"UPDATE activation_tokens SET used = 1, used_at = {PH} WHERE token = {PH}",
+                (datetime.datetime.utcnow().isoformat(), token))
             conn.commit()
 
             # Actualizar JSON legacy
@@ -325,37 +412,30 @@ async def activate_premium(request: Request):
         finally:
             conn.close()
 
-    # Crear sesión premium server-side
     session_token = create_premium_session(
         payment_method="manual_token",
         payment_id=token,
-        email=row["email"] if row else ""
+        email=row.get("email", "") if row else ""
     )
-
-    logger.info(f"Token activado: {token} → sesión {session_token}")
-    return JSONResponse({"valid": True, "message": "Premium activado correctamente", "session_token": session_token})
+    logger.info(f"Token activado: {token} → sesión {session_token[:8]}…")
+    return JSONResponse({"valid": True, "message": "Premium activado correctamente",
+                         "session_token": session_token})
 
 # ── ENDPOINTS: MERCADO PAGO ───────────────────────────────────────────────────
 
 @app.post("/api/mp/create-preference")
 async def create_mp_preference(request: Request):
-    """Crea una preferencia de pago en Mercado Pago y devuelve el init_point."""
+    """Crea una preferencia en Mercado Pago y devuelve el init_point."""
     import requests as req_lib
-
     url = "https://api.mercadopago.com/checkout/preferences"
-    headers = {
-        "Authorization": f"Bearer {MP_ACCESS_TOKEN}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}", "Content-Type": "application/json"}
     body = {
-        "items": [
-            {
-                "title": "Orbitae Premium - Acceso Ilimitado",
-                "quantity": 1,
-                "unit_price": 4500,
-                "currency_id": "ARS"
-            }
-        ],
+        "items": [{
+            "title": "Orbitae Premium - Acceso Ilimitado",
+            "quantity": 1,
+            "unit_price": 4500,
+            "currency_id": "ARS"
+        }],
         "back_urls": {
             "success": f"{BASE_URL}/?mp=success",
             "failure": f"{BASE_URL}/?mp=failure",
@@ -364,168 +444,134 @@ async def create_mp_preference(request: Request):
         "auto_return": "approved",
         "notification_url": f"{BASE_URL}/api/mp/webhook"
     }
-
     try:
         res = req_lib.post(url, headers=headers, json=body, timeout=10)
         res.raise_for_status()
         data = res.json()
-        preference_id = data.get("id", "")
-        init_point = data.get("init_point", "")
-        logger.info(f"Preferencia MP creada: {preference_id}")
-        return {"init_point": init_point, "preference_id": preference_id}
+        logger.info(f"Preferencia MP creada: {data.get('id')}")
+        return {"init_point": data.get("init_point"), "preference_id": data.get("id")}
     except Exception as e:
-        logger.error(f"Error al crear preferencia de Mercado Pago: {e}")
+        logger.error(f"Error creando preferencia MP: {e}")
         return JSONResponse({"error": "No se pudo iniciar el pago con Mercado Pago"}, status_code=500)
 
 @app.post("/api/mp/webhook")
 async def mp_webhook(request: Request):
     """
-    Recibe notificaciones IPN de Mercado Pago y verifica el pago contra la API de MP.
-    Este endpoint es llamado directamente por Mercado Pago (no por el usuario).
+    Recibe notificaciones IPN de Mercado Pago.
+    MP llama a este endpoint directamente (no el usuario).
+    Verifica el pago contra la API oficial y activa premium si está aprobado.
     """
     import requests as req_lib
-
     try:
         body = await request.json()
     except Exception:
         body = {}
 
-    logger.info(f"Webhook MP recibido: {json.dumps(body)[:500]}")
-
+    logger.info(f"Webhook MP: {json.dumps(body)[:300]}")
     topic = body.get("type") or request.query_params.get("topic", "")
-    resource_id = body.get("data", {}).get("id") or request.query_params.get("id", "")
+    resource_id = (body.get("data", {}).get("id") or
+                   request.query_params.get("id", ""))
 
     if not resource_id or topic not in ("payment", "merchant_order"):
         return {"status": "ignored"}
 
-    # Verificar el pago contra la API oficial de MP
     try:
-        verify_url = f"https://api.mercadopago.com/v1/payments/{resource_id}"
-        headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-        r = req_lib.get(verify_url, headers=headers, timeout=10)
+        r = req_lib.get(
+            f"https://api.mercadopago.com/v1/payments/{resource_id}",
+            headers={"Authorization": f"Bearer {MP_ACCESS_TOKEN}"},
+            timeout=10
+        )
         r.raise_for_status()
         payment = r.json()
     except Exception as e:
         logger.error(f"Error verificando pago MP {resource_id}: {e}")
         return {"status": "error"}
 
-    payment_id = str(payment.get("id", resource_id))
-    status = payment.get("status", "")
-    email = payment.get("payer", {}).get("email", "")
-    amount = payment.get("transaction_amount", 0)
-    currency = payment.get("currency_id", "ARS")
+    payment_id  = str(payment.get("id", resource_id))
+    status      = payment.get("status", "")
+    email       = payment.get("payer", {}).get("email", "")
+    amount      = payment.get("transaction_amount", 0)
+    currency    = payment.get("currency_id", "ARS")
+    pref_id     = str(payment.get("preference_id", ""))
+    now         = datetime.datetime.utcnow().isoformat()
 
-    logger.info(f"Pago MP {payment_id}: status={status} email={email} amount={amount}")
+    logger.info(f"Pago MP {payment_id}: status={status} email={email}")
 
-    # Guardar en DB
+    session_token = None
+    if status == "approved":
+        session_token = create_premium_session("mercadopago", payment_id, email)
+
     with db_lock:
         conn = get_db()
         try:
-            existing = conn.execute(
-                "SELECT session_token FROM mp_payments WHERE payment_id = ?", (payment_id,)
-            ).fetchone()
-
-            conn.execute(
-                """INSERT OR REPLACE INTO mp_payments
-                   (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                (payment_id, status,
-                 str(payment.get("preference_id", "")),
-                 existing["session_token"] if existing else None,
-                 amount, currency,
-                 datetime.datetime.utcnow().isoformat(),
-                 json.dumps(payment)[:2000])
-            )
+            db_upsert_mp_payment(conn, payment_id, status, pref_id,
+                                 session_token, amount, currency, now,
+                                 json.dumps(payment)[:2000])
             conn.commit()
         finally:
             conn.close()
 
-    # Si el pago fue aprobado, crear sesión premium
     if status == "approved":
-        session_token = create_premium_session(
-            payment_method="mercadopago",
-            payment_id=payment_id,
-            email=email
-        )
-        # Asociar el payment_id con la sesión
-        with db_lock:
-            conn = get_db()
-            try:
-                conn.execute(
-                    "UPDATE mp_payments SET session_token = ? WHERE payment_id = ?",
-                    (session_token, payment_id)
-                )
-                conn.commit()
-            finally:
-                conn.close()
-        logger.info(f"Premium activado via webhook MP: payment={payment_id} session={session_token}")
+        logger.info(f"Premium MP activado: {payment_id} → sesión {session_token[:8]}…")
 
     return {"status": "ok"}
 
 @app.get("/api/mp/verify-payment")
 async def mp_verify_payment(payment_id: str):
     """
-    El frontend llama a este endpoint después del redirect de MP para verificar el pago
-    y obtener el session_token si fue aprobado.
+    El frontend llama aquí tras el redirect de MP.
+    Verifica el payment_id con la API de MP y devuelve session_token si fue aprobado.
     """
     import requests as req_lib
 
     if not payment_id or not payment_id.isdigit():
         return JSONResponse({"approved": False, "error": "payment_id inválido"}, status_code=400)
 
-    # Primero revisar si ya tenemos el pago en DB
+    # Buscar en DB primero
     with db_lock:
         conn = get_db()
         try:
-            row = conn.execute(
-                "SELECT status, session_token FROM mp_payments WHERE payment_id = ?",
-                (payment_id,)
-            ).fetchone()
+            row = db_fetchone(conn,
+                f"SELECT status, session_token FROM mp_payments WHERE payment_id = {PH}",
+                (payment_id,))
         finally:
             conn.close()
 
-    if row and row["status"] == "approved" and row["session_token"]:
+    if row and row.get("status") == "approved" and row.get("session_token"):
         return {"approved": True, "session_token": row["session_token"]}
 
-    # Si no está en DB aún, consultamos directamente a MP
+    # Si no está en DB, consultar directamente a MP
     try:
-        verify_url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
-        headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-        r = req_lib.get(verify_url, headers=headers, timeout=10)
+        r = req_lib.get(
+            f"https://api.mercadopago.com/v1/payments/{payment_id}",
+            headers={"Authorization": f"Bearer {MP_ACCESS_TOKEN}"},
+            timeout=10
+        )
         r.raise_for_status()
         payment = r.json()
     except Exception as e:
         logger.error(f"Error verificando pago MP {payment_id}: {e}")
-        return JSONResponse({"approved": False, "error": "No se pudo verificar el pago"}, status_code=500)
+        return JSONResponse({"approved": False, "error": "No se pudo verificar"}, status_code=500)
 
-    status = payment.get("status", "")
-    email = payment.get("payer", {}).get("email", "")
-    amount = payment.get("transaction_amount", 0)
+    status   = payment.get("status", "")
+    email    = payment.get("payer", {}).get("email", "")
+    amount   = payment.get("transaction_amount", 0)
     currency = payment.get("currency_id", "ARS")
+    pref_id  = str(payment.get("preference_id", ""))
+    now      = datetime.datetime.utcnow().isoformat()
 
     if status == "approved":
-        session_token = create_premium_session(
-            payment_method="mercadopago",
-            payment_id=payment_id,
-            email=email
-        )
+        session_token = create_premium_session("mercadopago", payment_id, email)
         with db_lock:
             conn = get_db()
             try:
-                conn.execute(
-                    """INSERT OR REPLACE INTO mp_payments
-                       (payment_id, status, preference_id, session_token, amount, currency, created_at, raw_data)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                    (payment_id, status,
-                     str(payment.get("preference_id", "")),
-                     session_token, amount, currency,
-                     datetime.datetime.utcnow().isoformat(),
-                     json.dumps(payment)[:2000])
-                )
+                db_upsert_mp_payment(conn, payment_id, status, pref_id,
+                                     session_token, amount, currency, now,
+                                     json.dumps(payment)[:2000])
                 conn.commit()
             finally:
                 conn.close()
-        logger.info(f"Pago MP verificado y aprobado: {payment_id} → sesión {session_token}")
+        logger.info(f"Pago MP verificado y aprobado: {payment_id}")
         return {"approved": True, "session_token": session_token}
 
     return {"approved": False, "status": status}
@@ -533,20 +579,14 @@ async def mp_verify_payment(payment_id: str):
 # ── ENDPOINTS: PAYPAL ─────────────────────────────────────────────────────────
 
 def get_paypal_access_token() -> str:
-    """Obtiene un access token de PayPal usando Client ID + Secret."""
     import requests as req_lib
     import base64
-
     if not PAYPAL_SECRET:
         raise Exception("PAYPAL_SECRET no configurado")
-
-    credentials = base64.b64encode(f"{PAYPAL_CLIENT_ID}:{PAYPAL_SECRET}".encode()).decode()
+    creds = base64.b64encode(f"{PAYPAL_CLIENT_ID}:{PAYPAL_SECRET}".encode()).decode()
     r = req_lib.post(
         "https://api-m.paypal.com/v1/oauth2/token",
-        headers={
-            "Authorization": f"Basic {credentials}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
+        headers={"Authorization": f"Basic {creds}", "Content-Type": "application/x-www-form-urlencoded"},
         data="grant_type=client_credentials",
         timeout=10
     )
@@ -557,11 +597,9 @@ def get_paypal_access_token() -> str:
 async def validate_paypal_subscription(request: Request):
     """
     Valida una suscripción de PayPal contra la API oficial.
-    Body JSON: { "subscription_id": "I-XXXX" }
-    Devuelve: { "valid": true, "session_token": "uuid" }
+    Body: { subscription_id } → Devuelve { valid, session_token }
     """
     import requests as req_lib
-
     try:
         data = await request.json()
         subscription_id = str(data.get("subscription_id", "")).strip()
@@ -571,49 +609,37 @@ async def validate_paypal_subscription(request: Request):
     if not subscription_id or not subscription_id.startswith("I-"):
         return JSONResponse({"valid": False, "error": "subscription_id inválido"}, status_code=400)
 
-    # Verificar que no esté ya registrada (para evitar reutilización)
+    # Si ya existe en DB con sesión activa, reutilizarla
     with db_lock:
         conn = get_db()
         try:
-            existing = conn.execute(
-                "SELECT session_token, status FROM paypal_subscriptions WHERE subscription_id = ?",
-                (subscription_id,)
-            ).fetchone()
+            existing = db_fetchone(conn,
+                f"SELECT session_token, status FROM paypal_subscriptions WHERE subscription_id = {PH}",
+                (subscription_id,))
         finally:
             conn.close()
 
-    if existing and existing["status"] == "ACTIVE" and existing["session_token"]:
-        # Ya está registrada, devolver la misma sesión
+    if existing and existing.get("status") == "ACTIVE" and existing.get("session_token"):
         return {"valid": True, "session_token": existing["session_token"]}
 
-    # Si no hay PAYPAL_SECRET configurado, logueamos la suscripción sin verificar
-    # (menos seguro pero funcional para pruebas)
+    now = datetime.datetime.utcnow().isoformat()
+
+    # Sin PAYPAL_SECRET: aceptar sin verificar (registrar igualmente)
     if not PAYPAL_SECRET:
-        logger.warning(f"PAYPAL_SECRET no configurado. Aceptando sub {subscription_id} sin verificar API.")
-        session_token = create_premium_session(
-            payment_method="paypal_subscription",
-            payment_id=subscription_id,
-            months=1
-        )
+        logger.warning(f"PAYPAL_SECRET no configurado. Aceptando {subscription_id} sin verificar.")
+        session_token = create_premium_session("paypal_subscription", subscription_id)
         with db_lock:
             conn = get_db()
             try:
-                conn.execute(
-                    """INSERT OR REPLACE INTO paypal_subscriptions
-                       (subscription_id, plan_id, status, session_token, email, created_at, raw_data)
-                       VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                    (subscription_id, "P-55W80757HF211482RNIVJ6VQ", "ACTIVE",
-                     session_token, "",
-                     datetime.datetime.utcnow().isoformat(),
-                     json.dumps({"note": "PAYPAL_SECRET not set, unverified"}))
-                )
+                db_upsert_paypal_sub(conn, subscription_id, "P-55W80757HF211482RNIVJ6VQ",
+                                     "ACTIVE", session_token, "", now,
+                                     json.dumps({"note": "PAYPAL_SECRET not set"}))
                 conn.commit()
             finally:
                 conn.close()
-        logger.info(f"Suscripción PayPal registrada (sin verificación): {subscription_id} → {session_token}")
         return {"valid": True, "session_token": session_token}
 
-    # Verificar contra la API de PayPal
+    # Verificar con la API de PayPal
     try:
         access_token = get_paypal_access_token()
         r = req_lib.get(
@@ -628,34 +654,22 @@ async def validate_paypal_subscription(request: Request):
         return JSONResponse({"valid": False, "error": "No se pudo verificar la suscripción"}, status_code=500)
 
     pp_status = sub_data.get("status", "")
-    email = sub_data.get("subscriber", {}).get("email_address", "")
-    plan_id = sub_data.get("plan_id", "")
+    email     = sub_data.get("subscriber", {}).get("email_address", "")
+    plan_id   = sub_data.get("plan_id", "")
 
-    logger.info(f"PayPal sub {subscription_id}: status={pp_status} email={email} plan={plan_id}")
+    logger.info(f"PayPal sub {subscription_id}: status={pp_status} email={email}")
 
     if pp_status in ("ACTIVE", "APPROVED"):
-        session_token = create_premium_session(
-            payment_method="paypal_subscription",
-            payment_id=subscription_id,
-            email=email,
-            months=1
-        )
+        session_token = create_premium_session("paypal_subscription", subscription_id, email)
         with db_lock:
             conn = get_db()
             try:
-                conn.execute(
-                    """INSERT OR REPLACE INTO paypal_subscriptions
-                       (subscription_id, plan_id, status, session_token, email, created_at, raw_data)
-                       VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                    (subscription_id, plan_id, pp_status,
-                     session_token, email,
-                     datetime.datetime.utcnow().isoformat(),
-                     json.dumps(sub_data)[:2000])
-                )
+                db_upsert_paypal_sub(conn, subscription_id, plan_id, pp_status,
+                                     session_token, email, now, json.dumps(sub_data)[:2000])
                 conn.commit()
             finally:
                 conn.close()
-        logger.info(f"Premium PayPal activado: {subscription_id} → sesión {session_token}")
+        logger.info(f"Premium PayPal activado: {subscription_id}")
         return {"valid": True, "session_token": session_token}
 
     return {"valid": False, "status": pp_status}
@@ -664,43 +678,37 @@ async def validate_paypal_subscription(request: Request):
 
 @app.get("/api/admin/tokens")
 async def admin_list_tokens(secret: str):
-    """Lista todos los tokens de activación."""
     if secret != ADMIN_SECRET:
         raise HTTPException(status_code=403, detail="Acceso denegado")
-    tokens = load_tokens()
-    return {"total": len(tokens), "tokens": tokens}
+    return {"tokens": load_tokens()}
 
 @app.get("/api/admin/sessions")
 async def admin_list_sessions(secret: str):
-    """Lista todas las sesiones premium activas."""
     if secret != ADMIN_SECRET:
         raise HTTPException(status_code=403, detail="Acceso denegado")
     with db_lock:
         conn = get_db()
         try:
-            rows = conn.execute(
-                "SELECT session_token, payment_method, payment_id, email, created_at, expires_at, active FROM premium_sessions ORDER BY created_at DESC LIMIT 200"
-            ).fetchall()
-            sessions = [dict(r) for r in rows]
+            rows = db_fetchall(conn,
+                "SELECT session_token, payment_method, payment_id, email, created_at, expires_at, active "
+                "FROM premium_sessions ORDER BY created_at DESC LIMIT 200")
         finally:
             conn.close()
-    return {"total": len(sessions), "sessions": sessions}
+    return {"total": len(rows), "sessions": rows}
 
 @app.get("/api/admin/payments")
 async def admin_list_payments(secret: str):
-    """Lista todos los pagos de Mercado Pago registrados."""
     if secret != ADMIN_SECRET:
         raise HTTPException(status_code=403, detail="Acceso denegado")
     with db_lock:
         conn = get_db()
         try:
-            rows = conn.execute(
-                "SELECT payment_id, status, session_token, amount, currency, created_at FROM mp_payments ORDER BY created_at DESC LIMIT 200"
-            ).fetchall()
-            payments = [dict(r) for r in rows]
+            rows = db_fetchall(conn,
+                "SELECT payment_id, status, session_token, amount, currency, created_at "
+                "FROM mp_payments ORDER BY created_at DESC LIMIT 200")
         finally:
             conn.close()
-    return {"total": len(payments), "payments": payments}
+    return {"total": len(rows), "payments": rows}
 
 # ── GEOCODING ─────────────────────────────────────────────────────────────────
 CACHE_FILE = "geocode_cache.json"
@@ -714,7 +722,7 @@ if os.path.exists(CACHE_FILE):
     except Exception as e:
         logger.error(f"Error loading geocode cache: {e}")
 
-def save_cache():
+def save_geocache():
     try:
         with cache_lock:
             with open(CACHE_FILE, "w", encoding="utf-8") as f:
@@ -728,19 +736,15 @@ async def api_geocode(q: str):
     if not query:
         return []
     if query in geocode_cache:
-        logger.info(f"Geocode cache hit for query: '{query}'")
         return geocode_cache[query]
     url = f"https://nominatim.openstreetmap.org/search?format=json&limit=10&q={urllib.parse.quote(q)}"
-    req = urllib.request.Request(
-        url,
-        headers={'User-Agent': 'Orbitae/1.0 (https://orbitae.app; contact@orbitae.app)'}
-    )
+    req = urllib.request.Request(url, headers={
+        'User-Agent': 'Orbitae/1.0 (https://orbitae.app; contact@orbitae.app)'})
     try:
         with urllib.request.urlopen(req, timeout=5) as response:
             data = json.loads(response.read().decode('utf-8'))
             geocode_cache[query] = data
-            save_cache()
-            logger.info(f"Geocode fetched and cached for: '{query}'")
+            save_geocache()
             return data
     except Exception as e:
         logger.error(f"Geocoding error for '{q}': {e}")
@@ -750,19 +754,15 @@ async def api_geocode(q: str):
 async def api_reverse(lat: float, lon: float):
     cache_key = f"rev_{lat:.4f}_{lon:.4f}"
     if cache_key in geocode_cache:
-        logger.info(f"Reverse geocode cache hit for key: {cache_key}")
         return geocode_cache[cache_key]
     url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=10"
-    req = urllib.request.Request(
-        url,
-        headers={'User-Agent': 'Orbitae/1.0 (https://orbitae.app; contact@orbitae.app)'}
-    )
+    req = urllib.request.Request(url, headers={
+        'User-Agent': 'Orbitae/1.0 (https://orbitae.app; contact@orbitae.app)'})
     try:
         with urllib.request.urlopen(req, timeout=5) as response:
             data = json.loads(response.read().decode('utf-8'))
             geocode_cache[cache_key] = data
-            save_cache()
-            logger.info(f"Reverse geocode fetched and cached for key: {cache_key}")
+            save_geocache()
             return data
     except Exception as e:
         logger.error(f"Reverse geocoding error for ({lat}, {lon}): {e}")
@@ -771,21 +771,18 @@ async def api_reverse(lat: float, lon: float):
 # ── ARCHIVOS ESTÁTICOS ────────────────────────────────────────────────────────
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ── RUTAS ────────────────────────────────────────────────────────────────────
+# ── RUTAS ─────────────────────────────────────────────────────────────────────
 
 @app.get("/")
 async def root():
-    """Redirige la raíz directamente a la app de astro."""
     return FileResponse("static/index.html")
 
 @app.get("/astro")
 async def astro_app():
-    """Ruta limpia para la PWA — requerida para TWA (Play Store)."""
     return FileResponse("static/index.html")
 
 @app.get("/privacidad")
 async def privacy_policy():
-    """Política de privacidad — requerida por Google Play y Apple App Store."""
     html = """<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -804,7 +801,6 @@ async def privacy_policy():
                  border: 1px solid rgba(156,39,176,0.3); color: #ba55d3;
                  padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 24px; }
         a { color: #ba55d3; }
-        code { background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
         .highlight { background: rgba(156,39,176,0.1); border: 1px solid rgba(156,39,176,0.25);
                      border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
         .back-btn { display: inline-block; margin-top: 32px; padding: 10px 24px;
@@ -816,58 +812,22 @@ async def privacy_policy():
     <h1>&#127775; Política de Privacidad</h1>
     <span class="badge">Orbitae — Astrocartografía Interactiva</span>
     <p><strong>Última actualización:</strong> Junio 2026</p>
-
     <h2>1. Información que recopilamos</h2>
-    <p>Orbitae <strong>no recopila, almacena ni transmite</strong> ningún dato personal a
-    servidores externos. Todos los cálculos astrológicos se realizan localmente en tu dispositivo.</p>
-    <ul>
-        <li><strong>Datos de nacimiento</strong> (fecha, hora, lugar): se guardan únicamente en el
-        almacenamiento local de tu dispositivo (<code>localStorage</code>) y nunca se envían a ningún servidor.</li>
-        <li><strong>Ubicación GPS</strong>: solo se usa si elegís "Usar mi ubicación actual".
-        No se almacena ni se envía a ningún servidor.</li>
-        <li><strong>Nombre de usuario</strong>: se guarda localmente en tu dispositivo solo para personalizar el saludo.</li>
-        <li><strong>Datos de uso</strong>: no usamos analíticas, cookies de seguimiento ni publicidad.</li>
-    </ul>
-
+    <p>Orbitae <strong>no recopila</strong> datos personales. Los cálculos se realizan localmente en tu dispositivo.</p>
     <h2>2. Activación Premium</h2>
     <div class="highlight">
-        <p>Al adquirir el plan Premium, el pago es procesado de forma segura por Mercado Pago o PayPal.
-        Nuestro servidor verifica el pago directamente con el procesador de pagos y genera una
-        <strong>sesión premium cifrada</strong> vinculada a tu dispositivo.
-        No almacenamos datos de tarjetas de crédito ni información de pago sensible.</p>
-        <p style="margin-top:8px;">La sesión premium se guarda en tu dispositivo y se valida contra
-        nuestro servidor. Si cambiás de dispositivo, podés reactivar con tu código de transacción original
-        escribiendo a <a href="mailto:orbitae.app@gmail.com">orbitae.app@gmail.com</a>.</p>
+        <p>Al adquirir Premium, el pago es procesado por Mercado Pago o PayPal. Nuestro servidor verifica el pago
+        directamente con el procesador y genera una <strong>sesión cifrada</strong>. No almacenamos datos de tarjetas.</p>
     </div>
-
     <h2>3. Servicios de terceros</h2>
     <ul>
-        <li><strong>OpenStreetMap / Leaflet</strong>: para mostrar el mapa interactivo.</li>
-        <li><strong>Nominatim (OSM)</strong>: para buscar ciudades por nombre. Solo se envía el texto buscado.</li>
-        <li><strong>Mercado Pago / PayPal</strong>: procesamiento de pagos. Consultar sus políticas de privacidad.</li>
-        <li><strong>Google Fonts / cdnjs</strong>: para tipografías e íconos. Solo se descargan los archivos.</li>
+        <li><strong>OpenStreetMap / Leaflet</strong>: mapa interactivo.</li>
+        <li><strong>Nominatim</strong>: búsqueda de ciudades.</li>
+        <li><strong>Mercado Pago / PayPal</strong>: pagos. Ver sus políticas.</li>
+        <li><strong>Google Fonts</strong>: tipografías.</li>
     </ul>
-
-    <h2>4. Seguridad y datos locales</h2>
-    <p>Los datos guardados en tu dispositivo son accesibles solo por esta aplicación.
-    No realizamos copias de seguridad en la nube. Podés borrar todos tus datos en cualquier
-    momento desde la pestaña <strong>Mi Carta → Borrar mis datos</strong>.</p>
-
-    <h2>5. Menores de edad</h2>
-    <p>Esta aplicación no está dirigida a menores de 13 años y no recopilamos intencionalmente
-    información de menores de esa edad.</p>
-
-    <h2>6. Cambios a esta política</h2>
-    <p>Cualquier cambio material se publicará en esta misma página con la fecha actualizada.
-    El uso continuado de la aplicación implica la aceptación de la política vigente.</p>
-
-    <h2>7. Contacto</h2>
-    <p>Para consultas sobre privacidad o solicitudes de eliminación de datos:</p>
-    <ul>
-        <li>Email: <a href="mailto:orbitae.app@gmail.com">orbitae.app@gmail.com</a></li>
-        <li>Asunto: "Privacidad — [tu solicitud]"</li>
-    </ul>
-
+    <h2>4. Contacto</h2>
+    <p>Email: <a href="mailto:orbitae.app@gmail.com">orbitae.app@gmail.com</a></p>
     <a href="/" class="back-btn">&#8592; Volver a la App</a>
 </body>
 </html>"""
@@ -877,18 +837,17 @@ async def privacy_policy():
 async def log_error(request: Request):
     try:
         data = await request.json()
-        logger.error(f"CLIENT ERROR: {data.get('message')} at {data.get('filename')}:{data.get('lineno')}:{data.get('colno')}\nStack: {data.get('error')}")
-    except Exception as e:
-        logger.error(f"Error parsing client error: {e}")
+        logger.error(f"CLIENT ERROR: {data.get('message')} at {data.get('filename')}:{data.get('lineno')}")
+    except Exception:
+        pass
     return {"status": "ok"}
 
 @app.api_route("/health", methods=["GET", "HEAD"])
 async def health(request: Request):
-    """Endpoint de salud para Render — evita que el servicio duerma por inactividad."""
-    logger.info(f"Health check ping received ({request.method})")
-    return {"status": "ok", "app": "Orbitae", "version": "2.0.0"}
+    db_type = "postgresql" if USE_POSTGRES else "sqlite"
+    return {"status": "ok", "app": "Orbitae", "version": "2.1.0", "db": db_type}
 
-# ── INICIO ──────────────────────────────────────────────────────────────────
+# ── INICIO ────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8080))
