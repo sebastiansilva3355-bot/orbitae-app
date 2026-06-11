@@ -6229,7 +6229,12 @@
             if (!isMobileView()) return;
             
             let btn = document.getElementById('mobile-calc-cta');
-            const hasData = localStorage.getItem('astro_birth_data') !== null;
+            const hasData = localStorage.getItem(ASTRO_BIRTH_KEY) !== null;
+            
+            if (hasData) {
+                removeCalculateCTA();
+                return;
+            }
             
             if (!btn) {
                 btn = document.createElement('button');
@@ -6241,21 +6246,13 @@
                 document.querySelector('.app-container').appendChild(btn);
             }
             
-            if (hasData) {
-                btn.className = 'mobile-calculate-banner active-chart';
-                btn.innerHTML = '<i class="fa-solid fa-calculator"></i> Calcular Otra Carta';
-            } else {
-                btn.className = 'mobile-calculate-banner';
-                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Calcular mi Carta Natal';
-            }
+            btn.className = 'mobile-calculate-banner';
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Calcular mi Carta Natal';
+            btn.style.display = 'flex';
             
             const btnInfo = document.getElementById('btn-show-info');
             if (btnInfo) {
-                if (hasData) {
-                    btnInfo.classList.remove('pulse-nav-item');
-                } else {
-                    btnInfo.classList.add('pulse-nav-item');
-                }
+                btnInfo.classList.add('pulse-nav-item');
             }
         }
 
@@ -6280,7 +6277,10 @@
                 if (btnInfo) btnInfo.classList.remove('active');
                 if (styleSelector) styleSelector.style.display = 'flex';
                 if (helpBtn) helpBtn.style.display = 'flex';
-                if (ctaBtn) ctaBtn.style.display = 'flex';
+                
+                const hasData = localStorage.getItem(ASTRO_BIRTH_KEY) !== null;
+                if (ctaBtn) ctaBtn.style.display = hasData ? 'none' : 'flex';
+                
                 setTimeout(() => { map.invalidateSize(); }, 100);
             } else {
                 sidebar.classList.add('mobile-active');
