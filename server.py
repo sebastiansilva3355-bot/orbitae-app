@@ -147,6 +147,45 @@ async def activate_premium(request: Request):
     logger.info(f"Token activado exitosamente: {token} (email={token_data.get('email')})")
     return JSONResponse({"valid": True, "message": "Premium activado correctamente"})
 
+@app.post("/api/mp/create-preference")
+async def create_mp_preference(request: Request):
+    import requests
+    
+    # Access Token de Producción para Orbitae
+    MP_ACCESS_TOKEN = "APP_USR-2055215287777718-061112-2e1047c21eeff9813b1474c0d8090923-172306186"
+    
+    base_url = "https://orbitae-app.onrender.com"
+    url = "https://api.mercadopago.com/checkout/preferences"
+    headers = {
+        "Authorization": f"Bearer {MP_ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    body = {
+        "items": [
+            {
+                "title": "Orbitae Premium - Acceso Ilimitado",
+                "quantity": 1,
+                "unit_price": 4500,
+                "currency_id": "ARS"
+            }
+        ],
+        "back_urls": {
+            "success": base_url,
+            "failure": base_url,
+            "pending": base_url
+        },
+        "auto_return": "approved"
+    }
+    
+    try:
+        res = requests.post(url, headers=headers, json=body, timeout=5)
+        res.raise_for_status()
+        data = res.json()
+        return {"init_point": data.get("init_point")}
+    except Exception as e:
+        logger.error(f"Error al crear preferencia de Mercado Pago: {e}")
+        return JSONResponse({"error": "No se pudo iniciar el pago con Mercado Pago"}, status_code=500)
+
 @app.get("/api/admin/tokens")
 async def admin_list_tokens(secret: str):
     """Lista todos los tokens (solo admin)."""

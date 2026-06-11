@@ -6055,6 +6055,32 @@
             }
         }
 
+        // ── PROCESAMIENTO DE PAGO CON MERCADO PAGO ────────────────────────────
+        async function payWithMercadoPago() {
+            const btn = document.getElementById('mp-pay-btn');
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
+                btn.disabled = true;
+            }
+            try {
+                const resp = await fetch('/api/mp/create-preference', { method: 'POST' });
+                if (!resp.ok) throw new Error('Error al iniciar Mercado Pago');
+                const data = await resp.json();
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    throw new Error('Preferencia inválida');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Ocurrió un error al conectar con Mercado Pago.');
+                if (btn) {
+                    btn.innerHTML = '&#129299; Pagar con Mercado Pago (ARS)';
+                    btn.disabled = false;
+                }
+            }
+        }
+
         // ── ACTIVACIÓN POR URL PARAM (post-pago redirect) ────────────────────────
         (function checkURLActivation() {
             const params = new URLSearchParams(window.location.search);
@@ -6075,6 +6101,23 @@
                         }, 2000);
                     }
                 }).catch(() => {});
+            }
+
+            const mpStatus = params.get('status') || params.get('collection_status');
+            if (mpStatus === 'approved' && localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
+                window.history.replaceState({}, '', window.location.pathname);
+                localStorage.setItem('orbitae_premium_unlocked', 'true');
+                setTimeout(() => {
+                    showToast('✨ ¡Premium activado! Gracias por tu compra con Mercado Pago.');
+                    updateCityBadge();
+                    setTimeout(() => { location.reload(); }, 1500);
+                }, 1000);
+            } else if (mpStatus === 'rejected' || mpStatus === 'cancelled') {
+                window.history.replaceState({}, '', window.location.pathname);
+                showToast('❌ El pago fue rechazado o cancelado. Intentá de nuevo.');
+            } else if (mpStatus === 'pending' || mpStatus === 'in_process') {
+                window.history.replaceState({}, '', window.location.pathname);
+                showToast('⏳ El pago está pendiente de acreditación.');
             }
         })();
 
@@ -10111,11 +10154,10 @@
                 <div id="paypal-button-container-subscription" style="margin-top: 8px; min-height: 100px;"></div>
                 
                 <!-- Botón Mercado Pago -->
-                <a href="https://link.mercadopago.com.ar/orbitae" target="_blank" rel="noopener"
-                   onclick="closeUpgradeModal()"
-                   class="upgrade-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; text-align:center; background: #009ee3;">
+                <button id="mp-pay-btn" onclick="payWithMercadoPago()"
+                   class="upgrade-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; text-align:center; background: #009ee3; border: none; font-family: inherit; width: 100%; cursor: pointer;">
                     &#129299; Pagar con Mercado Pago (ARS)
-                </a>
+                </button>
             </div>
 
             <!-- Separador -->
