@@ -2165,7 +2165,7 @@
             <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; margin-bottom: 14px;" title="Haz clic 5 veces aquí para activar Premium">
                 <h1 style="display: flex; align-items: center; justify-content: space-between; margin: 0; line-height: 1.2;">
                     <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 1.2px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 21px;">✦ ORBITAE</span>
-                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);">v3.5 · PDF 4 Pág</span>
+                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);">v3.6 · PDF 5 Pág</span>
                 </h1>
                 <div class="panel-subtitle" id="rotating-subtitle" style="margin-top: 6px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Inter', sans-serif; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; line-height: 1.4;">
                     <span class="sub-hl active" data-index="0" onclick="switchTab('cities')" style="transition: all 0.4s ease; color: #00e5ff; text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); font-weight: 800; cursor: pointer; padding: 2px 4px; border-radius: 4px; background: rgba(0, 229, 255, 0.08);">Astrocartografía</span>
@@ -9160,8 +9160,21 @@
         function updateFloatingPDFButton() {}
 
         // ── GENERADOR PDF DE COMPATIBILIDAD ────────────────────────────────
-        function downloadCompatibilityPDF() {
-            if (typeof window.jspdf === 'undefined') { showToast('Cargando PDF...'); return; }
+        async function downloadCompatibilityPDF() {
+            if (localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
+                openUpgradeModal();
+                showToast('🔒 La descarga de reportes PDF es una característica Premium.');
+                return;
+            }
+            if (typeof window.jspdf === 'undefined') {
+                showToast('⏳ Cargando generador de PDF...');
+                try {
+                    await loadJsPDF();
+                } catch(e) {
+                    showToast('❌ Error al cargar el generador de PDF. Intenta de nuevo.');
+                    return;
+                }
+            }
             const d = window._lastCompatReport;
             if (!d) { showToast('Primero calcula la compatibilidad.'); return; }
             const name1 = T(d.nameP1 || 'Tú');
@@ -9177,14 +9190,14 @@
             // ── COLORES ──────────────────────────────────────────────────────
             const CP  = [45, 27, 105];   // Deep Purple
             const CPM = [75, 45, 131];   // Medium Purple
-            const CT  = [0, 188, 212];   // Teal
-            const CO  = [245, 158, 11];  // Orange
-            const CR  = [210, 70, 50];   // Red/Tension
-            const CLT = [248, 247, 252]; // Light bg
-            const CTX = [28, 26, 48];    // Text dark
-            const CGR = [110, 108, 130]; // Gray
+            const CT  = [0, 180, 216];   // Cyan
+            const CO  = [197, 160, 89];  // Gold
+            const CR  = [220, 80, 80];    // Red/Tension
+            const CLT = [255, 255, 255]; // White card bg
+            const CTX = [40, 40, 50];    // Dark charcoal text
+            const CGR = [120, 125, 140]; // Gray
             const CW  = [255, 255, 255]; // White
-            const CRA = [250, 248, 255]; // Row alternate
+            const CRA = [245, 247, 250]; // Row alternate
 
             // ── HELPERS ──────────────────────────────────────────────────────
             function T(s) {
@@ -9260,15 +9273,47 @@
                 ASC:'Ascendente',MC:'Medio Cielo'};
 
             // Page helpers
-            function fillWhite(){ fc(CW); doc.rect(0,0,W,H,'F'); }
-            function addFooter(){
-                fc(CP); doc.rect(0,H-10,W,10,'F');
-                doc.setFont('helvetica','italic'); doc.setFontSize(6.5); tc(CW);
-                doc.text('Orbitae  -  Astrocartografia Interactiva', mg, H-3.5);
-                doc.text('Pag. '+pgNum, W-mg-9, H-3.5);
+            function drawHeader() {
+                doc.setFillColor(246, 248, 250);
+                doc.rect(0, 0, W, H, 'F');
+                
+                // Fine top line
+                doc.setDrawColor(0, 180, 216); // Cian
+                doc.setLineWidth(0.35);
+                doc.line(mg, 15, W - mg, 15);
+                
+                doc.setTextColor(0, 180, 216); // Cian
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(7.5);
+                doc.text('ORBITAE  |  REPORTE DE COMPATIBILIDAD', mg, 11.5);
+                
+                const namesHeader = name1.toUpperCase() + ' & ' + name2.toUpperCase();
+                doc.setTextColor(197, 160, 89); // Oro
+                doc.setFont('times', 'bold');
+                doc.setFontSize(8.5);
+                doc.text(namesHeader, W - mg - doc.getTextWidth(namesHeader), 11.5);
             }
-            function newPage(){
-                addFooter(); doc.addPage(); pgNum++; fillWhite();
+
+            function addFooter() {
+                // Fine line above footer
+                doc.setDrawColor(0, 180, 216); // Cian
+                doc.setLineWidth(0.3);
+                doc.line(mg, H - 15, W - mg, H - 15);
+                
+                doc.setTextColor(130, 135, 155);
+                doc.setFont('helvetica', 'italic');
+                doc.setFontSize(6.5);
+                doc.text('Orbitae  -  Reporte de Sinastría y Carta Compuesta', mg, H - 10.5);
+                
+                doc.setFont('helvetica', 'normal');
+                doc.text('Página ' + pgNum, W - mg - 12, H - 10.5);
+            }
+
+            function newPage() {
+                addFooter();
+                doc.addPage();
+                pgNum++;
+                drawHeader();
             }
 
             const cbodies = ['Sun','Moon','Venus','Mars','ASC','MC'];
@@ -9320,19 +9365,19 @@
             const tensions = [];
             if (pMars) {
                 tensions.push({
-                    title: 'Ritmos de accion',
-                    desc: `El Marte de ${name1} en ${T(pMars.p1Sign)} impulsa a actuar bajo su iniciativa. El de ${name2} en ${T(pMars.p2Sign)} tiene otros tiempos. La tension surge cuando no sincronizan sus velocidades de ejecucion. Consejo: dividan roles, uno ejecuta y el otro planifica.`
+                    title: 'Ritmos de acción',
+                    desc: `El Marte de ${name1} en ${T(pMars.p1Sign)} impulsa a actuar bajo su iniciativa. El de ${name2} en ${T(pMars.p2Sign)} tiene otros tiempos. La tensión surge cuando no sincronizan sus velocidades de ejecución. Consejo: dividan roles, uno ejecuta y el otro planifica.`
                 });
             }
             if (pSun) {
                 tensions.push({
                     title: 'Independencia vs. Intimidad',
-                    desc: `El Sol de ${name1} en ${T(pSun.p1Sign)} busca su autoexpresion y brillo. El Sol de ${name2} en ${T(pSun.p2Sign)} define su propia autonomia. Esto requiere balancear la vida de pareja con la libertad individual. Consejo: acuerden espacios personales libres de culpa.`
+                    desc: `El Sol de ${name1} en ${T(pSun.p1Sign)} busca su autoexpresión y brillo. El Sol de ${name2} en ${T(pSun.p2Sign)} define su propia autonomía. Esto requiere balancear la vida de pareja con la libertad individual. Consejo: acuerden espacios personales libres de culpa.`
                 });
             }
             if (pMerc) {
                 tensions.push({
-                    title: 'Estilo de Comunicacion',
+                    title: 'Estilo de Comunicación',
                     desc: `El Mercurio de ${name1} en ${T(pMerc.p1Sign)} procesa las ideas a su manera. ${name2} se expresa mediante su Mercurio en ${T(pMerc.p2Sign)}. Pueden surgir malos entendidos si uno busca la diplomacia y el otro va directo al grano. Consejo: hablen temas complejos en calma.`
                 });
             }
@@ -9344,161 +9389,281 @@
             }
 
             const advice = [
-                `Respeten la forma de expresarse: la combinacion de la energia de ${name1} (${T(pSun?.p1Sign||'Tu Signo')}) y ${name2} (${T(pSun?.p2Sign||'Su Signo')}) requiere paciencia al dialogar.`,
-                'No tomen decisiones importantes bajo presion emocional: ambos necesitan procesamiento interno antes de hablar.',
-                'Creen rituales de reconexion cuando sientan distancia: algo simple y periodico funciona mejor que grandes gestos.',
-                `Para que el vinculo prospere, es vital que ${name1} de espacio a la vision de ${name2}, y viceversa, celebrando sus diferencias de perspectiva.`,
-                'Hablen de sus necesidades de espacio antes de que se conviertan en un problema: la anticipacion es clave en este vinculo.'
+                `Respeten la forma de expresarse: la combinación de la energía de ${name1} (${T(pSun?.p1Sign||'Tu Signo')}) y ${name2} (${T(pSun?.p2Sign||'Su Signo')}) requiere paciencia al dialogar.`,
+                'No tomen decisiones importantes bajo presión emocional: ambos necesitan procesamiento interno antes de hablar.',
+                'Creen rituales de reconexión cuando sientan distancia: algo simple y periódico funciona mejor que grandes gestos.',
+                `Para que el vínculo prospere, es vital que ${name1} dé espacio a la visión de ${name2}, y viceversa, celebrando sus diferencias de perspectiva.`,
+                'Hablen de sus necesidades de espacio antes de que se conviertan en un problema: la anticipación es clave en este vínculo.'
             ];
 
             // ==============================================================
-            // PAGINA 1
+            // PAGINA 1: PORTADA (COVER PAGE)
             // ==============================================================
-            fillWhite();
+            doc.setFillColor(10, 10, 22); // Fondo espacio profundo
+            doc.rect(0, 0, W, H, 'F');
 
-            // Cover header
-            fc(CP); doc.rect(0, 0, W, 52, 'F');
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(28); tc(CW);
-            doc.text('ORBITAE', W/2, 20, {align:'center'});
-            const titleW = doc.getTextWidth('ORBITAE');
-            drawBullet(W/2 - titleW/2 - 8, 15.5, 3.5, CO);
-            drawBullet(W/2 + titleW/2 + 8, 15.5, 3.5, CO);
+            // Marco Dorado y Cian
+            doc.setDrawColor(197, 160, 89); // Oro
+            doc.setLineWidth(0.4);
+            doc.rect(10, 10, W - 20, H - 20);
+            doc.setDrawColor(0, 180, 216); // Cian
+            doc.rect(11.5, 11.5, W - 23, H - 23);
+
+            // Círculos Celestiales en el Centro (Dos Órbitas Intersecadas - Símbolo de Compatibilidad)
+            doc.setDrawColor(0, 180, 216); // Cian
+            doc.setLineWidth(0.2);
+            doc.circle(W/2 - 14, 92, 28);
+            doc.circle(W/2 + 14, 92, 28);
+            doc.circle(W/2 - 14, 92, 16);
+            doc.circle(W/2 + 14, 92, 16);
             
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(9); tc(CT);
-            doc.text('REPORTE DE COMPATIBILIDAD ASTROLOGICA', W/2, 31, {align:'center'});
-            doc.setFont('helvetica', 'italic'); doc.setFontSize(8); tc([200, 195, 230]);
-            doc.text('Edicion Completa', W/2, 41, {align:'center'});
+            // Cruz Astral / Compass Rose (Líneas Cardinales)
+            doc.setDrawColor(197, 160, 89); // Oro
+            doc.line(W/2 - 14, 55, W/2 - 14, 129);
+            doc.line(W/2 + 14, 55, W/2 + 14, 129);
+            doc.line(W/2 - 50, 92, W/2 + 50, 92);
+            
+            // Cruz Astral Diagonal en Cian
+            doc.setDrawColor(0, 180, 216);
+            doc.line(W/2 - 38, 92 - 24, W/2 + 38, 92 + 24);
+            doc.line(W/2 - 38, 92 + 24, W/2 + 38, 92 - 24);
 
-            // Names
-            const titleNames = name1 + '  &  ' + name2;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(14); tc(CO);
-            doc.text(titleNames, W/2, 65, {align:'center'});
-            const nameW = doc.getTextWidth(titleNames);
-            drawBullet(W/2 - nameW/2 - 6, 62.5, 2, CO);
-            drawBullet(W/2 + nameW/2 + 6, 62.5, 2, CO);
+            // Estrellas / Constelaciones decorativas
+            doc.setFillColor(255, 255, 255);
+            doc.circle(W/2 - 28, 70, 0.4, 'F');
+            doc.circle(W/2 + 32, 75, 0.5, 'F');
+            doc.circle(W/2 - 35, 112, 0.3, 'F');
+            doc.circle(W/2 + 22, 118, 0.4, 'F');
+            doc.circle(W/2 + 40, 98, 0.6, 'F');
 
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); tc(CGR);
-            doc.text('Generado el ' + new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'long', year:'numeric'}), W/2, 72, {align:'center'});
+            // Título Principal
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('times', 'bold');
+            doc.setFontSize(30);
+            doc.text('O R B I T A E', W/2, 146, { align: 'center' });
 
-            // Score block
-            let scoreY = 80;
-            fc([18, 10, 52]); doc.roundedRect(mg, scoreY, cW, 36, 4, 4, 'F');
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(44); tc(CPM);
-            doc.text(String(d.score), W/2, scoreY + 23, {align:'center'});
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(10); tc(CW);
-            doc.text('/ 100  -  ' + T(d.scoreLabel), W/2, scoreY + 29, {align:'center'});
-            doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); tc([185, 175, 225]);
-            doc.text(T(d.purposeLabel), W/2, scoreY + 34, {align:'center'});
+            doc.setTextColor(0, 180, 216); // Cian
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13);
+            doc.text('COMPATIBILIDAD ASTROLÓGICA', W/2, 155, { align: 'center' });
+
+            // Subtítulo
+            doc.setTextColor(230, 230, 250); // Muted Lavender
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.text('REPORTE COMPLETO DE SINAS TRÍA Y CARTA COMPUESTA', W/2, 163, { align: 'center' });
+
+            // Nombres en grande
+            const titleNames = name1.toUpperCase() + '  &  ' + name2.toUpperCase();
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text(titleNames, W/2, 175, { align: 'center' });
+            
+            // Score block premium
+            const scoreY = 184;
+            doc.setFillColor(15, 25, 50); // Deep blue background card
+            doc.roundedRect(W/2 - 50, scoreY, 100, 25, 3, 3, 'F');
+            doc.setDrawColor(0, 180, 216); // Cian border
+            doc.setLineWidth(0.35);
+            doc.roundedRect(W/2 - 50, scoreY, 100, 25, 3, 3, 'D');
+
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(28); tc(CO); // Gold
+            doc.text(String(d.score), W/2, scoreY + 11, {align:'center'});
+            
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CW);
+            doc.text('/ 100  -  ' + T(d.scoreLabel).toUpperCase(), W/2, scoreY + 16, {align:'center'});
+            
+            doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); tc([185, 175, 225]);
+            doc.text(T(d.purposeLabel), W/2, scoreY + 21, {align:'center'});
+
+            // Tarjeta de Datos de Nacimiento
+            doc.setFillColor(10, 15, 32); // Darker blue card
+            doc.roundedRect(W/2 - 68, 216, 136, 42, 3, 3, 'F');
+            doc.setDrawColor(197, 160, 89); // Gold border
+            doc.setLineWidth(0.35);
+            doc.roundedRect(W/2 - 68, 216, 136, 42, 3, 3, 'D');
+
+            doc.setTextColor(0, 180, 216); // Cian
+            doc.setFont('times', 'bold');
+            doc.setFontSize(9);
+            doc.text('DATOS DE NACIMIENTO', W/2, 222, { align: 'center' });
+
+            const p1Date = document.getElementById('date-input')?.value || '-';
+            const p1Time = document.getElementById('time-input')?.value || '-';
+            const p1City = document.getElementById('city-search')?.value || '-';
+
+            const p2Date = document.getElementById('date-input-p2')?.value || '-';
+            const p2Time = document.getElementById('time-input-p2')?.value || '-';
+            const p2City = document.getElementById('city-search-p2')?.value || '-';
+
+            // Person 1 block
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.text(name1.toUpperCase(), W/2 - 32, 230, { align: 'center' });
+            doc.setTextColor(220, 220, 230);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.text(`Fecha: ${p1Date}`, W/2 - 32, 234, { align: 'center' });
+            doc.text(`Hora: ${p1Time} hs`, W/2 - 32, 238, { align: 'center' });
+            let p1CityShort = p1City;
+            if (p1CityShort.length > 20) p1CityShort = p1CityShort.substring(0, 18) + '...';
+            doc.text(p1CityShort, W/2 - 32, 242, { align: 'center' });
+
+            // Vertical divider in gold
+            doc.setDrawColor(197, 160, 89);
+            doc.setLineWidth(0.25);
+            doc.line(W/2, 226, W/2, 244);
+
+            // Person 2 block
+            doc.setTextColor(197, 160, 89); // Oro
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.text(name2.toUpperCase(), W/2 + 32, 230, { align: 'center' });
+            doc.setTextColor(220, 220, 230);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.text(`Fecha: ${p2Date}`, W/2 + 32, 234, { align: 'center' });
+            doc.text(`Hora: ${p2Time} hs`, W/2 + 32, 238, { align: 'center' });
+            let p2CityShort = p2City;
+            if (p2CityShort.length > 20) p2CityShort = p2CityShort.substring(0, 18) + '...';
+            doc.text(p2CityShort, W/2 + 32, 242, { align: 'center' });
+
+            // Date of generation
+            doc.setTextColor(140, 145, 175);
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(6.5);
+            doc.text('Generado con Orbitae el ' + new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'}) + ' hs', W/2, 252, { align: 'center' });
+
+            // End Page 1 (No footer)
+            doc.addPage();
+            pgNum = 2;
+            drawHeader();
+
+            // ==============================================================
+            // PAGINA 2: SUMMARY, CATEGORIES & PLANETS TABLE
+            // ==============================================================
+            let currY = 22;
 
             // 1. Resumen Ejecutivo
-            let s1Y = 126;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('1. Resumen Ejecutivo', mg, s1Y);
-            fc(CT); doc.rect(mg, s1Y + 2, cW, 0.6, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('1. Resumen Ejecutivo', mg, currY);
+            currY += 4.5;
 
-            const narL = doc.splitTextToSize(cleanTextForPDF(d.narrative), cW - 10);
-            const lineH = 3.8;
-            const narH = Math.max(narL.length * lineH + 6, 18);
-            fc(CLT); doc.roundedRect(mg, s1Y + 6, cW, narH, 2, 2, 'F');
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-            let currY = s1Y + 11;
+            const narL = doc.splitTextToSize(cleanTextForPDF(d.narrative), cW - 14);
+            const lineH = 4.0;
+            const narH = Math.max(narL.length * lineH + 7, 20);
+            
+            fc(CLT); doc.roundedRect(mg, currY, cW, narH, 2, 2, 'F');
+            fc(CT); doc.rect(mg, currY, 3, narH, 'F');
+            doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, currY, cW, narH, 2, 2, 'S');
+            
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); tc(CTX);
+            let txtY = currY + 5.5;
             narL.forEach(line => {
-                doc.text(line, mg + 5, currY);
-                currY += lineH;
+                doc.text(line, mg + 7, txtY);
+                txtY += lineH;
             });
+            currY += narH + 7;
 
-            let catY = s1Y + 6 + narH + 6;
+            // Categorias de sintonía
+            const catH = (d.synCategories||[]).length * 8.5 + 4;
+            fc(CLT); doc.roundedRect(mg, currY, cW, catH, 2, 2, 'F');
+            doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, currY, cW, catH, 2, 2, 'S');
+            
+            let rowY = currY + 6;
             (d.synCategories||[]).forEach((cat, idx) => {
                 const col = cat.active ? CT : CO;
-                const txt = cat.active ? 'Activa' : 'Moderada';
-                drawBullet(mg + 2, catY + 2.5, 1.5, col);
-                doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); tc(CTX);
-                doc.text(T(cat.label), mg + 6, catY + 5);
-                doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(col);
-                doc.text(txt, W - mg - doc.getTextWidth(txt), catY + 5);
-                dc([230, 227, 245]); doc.line(mg, catY + 7.5, W - mg, catY + 7.5);
-                catY += 10;
+                const txt = cat.active ? 'ACTIVA' : 'MODERADA';
+                drawBullet(mg + 6, rowY - 1, 1.2, col);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CTX);
+                doc.text(T(cat.label), mg + 11, rowY);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); tc(col);
+                doc.text(txt, W - mg - doc.getTextWidth(txt) - 6, rowY);
+                
+                if (idx < (d.synCategories||[]).length - 1) {
+                    doc.setDrawColor(240, 240, 248); doc.setLineWidth(0.15);
+                    doc.line(mg + 4, rowY + 3.2, W - mg - 4, rowY + 3.2);
+                }
+                rowY += 8.5;
             });
+            currY += catH + 9;
 
-            // 2. Comparacion de Cartas Natales (Part 1)
-            let s2Y = Math.max(210, catY + 3);
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('2. Comparacion de Cartas Natales', mg, s2Y);
-            fc(CT); doc.rect(mg, s2Y + 2, cW, 0.6, 'F');
+            // 2. Comparacion de Cartas Natales
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('2. Comparación de Cartas Natales', mg, currY);
+            currY += 4.5;
 
-            fc(CP); doc.rect(mg, s2Y + 6, cW, 7.5, 'F');
+            fc(CP); doc.rect(mg, currY, cW, 7.5, 'F');
             doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); tc(CW);
-            doc.text('Planeta', mg + 6, s2Y + 11);
-            doc.text(`Posicion ${name1}`, mg + 68, s2Y + 11);
-            doc.text(`Posicion ${name2}`, mg + 132, s2Y + 11);
+            doc.text('Planeta', mg + 6, currY + 5);
+            doc.text(`Posición ${name1}`, mg + 62, currY + 5);
+            doc.text(`Posición ${name2}`, mg + 122, currY + 5);
+            currY += 7.5;
 
-            let rowY = s2Y + 13.5;
-            const p1List = (d.individualPlacements||[]).slice(0, 5);
-            p1List.forEach((item, i) => {
-                fc(i%2===0?CW:CRA); doc.rect(mg, rowY, cW, 7, 'F');
-                drawBullet(mg + 3, rowY + 3.5, 1.2, [90, 70, 155]);
+            const allPlacements = d.individualPlacements || [];
+            allPlacements.forEach((item, i) => {
+                fc(i % 2 === 0 ? CW : CRA);
+                doc.rect(mg, currY, cW, 6.8, 'F');
+                
+                // Row border left accent
+                fc(CPM); doc.rect(mg, currY, 1.2, 6.8, 'F');
+                
+                drawBullet(mg + 4.5, currY + 3.4, 1.0, [90, 70, 155]);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(T(PN[item.body]||item.body), mg + 8, rowY + 5);
-                doc.text(T(item.p1Sign)+' '+T(String(item.p1Deg))+'°', mg + 68, rowY + 5);
-                doc.text(T(item.p2Sign)+' '+T(String(item.p2Deg))+'°', mg + 132, rowY + 5);
-                rowY += 7;
+                doc.text(T(PN[item.body]||item.body), mg + 9, currY + 4.5);
+                doc.text(T(item.p1Sign)+' '+T(String(item.p1Deg))+'°', mg + 62, currY + 4.5);
+                doc.text(T(item.p2Sign)+' '+T(String(item.p2Deg))+'°', mg + 122, currY + 4.5);
+                
+                // Bottom row divider line
+                doc.setDrawColor(235, 235, 245); doc.setLineWidth(0.15);
+                doc.line(mg, currY + 6.8, W - mg, currY + 6.8);
+                
+                currY += 6.8;
             });
 
+            // End Page 2
             newPage();
 
             // ==============================================================
-            // PAGINA 2
+            // PAGINA 3: ASPECTS & COMPOSITE PART 1
             // ==============================================================
-            let p2rowY = 20;
-            const p2List = (d.individualPlacements||[]).slice(5);
-            p2List.forEach((item, i) => {
-                fc(i%2===0?CW:CRA); doc.rect(mg, p2rowY, cW, 7, 'F');
-                if (item.body === 'ASC') {
-                    tc([90, 70, 155]); doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-                    doc.text('^', mg + 2, p2rowY + 6);
-                } else {
-                    drawBullet(mg + 3, p2rowY + 3.5, 1.2, [90, 70, 155]);
-                }
-                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(T(PN[item.body]||item.body), mg + 8, p2rowY + 5);
-                doc.text(T(item.p1Sign)+' '+T(String(item.p1Deg))+'°', mg + 68, p2rowY + 5);
-                doc.text(T(item.p2Sign)+' '+T(String(item.p2Deg))+'°', mg + 132, p2rowY + 5);
-                p2rowY += 7;
-            });
-            dc(CP); doc.line(mg, p2rowY, W - mg, p2rowY);
+            let p3Y = 22;
 
             // 3. Aspectos Planetarios
-            let s3Y = p2rowY + 8;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('3. Aspectos Planetarios  -  La Quimica Explicada', mg, s3Y);
-            fc(CT); doc.rect(mg, s3Y + 2, cW, 0.6, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('3. Aspectos Planetarios  -  La Química Explicada', mg, p3Y);
+            p3Y += 4.5;
 
             doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); tc(CGR);
-            const s3intro = doc.splitTextToSize('Los aspectos son los angulos entre los planetas de ambas cartas. Explican el por que de la atraccion, la comunicacion y los roces.', cW);
-            doc.text(s3intro, mg, s3Y + 6);
+            const s3intro = doc.splitTextToSize('Los aspectos son los ángulos matemáticos entre los planetas de ambas cartas. Explican la atracción, la sintonía mental y los roces cotidianos.', cW);
+            doc.text(s3intro, mg, p3Y + 3);
+            p3Y += 9;
 
-            let aspY = s3Y + 11;
             keyAspects.forEach((asp) => {
-                const dL = doc.splitTextToSize(T(asp.desc), cW - 10);
-                const aH = 5 + 4 + dL.length * 4.5 + 4;
-                fc(asp.col); doc.rect(mg, aspY, 3, aH, 'F');
-                fc(CLT); doc.rect(mg + 3, aspY, cW - 3, aH, 'F');
+                const dL = doc.splitTextToSize(T(asp.desc), cW - 14);
+                const aH = 5 + 4 + dL.length * 4.2 + 4;
+                
+                fc(CLT); doc.roundedRect(mg, p3Y, cW, aH, 1.5, 1.5, 'F');
+                fc(asp.col); doc.rect(mg, p3Y, 3, aH, 'F');
+                doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, p3Y, cW, aH, 1.5, 1.5, 'S');
+
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(asp.col);
-                doc.text(T(asp.title), mg + 6, aspY + 4.5);
+                doc.text(T(asp.title), mg + 7, p3Y + 4.5);
                 doc.setFont('helvetica', 'italic'); doc.setFontSize(7); tc(CGR);
-                doc.text(T(asp.sub), mg + 6, aspY + 8.5);
+                doc.text(T(asp.sub), mg + 7, p3Y + 8.2);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(dL, mg + 6, aspY + 13);
-                aspY += aH + 3.5;
+                doc.text(dL, mg + 7, p3Y + 12.5);
+                p3Y += aH + 3;
             });
+            p3Y += 4;
 
-            // 4. Esencia del Vinculo (Part 1)
-            let s4Y = 186;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('4. Esencia del Vinculo  -  Carta Compuesta', mg, s4Y);
-            fc(CT); doc.rect(mg, s4Y + 2, cW, 0.6, 'F');
+            // 4. Esencia del Vinculo (Sun, Moon, Venus)
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('4. Esencia del Vínculo  -  Carta Compuesta (Parte 1)', mg, p3Y);
+            p3Y += 4.5;
 
-            let compY = s4Y + 6;
             const comp1List = ['Sun', 'Moon', 'Venus'];
             comp1List.forEach(body => {
                 const item = d.compositeChart[body];
@@ -9507,25 +9672,35 @@
                 const pos  = T(item.sign)+' '+T(String(item.deg))+'°';
                 const lbl  = T(clabels[body]||'');
                 const col  = ccolors[body]||CT;
-                const iL   = doc.splitTextToSize(T(item.interp||''), cW - 10);
-                const bH   = 6 + iL.length * 4.5 + 4;
-                fc(CLT); doc.roundedRect(mg, compY, cW, bH, 2, 2, 'F');
-                fc(col); doc.rect(mg, compY, 3, bH, 'F');
+                const iL   = doc.splitTextToSize(T(item.interp||''), cW - 14);
+                const bH   = 6.5 + iL.length * 4.2 + 3.5;
+                
+                fc(CLT); doc.roundedRect(mg, p3Y, cW, bH, 1.5, 1.5, 'F');
+                fc(col); doc.rect(mg, p3Y, 3, bH, 'F');
+                doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, p3Y, cW, bH, 1.5, 1.5, 'S');
+
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(col);
-                doc.text(nm + ' - ' + pos, mg + 6, compY + 4.5);
+                doc.text(nm + ' - ' + pos, mg + 7, p3Y + 4.5);
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); tc(col);
-                doc.text(lbl, W - mg - doc.getTextWidth(lbl) - 3, compY + 4.5);
+                doc.text(lbl, W - mg - doc.getTextWidth(lbl) - 6, p3Y + 4.5);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(iL, mg + 6, compY + 9);
-                compY += bH + 3.5;
+                doc.text(iL, mg + 7, p3Y + 8.8);
+                p3Y += bH + 3.2;
             });
 
+            // End Page 3
             newPage();
 
             // ==============================================================
-            // PAGINA 3
+            // PAGINA 4: COMPOSITE PART 2 & TENSIONS
             // ==============================================================
-            let p3compY = 20;
+            let p4Y = 22;
+
+            // 4. Esencia del Vinculo (Mars, ASC, MC)
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('4. Esencia del Vínculo  -  Carta Compuesta (Parte 2)', mg, p4Y);
+            p4Y += 4.5;
+
             const comp2List = ['Mars', 'ASC', 'MC'];
             comp2List.forEach(body => {
                 const item = d.compositeChart[body];
@@ -9534,77 +9709,87 @@
                 const pos  = T(item.sign)+' '+T(String(item.deg))+'°';
                 const lbl  = T(clabels[body]||'');
                 const col  = ccolors[body]||CT;
-                const iL   = doc.splitTextToSize(T(item.interp||''), cW - 10);
-                const bH   = 6 + iL.length * 4.5 + 4;
-                fc(CLT); doc.roundedRect(mg, p3compY, cW, bH, 2, 2, 'F');
-                fc(col); doc.rect(mg, p3compY, 3, bH, 'F');
+                const iL   = doc.splitTextToSize(T(item.interp||''), cW - 14);
+                const bH   = 6.5 + iL.length * 4.2 + 3.5;
+                
+                fc(CLT); doc.roundedRect(mg, p4Y, cW, bH, 1.5, 1.5, 'F');
+                fc(col); doc.rect(mg, p4Y, 3, bH, 'F');
+                doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, p4Y, cW, bH, 1.5, 1.5, 'S');
+
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(col);
-                doc.text(nm + ' - ' + pos, mg + 6, p3compY + 4.5);
+                doc.text(nm + ' - ' + pos, mg + 7, p4Y + 4.5);
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); tc(col);
-                doc.text(lbl, W - mg - doc.getTextWidth(lbl) - 3, p3compY + 4.5);
+                doc.text(lbl, W - mg - doc.getTextWidth(lbl) - 6, p4Y + 4.5);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(iL, mg + 6, p3compY + 9);
-                p3compY += bH + 3.5;
+                doc.text(iL, mg + 7, p4Y + 8.8);
+                p4Y += bH + 3.2;
             });
+            p4Y += 4;
 
             // 5. Puntos de Tension
-            let s5Y = 96;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('5. Puntos de Tension  -  Honestidad Astrologica', mg, s5Y);
-            fc(CT); doc.rect(mg, s5Y + 2, cW, 0.6, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('5. Puntos de Tensión  -  Honestidad Astrológica', mg, p4Y);
+            p4Y += 4.5;
 
             doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); tc(CGR);
-            const s5intro = doc.splitTextToSize('Todo vinculo tiene areas de friccion. Conocerlas no debilita la relacion, la fortalece.', cW);
-            doc.text(s5intro, mg, s5Y + 6);
+            const s5intro = doc.splitTextToSize('Toda relación real posee puntos de fricción. Conocerlos no debilita la unión, sino que brinda herramientas para comprender y madurar.', cW);
+            doc.text(s5intro, mg, p4Y + 3);
+            p4Y += 9;
 
-            let tenY = s5Y + 11;
             tensions.slice(0, 3).forEach(t => {
-                const dL = doc.splitTextToSize(T(t.desc), cW - 10);
-                const tH = 6 + dL.length * 4.5 + 4;
-                fc([255, 252, 245]); doc.roundedRect(mg, tenY, cW, tH, 2, 2, 'F');
-                fc(CO); doc.rect(mg, tenY, 3, tH, 'F');
-                dc(CO); doc.roundedRect(mg, tenY, cW, tH, 2, 2, 'S');
-                doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CO);
-                doc.text(T(t.title), mg + 6, tenY + 4.5);
+                const dL = doc.splitTextToSize(T(t.desc), cW - 14);
+                const tH = 6 + dL.length * 4.2 + 3.5;
+                
+                fc([255, 252, 245]); doc.roundedRect(mg, p4Y, cW, tH, 1.5, 1.5, 'F');
+                fc(CR); doc.rect(mg, p4Y, 3, tH, 'F');
+                doc.setDrawColor(245, 230, 220); doc.setLineWidth(0.2); doc.roundedRect(mg, p4Y, cW, tH, 1.5, 1.5, 'S');
+
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CR);
+                doc.text(T(t.title), mg + 7, p4Y + 4.5);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(dL, mg + 6, tenY + 9);
-                tenY += tH + 3.5;
+                doc.text(dL, mg + 7, p4Y + 8.8);
+                p4Y += tH + 3;
             });
 
-            // 6. Consejo Practico
-            let s6Y = 182;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('6. Consejo Practico para Esta Pareja', mg, s6Y);
-            fc(CT); doc.rect(mg, s6Y + 2, cW, 0.6, 'F');
-
-            let advH = 8;
-            advice.slice(0, 5).forEach(a => { advH += doc.splitTextToSize(T(a), cW - 14).length * 4.5 + 4; });
-            fc(CLT); doc.roundedRect(mg, s6Y + 6, cW, advH, 2, 2, 'F');
-            let ay = s6Y + 12;
-            advice.slice(0, 5).forEach(a => {
-                const aL = doc.splitTextToSize(T(a), cW - 14);
-                drawBullet(mg + 6, ay - 1.5, 1.2, CO);
-                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(aL, mg + 11, ay);
-                ay += aL.length * 4.5 + 4;
-            });
-
-            // 7. Puntos de Encuentro Geograficos (Header & Intro)
-            let s7Y = 252;
-            doc.setFont('helvetica', 'bold'); doc.setFontSize(11); tc(CPM);
-            doc.text('7. Puntos de Encuentro Geograficos', mg, s7Y);
-            fc(CT); doc.rect(mg, s7Y + 2, cW, 0.6, 'F');
-
-            doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); tc(CGR);
-            const s7intro = doc.splitTextToSize('Lugares del mundo donde la energia de ambas cartas se potencia. Clasificados por tipo de experiencia que generan juntos.', cW);
-            doc.text(s7intro, mg, s7Y + 6);
-
+            // End Page 4
             newPage();
 
             // ==============================================================
-            // PAGINA 4
+            // PAGINA 5: ADVICE & GEOGRAPHIC ENCOUNTERS
             // ==============================================================
-            let locY = 20;
+            let p5Y = 22;
+
+            // 6. Consejo Practico
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('6. Consejos Prácticos para la Relación', mg, p5Y);
+            p5Y += 4.5;
+
+            let advH = 8;
+            advice.slice(0, 5).forEach(a => { advH += doc.splitTextToSize(T(a), cW - 18).length * 4.2 + 3.5; });
+            
+            fc(CLT); doc.roundedRect(mg, p5Y, cW, advH, 2, 2, 'F');
+            doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, p5Y, cW, advH, 2, 2, 'S');
+            
+            let ay = p5Y + 6.5;
+            advice.slice(0, 5).forEach(a => {
+                const aL = doc.splitTextToSize(T(a), cW - 18);
+                drawBullet(mg + 6, ay - 1.5, 1.2, CO);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
+                doc.text(aL, mg + 11, ay);
+                ay += aL.length * 4.2 + 3.5;
+            });
+            p5Y += advH + 9;
+
+            // 7. Puntos de Encuentro Geograficos
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); tc(CP);
+            doc.text('7. Puntos de Encuentro Geográficos', mg, p5Y);
+            p5Y += 4.5;
+
+            doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); tc(CGR);
+            const s7intro = doc.splitTextToSize('Lugares del mundo donde las líneas planetarias de ambos se cruzan, potenciando experiencias específicas en sus viajes o estadías compartidas.', cW);
+            doc.text(s7intro, mg, p5Y + 3);
+            p5Y += 10;
+
             const purpose = document.getElementById('compatibility-type-select')?.value||'pareja';
             const locLbls = {
                 pareja:['Vivir juntos','Convivencia y descanso','Vacaciones y romance','Proyectos en comun','Crecimiento personal'],
@@ -9620,37 +9805,26 @@
                     : (c.lat.toFixed(1)+', '+c.lon.toFixed(1));
                 const desc = T(getEncounterDescription(c.p1Planet,c.p2Planet,purpose));
                 const catL = lls[idx]||'Punto de encuentro';
-                const dL   = doc.splitTextToSize(desc, cW - 10);
-                const lH   = 6 + dL.length * 4.5 + 4;
+                const dL   = doc.splitTextToSize(desc, cW - 14);
+                const lH   = 5 + 4 + dL.length * 4.2 + 3.5;
                 
-                fc(CW); doc.roundedRect(mg, locY, cW, lH, 2, 2, 'F');
-                fc(CT); doc.rect(mg, locY, 3, lH, 'F');
-                dc(CT); doc.roundedRect(mg, locY, cW, lH, 2, 2, 'S');
+                fc(CLT); doc.roundedRect(mg, p5Y, cW, lH, 1.5, 1.5, 'F');
+                fc(CT); doc.rect(mg, p5Y, 3, lH, 'F');
+                doc.setDrawColor(220, 220, 235); doc.setLineWidth(0.2); doc.roundedRect(mg, p5Y, cW, lH, 1.5, 1.5, 'S');
                 
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(8); tc(CT);
-                doc.text(loc, mg + 6, locY + 4.5);
-                doc.setFont('helvetica', 'bold'); doc.setFontSize(7); tc(CO);
-                doc.text(catL, W - mg - doc.getTextWidth(catL) - 3, locY + 4.5);
+                doc.text(loc, mg + 7, p5Y + 4.5);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7.2); tc(CO);
+                doc.text(catL.toUpperCase(), W - mg - doc.getTextWidth(catL) - 6, p5Y + 4.5);
+                
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); tc(CTX);
-                doc.text(dL, mg + 6, locY + 9);
-                locY += lH + 3.5;
+                doc.text(dL, mg + 7, p5Y + 8.8);
+                p5Y += lH + 3;
             });
 
-            // Final footer page 4
-            fc(CP); doc.rect(0, H - 18, W, 18, 'F');
-            doc.setFont('helvetica', 'italic'); doc.setFontSize(7); tc([195, 190, 230]);
-            doc.text('Orbitae  -  Astrocartografia Interactiva  -  Los datos se personalizan con las cartas natales reales de cada usuario.', W/2, H - 10, {align:'center'});
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); tc([160, 155, 200]);
-            doc.text('Pag. ' + pgNum, W - mg - 8, H - 4);
+            // End Page 5
+            addFooter();
 
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('es-AR').replace(/\//g,'-');
-            const timeStr = String(now.getHours()).padStart(2,'0') + '-' + 
-                            String(now.getMinutes()).padStart(2,'0') + '-' + 
-                            String(now.getSeconds()).padStart(2,'0');
-            doc.save('Orbitae_Compatibilidad_' + dateStr + '_' + timeStr + '.pdf');
-            showToast('PDF descargado correctamente.');
-        }
 
 
         function getLineIntersection(p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y) {
