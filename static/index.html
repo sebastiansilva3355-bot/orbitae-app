@@ -64,6 +64,56 @@
         }
 
         /* --- NUEVOS ESTILOS DEL PLAN DE MEJORAS UX/UI --- */
+        #name-input-p1, #name-input-p2 {
+            text-transform: capitalize;
+        }
+        #tab-compat .text-input {
+            padding: 12px 14px !important;
+        }
+        #tab-compat .input-label {
+            margin-bottom: 8px !important;
+        }
+        .compat-chips-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .compat-chip {
+            background: #13131F;
+            border: 1px solid #2a2a40;
+            color: #777799;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .compat-chip:hover {
+            background: #16162a;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .compat-chip.active[data-value="pareja"] {
+            background: rgba(124, 58, 237, 0.25);
+            border: 1.5px solid #7c3aed;
+            color: #a78bfa;
+        }
+        .compat-chip.active[data-value="amigos"] {
+            background: rgba(34, 211, 238, 0.25);
+            border: 1.5px solid #22d3ee;
+            color: #22d3ee;
+        }
+        .compat-chip.active[data-value="familia"] {
+            background: rgba(236, 72, 153, 0.25);
+            border: 1.5px solid #ec4899;
+            color: #ec4899;
+        }
         .pulsing-marker-container {
             position: relative;
             width: 20px;
@@ -2883,9 +2933,9 @@
 
                 <!-- Contenido Pestaña: Compatibilidad (Independiente) -->
                 <div id="tab-compat" class="tab-content" style="display: none;">
-                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.1); margin-bottom: 16px;">
-                        <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <i class="fa-solid fa-heart-circle-bolt" style="color: #ffd700;"></i> Sinastría & Compatibilidad
+                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.1); margin-bottom: 16px; padding: 20px;">
+                        <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-heart" style="color: #a78bfa;"></i> Sinastría de Pareja
                         </h3>
 
                         <!-- Estado de Persona 1 -->
@@ -2894,73 +2944,54 @@
                         </div>
 
                         <!-- Nombres de las Personas (Lugar Amistoso) -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
                             <div>
-                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px; margin-right: 4px;"></i> Tu Nombre</label>
-                                <input type="text" id="name-input-p1" placeholder="Tu nombre" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
+                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px; margin-right: 4px;"></i> Tu nombre</label>
+                                <input type="text" id="name-input-p1" placeholder="Tu nombre" value="Sebastian" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
                             </div>
                             <div>
-                                <label class="input-label" style="color: #00bcd4; font-size: 10px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px; margin-right: 4px;"></i> Su Nombre</label>
-                                <input type="text" id="name-input-p2" placeholder="Su nombre" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
+                                <label class="input-label" style="color: #00bcd4; font-size: 10px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px; margin-right: 4px;"></i> Nombre de tu pareja</label>
+                                <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="Taylor Swift" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
                             </div>
                         </div>
 
                         <!-- Formulario de Persona 2 -->
-                        <div id="compat-p2-form-container">
+                        <div id="compat-p2-form-container" style="margin-top: 24px;">
                             <h4 style="color: #00bcd4; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(0, 188, 212, 0.2); padding-bottom: 6px;">
-                                <i class="fa-solid fa-user-plus"></i> Datos de Persona 2 (Pareja / Socio)
+                                <i class="fa-solid fa-user-plus"></i> Datos de tu pareja o persona a analizar
                             </h4>
 
                             <!-- Buscador Nominatim P2 -->
-                            <div class="input-group autocomplete-container">
-                                <label class="input-label" style="color: #00bcd4;">Ciudad de Nacimiento P2</label>
-                                <input type="text" id="city-search-p2" placeholder="Busca la ciudad de nacimiento..." class="text-input" oninput="onP2CitySearchInput()" style="border-color: rgba(0, 188, 212, 0.4); background: rgba(0, 188, 212, 0.02); color: white;" autocomplete="on">
+                            <div class="input-group autocomplete-container" style="margin-bottom: 14px;">
+                                <label class="input-label" style="color: #00bcd4;">Ciudad de nacimiento</label>
+                                <input type="text" id="city-search-p2" placeholder="Ej: Buenos Aires, Argentina" value="West Reading, Pennsylvania, USA" class="text-input" oninput="onP2CitySearchInput()" style="border-color: rgba(0, 188, 212, 0.4); background: rgba(0, 188, 212, 0.02); color: white;" autocomplete="on">
                                 <div id="search-results-p2" class="search-results-dropdown"></div>
                             </div>
 
                             <!-- Fecha / Hora P2 -->
-                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px;" class="input-group">
+                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 14px;" class="input-group">
                                 <div>
-                                    <label class="input-label" style="color: #00bcd4;">Fecha Nacimiento P2</label>
-                                    <input type="text" id="date-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                                    <label class="input-label" style="color: #00bcd4;">Fecha de nacimiento</label>
+                                    <input type="text" id="date-input-p2" value="1989-12-13" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
                                 </div>
                                 <div>
-                                    <label class="input-label" style="color: #00bcd4;">Hora P2</label>
-                                    <input type="text" id="time-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                                    <label class="input-label" style="color: #00bcd4;">Hora de nacimiento (aprox.)</label>
+                                    <input type="text" id="time-input-p2" value="05:17" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
                                 </div>
                             </div>
 
                             <!-- Tipo de Consulta de Compatibilidad -->
                             <div class="input-group">
                                 <label class="input-label" style="color: #00bcd4;">Propósito de la Consulta</label>
-                                <div class="custom-compat-options">
-                                    <div class="custom-compat-option active" data-value="pareja" onclick="selectCompatType(this, 'pareja')">
-                                        <i class="fa-solid fa-heart" style="color: #e91e63;"></i>
-                                        <div class="option-details">
-                                            <strong>Pareja Romántica</strong>
-                                            <span>Vivir juntos / Luna de miel</span>
-                                        </div>
+                                <div class="compat-chips-container">
+                                    <div class="compat-chip active" data-value="pareja" onclick="selectCompatType(this, 'pareja')">
+                                        ❤️ Pareja romántica
                                     </div>
-                                    <div class="custom-compat-option" data-value="socios" onclick="selectCompatType(this, 'socios')">
-                                        <i class="fa-solid fa-briefcase" style="color: #ffd700;"></i>
-                                        <div class="option-details">
-                                            <strong>Socios de Negocios</strong>
-                                            <span>Lanzar empresa / Reuniones</span>
-                                        </div>
+                                    <div class="compat-chip" data-value="amigos" onclick="selectCompatType(this, 'amigos')">
+                                        👥 Amistad / Socio
                                     </div>
-                                    <div class="custom-compat-option" data-value="grupo" onclick="selectCompatType(this, 'grupo')">
-                                        <i class="fa-solid fa-users" style="color: #3f51b5;"></i>
-                                        <div class="option-details">
-                                            <strong>Viaje Grupal / Familia</strong>
-                                            <span>Destino común para todos</span>
-                                        </div>
-                                    </div>
-                                    <div class="custom-compat-option" data-value="reencuentro" onclick="selectCompatType(this, 'reencuentro')">
-                                        <i class="fa-solid fa-arrows-rotate" style="color: #00bcd4;"></i>
-                                        <div class="option-details">
-                                            <strong>Reencuentro</strong>
-                                            <span>Conexión y sintonía a distancia</span>
-                                        </div>
+                                    <div class="compat-chip" data-value="familia" onclick="selectCompatType(this, 'familia')">
+                                        🏠 Vínculo familiar
                                     </div>
                                 </div>
                                 <input type="hidden" id="compatibility-type-select" value="pareja">
@@ -2976,9 +3007,9 @@
                                 </button>
                             </div>
 
-                            <input type="hidden" id="lat-input-p2">
-                            <input type="hidden" id="lon-input-p2">
-                            <input type="hidden" id="timezone-input-p2" value="0">
+                            <input type="hidden" id="lat-input-p2" value="40.3340">
+                            <input type="hidden" id="lon-input-p2" value="-75.9470">
+                            <input type="hidden" id="timezone-input-p2" value="-5">
                         </div>
                     </div>
 
@@ -4381,8 +4412,11 @@
 
         function saveP2BirthData() {
             try {
-                const nameP1 = document.getElementById('name-input-p1')?.value || '';
-                const nameP2 = document.getElementById('name-input-p2')?.value || '';
+                let nameP1 = document.getElementById('name-input-p1')?.value || '';
+                let nameP2 = document.getElementById('name-input-p2')?.value || '';
+                if (nameP1) nameP1 = nameP1.charAt(0).toUpperCase() + nameP1.slice(1);
+                if (nameP2) nameP2 = nameP2.charAt(0).toUpperCase() + nameP2.slice(1);
+                
                 const cityP2 = document.getElementById('city-search-p2')?.value || '';
                 const latP2  = document.getElementById('lat-input-p2')?.value || '';
                 const lonP2  = document.getElementById('lon-input-p2')?.value || '';
@@ -4409,42 +4443,61 @@
                 const savedNameP1 = localStorage.getItem('orbitae_name');
                 
                 const p1Input = document.getElementById('name-input-p1');
-                if (p1Input && savedNameP1) {
-                    p1Input.value = savedNameP1;
+                if (p1Input) {
+                    if (savedNameP1) {
+                        p1Input.value = savedNameP1.charAt(0).toUpperCase() + savedNameP1.slice(1);
+                    } else {
+                        p1Input.value = "Sebastian";
+                    }
                 }
 
-                if (!raw) return false;
-                const data = JSON.parse(raw);
-                
-                if (data.nameP1 && p1Input) p1Input.value = data.nameP1;
-                
                 const p2Input = document.getElementById('name-input-p2');
-                if (data.nameP2 && p2Input) p2Input.value = data.nameP2;
-                
                 const cityP2 = document.getElementById('city-search-p2');
-                if (data.city && cityP2) cityP2.value = data.city;
-                
                 const latP2 = document.getElementById('lat-input-p2');
-                if (data.lat && latP2) latP2.value = data.lat;
-                
                 const lonP2 = document.getElementById('lon-input-p2');
-                if (data.lon && lonP2) lonP2.value = data.lon;
-                
                 const dateP2 = document.getElementById('date-input-p2');
-                if (data.date && dateP2) dateP2.value = data.date;
-                
                 const timeP2 = document.getElementById('time-input-p2');
-                if (data.time && timeP2) timeP2.value = data.time;
-                
                 const tzP2 = document.getElementById('timezone-input-p2');
+                const sel = document.getElementById('compatibility-type-select');
+
+                if (!raw) {
+                    if (p2Input) p2Input.value = "Taylor Swift";
+                    if (cityP2) cityP2.value = "West Reading, Pennsylvania, USA";
+                    if (latP2) latP2.value = "40.3340";
+                    if (lonP2) lonP2.value = "-75.9470";
+                    if (dateP2) dateP2.value = "1989-12-13";
+                    if (timeP2) timeP2.value = "05:17";
+                    if (tzP2) tzP2.value = "-5";
+                    if (sel) sel.value = "pareja";
+                    
+                    document.querySelectorAll('.compat-chip').forEach(el => {
+                        if (el.getAttribute('data-value') === 'pareja') {
+                            el.classList.add('active');
+                        } else {
+                            el.classList.remove('active');
+                        }
+                    });
+                    return false;
+                }
+                
+                const data = JSON.parse(raw);
+                if (data.nameP1 && p1Input) p1Input.value = data.nameP1.charAt(0).toUpperCase() + data.nameP1.slice(1);
+                if (data.nameP2 && p2Input) p2Input.value = data.nameP2;
+                if (data.city && cityP2) cityP2.value = data.city;
+                if (data.lat && latP2) latP2.value = data.lat;
+                if (data.lon && lonP2) lonP2.value = data.lon;
+                if (data.date && dateP2) dateP2.value = data.date;
+                if (data.time && timeP2) timeP2.value = data.time;
                 if (data.tz !== undefined && tzP2) tzP2.value = data.tz;
                 
                 if (data.purpose) {
-                    const sel = document.getElementById('compatibility-type-select');
-                    if (sel) sel.value = data.purpose;
+                    let mappedPurpose = data.purpose;
+                    if (mappedPurpose === 'socios') mappedPurpose = 'amigos';
+                    if (mappedPurpose === 'grupo' || mappedPurpose === 'reencuentro') mappedPurpose = 'familia';
+                    if (sel) sel.value = mappedPurpose;
                     
-                    document.querySelectorAll('.custom-compat-option').forEach(el => {
-                        if (el.getAttribute('data-value') === data.purpose) {
+                    document.querySelectorAll('.compat-chip').forEach(el => {
+                        if (el.getAttribute('data-value') === mappedPurpose) {
                             el.classList.add('active');
                         } else {
                             el.classList.remove('active');
@@ -5846,7 +5899,7 @@
             const nameInput = document.getElementById('onboarding-name-input');
             let name = nameInput ? nameInput.value.trim() : '';
             if (!name) name = 'Viajero';
-            
+            name = name.charAt(0).toUpperCase() + name.slice(1);
             localStorage.setItem('orbitae_name', name);
             
             // Cerrar onboarding
@@ -8284,17 +8337,17 @@
                     'Jupiter-Jupiter': 'Suerte y crecimiento conjunto sin límites. En este punto, el optimismo y la visión de futuro de ambos se expanden de forma extraordinaria. Es un destino ideal para emprender un gran viaje de exploración, iniciar proyectos ambiciosos o tomar decisiones importantes que marquen el rumbo a largo plazo de la relación.',
                 };
                 return parejaMap[keys] || 'Zona de gran armonía y complicidad. Al cruzarse las líneas de sus cartas en este punto, experimentarán un flujo natural de afecto, buena comunicación y entendimiento mutuo. Es un lugar ideal para vacacionar, compartir aventuras y descubrir nuevas facetas del otro en un clima relajado y estimulante.';
-            } else if (purpose === 'socios') {
+            } else if (purpose === 'socios' || purpose === 'amigos') {
                 const sociosMap = {
                     'Sun-Sun': 'Éxito y visibilidad empresarial compartida de primer nivel. En este lugar, las identidades profesionales de ambos se potencian mutuamente, permitiendo proyectar una imagen corporativa sólida y de gran autoridad. Es ideal para abrir oficinas de representación, captar clientes estratégicos de alto perfil y realizar presentaciones públicas o conferencias de prensa que posicionen la marca.',
                     'Mercury-Sun': 'Ubicación óptima para negociaciones, redacción de contratos clave y estrategias de marketing. Aquí la lucidez mental de uno se fusiona con la voluntad de éxito del otro, facilitando acuerdos altamente favorables. Es ideal para establecer centros de distribución, oficinas comerciales y programar reuniones de toma de decisiones rápidas.',
-                    'Jupiter-Sun': 'Máxima fortuna, expansión comercial y crecimiento financiero. Esta zona activa un flujo de prosperidad y oportunidades de inversión inmejorables. Es el lugar perfecto para lanzar nuevos productos a gran escala, constituir legalmente la sociedad o firmar contratos de fusiones y adquisiciones internacionales.',
+                    'Jupiter-Sun': 'Máxima fortuna, expansión comercial and crecimiento financiero. Esta zona activa un flujo de prosperidad y oportunidades de inversión inmejorables. Es el lugar perfecto para lanzar nuevos productos a gran escala, constituir legalmente la sociedad o firmar contratos de fusiones y adquisiciones internacionales.',
                     'Mercury-Mercury': 'Centro neurálgico de comunicación, logística y desarrollo tecnológico. La sintonía mental entre ambos se acelera, permitiendo resolver problemas técnicos y coordinar tareas operativas con alta eficiencia. Es ideal para instalar servidores, oficinas de desarrollo de software y centros de atención telefónica o soporte.',
                     'Jupiter-Mercury': 'Visión comercial y planificación estratégica a gran escala. Esta zona favorece el pensamiento global y la exportación de servicios o bienes. Es excelente para seminarios de capacitación, desarrollo de planes de negocios a largo plazo y diseño de campañas publicitarias internacionales.',
                     'Jupiter-Jupiter': 'Suerte comercial extraordinaria y consolidación de metas corporativas. Un punto de encuentro donde la fe en el proyecto conjunto se multiplica, atrayendo socios capitalistas de confianza. Zona inmejorable para ubicar la sede central o casa matriz y registrar la propiedad intelectual de la empresa.',
                 };
                 return sociosMap[keys] || 'Excelente para cooperaciones de negocios, impulsando el éxito comercial, el reconocimiento profesional y la productividad en el día a día. Favorece la firma de acuerdos duraderos y el trabajo conjunto de forma constructiva y estructurada.';
-            } else if (purpose === 'grupo') {
+            } else if (purpose === 'grupo' || purpose === 'familia') {
                 const grupoMap = {
                     'Moon-Moon': 'Confort doméstico, paz y bienestar absoluto para todos los integrantes. En esta zona geográfica se crea un ambiente acogedor que fomenta el descanso profundo y la empatía grupal. Es el lugar ideal para alquilar una residencia vacacional familiar, pasar tiempo de calidad compartiendo comidas caseras y recargar energías lejos de la rutina diaria.',
                     'Moon-Venus': 'Diversión relajada, afecto genuino y una excelente sintonía estética. Esta zona invita al grupo a explorar mercados de pulgas, disfrutar de la gastronomía local y asistir a espectáculos artísticos. Es perfecta para viajes de amigas o familiares que buscan consentirse, compartir charlas íntimas y crear recuerdos llenos de risas y armonía.',
@@ -8369,8 +8422,13 @@
         let encounterLayers = [];
 
         function selectCompatType(element, val) {
-            document.querySelectorAll('.custom-compat-option').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
+            document.querySelectorAll('.compat-chip').forEach(el => el.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            } else {
+                const el = document.querySelector(`.compat-chip[data-value="${val}"]`);
+                if (el) el.classList.add('active');
+            }
             document.getElementById('compatibility-type-select').value = val;
             if (isSyncModeActive) {
                 calculateNewChart(true);
@@ -8392,7 +8450,7 @@
                 el.innerHTML = `
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
                         <span>👤 <strong>Tu Carta Natal:</strong> <span style="color:#00bcd4;">${loc}</span></span>
-                        <span style="background:rgba(76, 175, 80, 0.12); color:#81c784; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:700; text-transform:uppercase;">Activa</span>
+                        <span style="background: rgba(124, 58, 237, 0.2); border: 1px solid #7C3AED; color: #A78BFA; border-radius: 8px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; padding: 3px 10px; text-transform: uppercase;">Activa</span>
                     </div>
                 `;
             } else {
@@ -8622,12 +8680,12 @@
             if (purpose === 'pareja') {
                 beneficialPlanets = ['Venus', 'Moon', 'Jupiter'];
                 purposeLabel = "Pareja Romántica";
-            } else if (purpose === 'socios') {
+            } else if (purpose === 'socios' || purpose === 'amigos') {
                 beneficialPlanets = ['Jupiter', 'Sun', 'Mercury'];
-                purposeLabel = "Socios de Negocios";
-            } else if (purpose === 'grupo') {
+                purposeLabel = "Amistad / Socio";
+            } else if (purpose === 'grupo' || purpose === 'familia') {
                 beneficialPlanets = ['Jupiter', 'Moon', 'Venus'];
-                purposeLabel = "Viaje Grupal / Familia";
+                purposeLabel = "Vínculo familiar";
             } else if (purpose === 'reencuentro') {
                 beneficialPlanets = ['Sun', 'Venus', 'Moon'];
                 purposeLabel = "Reencuentro";
@@ -8831,7 +8889,13 @@
                 socios:     [{icon:'💼',label:'Negocios',   planets:['Jupiter','Mercury']},
                              {icon:'☀️',label:'Visibilidad', planets:['Sun','Jupiter']},
                              {icon:'📋',label:'Contratos',   planets:['Mercury','Sun']}],
+                amigos:     [{icon:'👥',label:'Amistad',    planets:['Jupiter','Mercury']},
+                             {icon:'💼',label:'Negocios',   planets:['Sun','Jupiter']},
+                             {icon:'📋',label:'Contratos',   planets:['Mercury','Sun']}],
                 grupo:      [{icon:'🎉',label:'Disfrute',   planets:['Venus','Moon']},
+                             {icon:'🌍',label:'Aventura',   planets:['Jupiter','Sun']},
+                             {icon:'🤝',label:'Cohesion',   planets:['Moon','Jupiter']}],
+                familia:    [{icon:'🎉',label:'Disfrute',   planets:['Venus','Moon']},
                              {icon:'🌍',label:'Aventura',   planets:['Jupiter','Sun']},
                              {icon:'🤝',label:'Cohesion',   planets:['Moon','Jupiter']}],
                 reencuentro:[{icon:'💛',label:'Afecto',     planets:['Sun','Venus']},
@@ -8918,7 +8982,7 @@
                     } else {
                         dynamicAdvice = '🔑 <strong>Consejo para convivir mejor:</strong> Respeten la forma en que cada uno expresa su cariño. La clave del éxito está en no intentar cambiar al otro, sino en dialogar con paciencia, celebrar sus diferencias como un complemento y asegurar que cada uno tenga su espacio personal y de confianza.';
                     }
-                } else if (purpose === 'socios') {
+                } else if (purpose === 'socios' || purpose === 'amigos') {
                     if (hasSquare) {
                         dynamicAdvice = '🔑 <strong>Consejo para el éxito:</strong> Hay visiones competitivas o metodologías opuestas en juego. Para que la sociedad funcione, es vital que delimiten responsabilidades estrictamente y que cada uno respete las decisiones del otro en su respectiva área.';
                     } else if (hasQuincunx) {
@@ -8930,7 +8994,7 @@
                     } else {
                         dynamicAdvice = '🔑 <strong>Consejo para el éxito:</strong> Definan con claridad el rol de cada uno desde el principio. Mantengan una comunicación abierta, transparente y basada en la confianza profesional para evitar malos entendidos en el futuro.';
                     }
-                } else if (purpose === 'grupo') {
+                } else if (purpose === 'grupo' || purpose === 'familia') {
                     if (hasSquare) {
                         dynamicAdvice = '🔑 <strong>Consejo de convivencia:</strong> Las actividades grupales pueden chocar con los deseos individuales de alguno. Flexibilicen el itinerario y eviten imponer planes rígidos; den espacio para que cada uno explore a su propio ritmo.';
                     } else if (hasQuincunx) {
@@ -8965,20 +9029,20 @@
                             <p style="margin:0;line-height:1.5;">${dynamicAdvice}</p>
                         </div>
                     `;
-                } else if (purpose === 'socios') {
+                } else if (purpose === 'socios' || purpose === 'amigos') {
                     narrative = `
                         <div style="display:flex;flex-direction:column;gap:10px;">
                             <p style="margin:0;line-height:1.5;">☀️ <strong>Metas y Propósito (Soles):</strong> ${sunText}</p>
                             <p style="margin:0;line-height:1.5;">🌙 <strong>Resonancia y Ritmo (Lunas):</strong> ${moonText}</p>
-                            <p style="margin:0;line-height:1.5;">💼 <strong>Valores y Acuerdos (Venus):</strong> ${venusText}</p>
+                            <p style="margin:0;line-height:1.5;">${purpose === 'amigos' ? '👥 Relación y Entendimiento (Venus)' : '💼 Valores y Acuerdos (Venus)'}: ${venusText}</p>
                             <p style="margin:0;line-height:1.5;">${dynamicAdvice}</p>
                         </div>
                     `;
-                } else if (purpose === 'grupo') {
+                } else if (purpose === 'grupo' || purpose === 'familia') {
                     narrative = `
                         <div style="display:flex;flex-direction:column;gap:10px;">
-                            <p style="margin:0;line-height:1.5;">☀️ <strong>Identidad del Grupo (Soles):</strong> ${sunText}</p>
-                            <p style="margin:0;line-height:1.5;">🌙 <strong>Cohesión Emocional (Lunas):</strong> ${moonText}</p>
+                            <p style="margin:0;line-height:1.5;">☀️ ${purpose === 'familia' ? 'Vínculo Familiar (Soles)' : 'Identidad del Grupo (Soles)'}: ${sunText}</p>
+                            <p style="margin:0;line-height:1.5;">🌙 ${purpose === 'familia' ? 'Cohesión en el Hogar (Lunas)' : 'Cohesión Emocional (Lunas)'}: ${moonText}</p>
                             <p style="margin:0;line-height:1.5;">🎉 <strong>Armonía y Disfrute (Venus):</strong> ${venusText}</p>
                             <p style="margin:0;line-height:1.5;">${dynamicAdvice}</p>
                         </div>
@@ -8997,7 +9061,9 @@
                 const narrativeMap = {
                     pareja:     'Sus cartas natales crean zonas geograficas donde el amor fluye con mayor intensidad. Los puntos de encuentro son lugares en el mundo donde ambos se sentiran profundamente conectados y en sintonia afectiva.',
                     socios:     'Las lineas de ambas cartas se cruzan en zonas de alta productividad y suerte comercial. Ideales para establecer sedes, reuniones clave o firmar acuerdos que impulsan el proyecto conjunto.',
+                    amigos:     'Las lineas de ambas cartas se cruzan en zonas de alta productividad, confianza y entendimiento mutuo. Ideales para compartir momentos de amistad o planificar proyectos y metas en comun.',
                     grupo:      'La energia del grupo fluye armoniosamente en estas ubicaciones. Son lugares donde todos los integrantes se sienten a gusto, optimistas y en sintonia — perfecto para un viaje de exploracion.',
+                    familia:    'La energia familiar fluye armoniosamente en estas ubicaciones. Son lugares donde todos los integrantes se sienten a gusto, optimistas y en sintonia — perfecto para compartir o convivir en armonia.',
                     reencuentro:'Estas coordenadas representan zonas donde la energia de ambos se reactiva con fuerza. Un reencuentro aqui puede renovar lazos con mucha intensidad y emocion genuina.',
                 };
                 narrative = narrativeMap[purpose] || narrativeMap['pareja'];
@@ -9809,7 +9875,9 @@
             const locLbls = {
                 pareja:['Vivir juntos','Convivencia y descanso','Vacaciones y romance','Proyectos en comun','Crecimiento personal'],
                 socios:['Expansion comercial','Centro operativo','Acuerdos y contratos','Visibilidad','Crecimiento conjunto'],
+                amigos:['Expansión comercial','Centro operativo','Acuerdos y contratos','Visibilidad','Crecimiento conjunto'],
                 grupo:['Aventura grupal','Base de operaciones','Encuentro festivo','Exploracion','Vinculo grupal'],
+                familia:['Aventura grupal','Base de operaciones','Encuentro festivo','Exploración','Vínculo grupal'],
                 reencuentro:['Reencuentro afectivo','Ambiente nostalgico','Conexion renovada','Nuevo comienzo','Viaje del alma']
             };
             const lls = locLbls[purpose]||locLbls['pareja'];
