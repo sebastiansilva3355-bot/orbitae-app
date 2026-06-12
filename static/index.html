@@ -4542,7 +4542,15 @@
             const sidebar = document.getElementById('sidebar');
             if (sidebar) {
                 L.DomEvent.disableClickPropagation(sidebar);
-                L.DomEvent.disableScrollPropagation(sidebar);
+                
+                // Evitar que Leaflet capture el scroll, pero permitir scroll nativo en el panel
+                const stopPropagation = (e) => {
+                    e.stopPropagation();
+                };
+                sidebar.addEventListener('touchstart', stopPropagation, { passive: true });
+                sidebar.addEventListener('touchmove', stopPropagation, { passive: true });
+                sidebar.addEventListener('touchend', stopPropagation, { passive: true });
+                sidebar.addEventListener('wheel', stopPropagation, { passive: true });
             }
         }
 
