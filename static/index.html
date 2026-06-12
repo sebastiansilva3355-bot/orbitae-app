@@ -72,6 +72,11 @@
         }
         #tab-compat .input-label {
             margin-bottom: 8px !important;
+            text-transform: none !important;
+        }
+        .panel-content {
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
         }
         .compat-chips-container {
             display: flex;
@@ -2944,20 +2949,16 @@
                         </div>
 
                         <!-- Nombres de las Personas (Lugar Amistoso) -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <div>
-                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px; margin-right: 4px;"></i> Tu nombre</label>
-                                <input type="text" id="name-input-p1" placeholder="Tu nombre" value="Sebastian" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
-                            </div>
-                            <div>
-                                <label class="input-label" style="color: #00bcd4; font-size: 10px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px; margin-right: 4px;"></i> Nombre de tu pareja</label>
-                                <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="Taylor Swift" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
-                            </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
+                            <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px; margin-bottom: 0;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px; margin-right: 4px;"></i> Tu nombre</label>
+                            <label class="input-label" style="color: #00bcd4; font-size: 10px; margin-bottom: 0;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px; margin-right: 4px;"></i> Nombre de tu pareja</label>
+                            <input type="text" id="name-input-p1" placeholder="Tu nombre" value="Sebastian" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
+                            <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="Taylor Swift" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
                         </div>
 
                         <!-- Formulario de Persona 2 -->
                         <div id="compat-p2-form-container" style="margin-top: 24px;">
-                            <h4 style="color: #00bcd4; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(0, 188, 212, 0.2); padding-bottom: 6px;">
+                            <h4 style="color: #00bcd4; font-size: 11px; font-weight: 700; text-transform: none; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(0, 188, 212, 0.2); padding-bottom: 6px;">
                                 <i class="fa-solid fa-user-plus"></i> Datos de tu pareja o persona a analizar
                             </h4>
 
@@ -2969,15 +2970,11 @@
                             </div>
 
                             <!-- Fecha / Hora P2 -->
-                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 14px;" class="input-group">
-                                <div>
-                                    <label class="input-label" style="color: #00bcd4;">Fecha de nacimiento</label>
-                                    <input type="text" id="date-input-p2" value="1989-12-13" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
-                                </div>
-                                <div>
-                                    <label class="input-label" style="color: #00bcd4;">Hora de nacimiento (aprox.)</label>
-                                    <input type="text" id="time-input-p2" value="05:17" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
-                                </div>
+                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 6px 14px;" class="input-group">
+                                <label class="input-label" style="color: #00bcd4; margin-bottom: 0;">Fecha de nacimiento</label>
+                                <label class="input-label" style="color: #00bcd4; margin-bottom: 0;">Hora de nacimiento (aprox.)</label>
+                                <input type="text" id="date-input-p2" value="1989-12-13" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                                <input type="text" id="time-input-p2" value="05:17" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
                             </div>
 
                             <!-- Tipo de Consulta de Compatibilidad -->
@@ -4541,6 +4538,11 @@
             const helpBtn = document.querySelector('.floating-help-btn');
             if (helpBtn) {
                 L.DomEvent.disableClickPropagation(helpBtn);
+            }
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                L.DomEvent.disableClickPropagation(sidebar);
+                L.DomEvent.disableScrollPropagation(sidebar);
             }
         }
 
