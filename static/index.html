@@ -35,8 +35,98 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
     <style>
+        /* Ocultar indicadores nativos de calendario/reloj de los navegadores */
+        input::-webkit-calendar-picker-indicator,
+        input::-webkit-inner-spin-button,
+        input::-webkit-outer-spin-button {
+            display: none !important;
+            -webkit-appearance: none !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
         :root {
             --bg-light: #0d0d14; /* BG Primary */
+            --panel-bg: rgba(20, 20, 31, 0.9); /* More opaque, premium glass */
+            --bg-card: #14141f; /* BG Card */
+            --accent-purple: #9b5de5; /* Purple Main */
+            --accent-purple-light: #c77dff; /* Purple Light */
+            --accent-teal: #00d9c0; /* Teal */
+            --accent-gold: #f4c430; /* Gold */
+            --accent-red: #ff6b6b; /* Red Soft */
+            --text-dark: #f0f8ff;
+            --text-gray: #8888aa; /* Gray Mid */
+            --border-glow: rgba(155, 93, 229, 0.2);
+            --glow-shadow: 0 0 20px rgba(155, 93, 229, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.06);
+        }
+
+        /* --- NUEVOS ESTILOS DEL PLAN DE MEJORAS UX/UI --- */
+        .pulsing-marker-container {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pulse-halo {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(156, 39, 176, 0.4);
+            animation: marker-pulse 2s infinite ease-out;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes marker-pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(3.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float-avatar {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0); }
+        }
+
+        .map-hint-tooltip {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(13, 13, 23, 0.88);
+            border: 1px solid rgba(156, 39, 176, 0.45);
+            color: #E5E5F0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 4000;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 0;
+            display: none;
+        }
+        .map-hint-tooltip.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
             --panel-bg: rgba(20, 20, 31, 0.9); /* More opaque, premium glass */
             --bg-card: #14141f; /* BG Card */
             --accent-purple: #9b5de5; /* Purple Main */
@@ -937,15 +1027,17 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: rgba(13, 13, 23, 0.9);
-            border: 1px solid var(--glass-border);
+            background: rgba(13, 13, 23, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 6px;
             display: flex;
             gap: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             z-index: 3000;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .map-style-btn {
@@ -977,28 +1069,30 @@
         /* Botón Flotante de Ayuda */
         .floating-help-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #9c27b0;
+            top: 12px;
+            right: 60px;
+            background: rgba(156, 39, 176, 0.25);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(156, 39, 176, 0.45);
             border-radius: 30px;
             padding: 8px 16px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 3000;
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .floating-help-btn:hover {
-            background: #7b1fa2;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+            background: rgba(156, 39, 176, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.3);
         }
 
         /* Modal de Ayuda (Onboarding) */
@@ -2169,75 +2263,138 @@
                     <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 1.2px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 21px;">✦ ORBITAE</span>
                     <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);" id="version-badge-debug" style="display:none;">v3.8 · PDF 5 Pág</span>
                 </h1>
-                <div class="panel-subtitle" id="rotating-subtitle" style="margin-top: 6px; font-size: 8.5px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Inter', sans-serif; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; line-height: 1.4;">
-                    <span class="sub-hl active" data-index="0" onclick="switchTab('cities')" style="transition: all 0.4s ease; color: #00e5ff; text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); font-weight: 800; cursor: pointer; padding: 2px 4px; border-radius: 4px; background: rgba(0, 229, 255, 0.08);">Astrocartografía</span>
-                    <span class="sub-dot" style="color: rgba(255,255,255,0.15); font-weight: 900;">&middot;</span>
-                    <span class="sub-hl" data-index="1" onclick="switchTab('compat')" style="transition: all 0.4s ease; color: rgba(255,255,255,0.35); cursor: pointer; padding: 2px 4px; border-radius: 4px;">Sinastría</span>
-                    <span class="sub-dot" style="color: rgba(255,255,255,0.15); font-weight: 900;">&middot;</span>
-                    <span class="sub-hl" data-index="2" onclick="switchTab('profile')" style="transition: all 0.4s ease; color: rgba(255,255,255,0.35); cursor: pointer; padding: 2px 4px; border-radius: 4px;">Carta Natal</span>
+                <div class="tabs" style="margin-top: 10px; margin-bottom: 0;">
+                    <button class="tab-btn active" onclick="switchTab('profile')">Carta Natal</button>
+                    <button class="tab-btn" onclick="switchTab('cities')">Astrocarto</button>
+                    <button class="tab-btn" onclick="switchTab('compat')">Sinastría</button>
+                    <button class="tab-btn" onclick="switchTab('daily')">Diario</button>
+                    <button class="tab-btn" onclick="switchTab('legend')">Ayuda</button>
                 </div>
-                <script>
-                    (function() {
-                        const items = document.querySelectorAll('#rotating-subtitle .sub-hl');
-                        if (items.length === 0) return;
-                        
-                        const activeStyles = [
-                            { color: '#00e5ff', bg: 'rgba(0, 229, 255, 0.08)', shadow: '0 0 8px rgba(0, 229, 255, 0.6)' },
-                            { color: '#d8b4fe', bg: 'rgba(216, 180, 254, 0.08)', shadow: '0 0 8px rgba(216, 180, 254, 0.6)' },
-                            { color: '#c4b5fd', bg: 'rgba(196, 181, 253, 0.08)', shadow: '0 0 8px rgba(196, 181, 253, 0.6)' }
-                        ];
-                        
-                        let currentIdx = 0;
-                        setInterval(() => {
-                            const prevItem = items[currentIdx];
-                            if (prevItem) {
-                                prevItem.classList.remove('active');
-                                prevItem.style.color = 'rgba(255, 255, 255, 0.35)';
-                                prevItem.style.background = 'transparent';
-                                prevItem.style.textShadow = 'none';
-                                prevItem.style.fontWeight = '500';
-                            }
-                            
-                            currentIdx = (currentIdx + 1) % items.length;
-                            
-                            const activeItem = items[currentIdx];
-                            if (activeItem) {
-                                activeItem.classList.add('active');
-                                const style = activeStyles[currentIdx];
-                                activeItem.style.color = style.color;
-                                activeItem.style.background = style.bg;
-                                activeItem.style.textShadow = style.shadow;
-                                activeItem.style.fontWeight = '800';
-                            }
-                        }, 2800);
-                    })();
-                </script>
             </div>
             
             <div class="panel-content">
                 
-                <!-- Pestañas de Navegación -->
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('profile')">Mi Carta</button>
-                    <button class="tab-btn" onclick="switchTab('compat')">Compatibilidad</button>
-                    <button class="tab-btn" onclick="switchTab('daily')">Diario</button>
-                    <button class="tab-btn" onclick="switchTab('cities')">Destinos</button>
-                    <button class="tab-btn" onclick="switchTab('legend')">Ayuda</button>
-                </div>
+
 
                 <!-- Contenido Pestaña: Origen (Activa por Defecto) -->
                 <div id="tab-profile" class="tab-content">
                     <!-- Saludo Dinámico Personalizado -->
-                    <div id="welcome-greeting-block" style="margin-bottom: 16px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);">
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <div style="font-size: 9px; color: rgba(255, 255, 255, 0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;" id="greeting-time-text">Buenos días,</div>
-                            <div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 6px; line-height: 1.2;">
-                                <span id="greeting-username" style="background: linear-gradient(90deg, #ffffff 60%, #c4b5fd 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;">Viajero</span>
-                                <span id="greeting-sun-symbol" style="color: #00e5ff; font-size: 16px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.8); animation: pulse-icon 2s infinite;">✦</span>
+                    <div id="welcome-greeting-block" style="margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, rgba(20, 20, 31, 0.8) 0%, rgba(13, 13, 23, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 12px;">
+                                <div style="font-size: 10px; color: rgba(255, 255, 255, 0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;" id="greeting-time-text">Buenos días,</div>
+                                <div style="font-family: 'Cinzel', serif; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; line-height: 1.2; margin-bottom: 8px;">
+                                    <span id="greeting-username" style="background: linear-gradient(90deg, #ffffff 60%, #c4b5fd 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;">Viajero</span>
+                                    <span id="greeting-sun-symbol" style="color: #ffd700; font-size: 18px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);">✦</span>
+                                </div>
+                                
+                                <!-- Mensaje Diario / Clima Astral -->
+                                <div id="greeting-daily-msg" style="font-size: 12px; color: #E5E5F0; line-height: 1.6; margin-top: 4px;">
+                                    Ingresá tus datos de nacimiento para calcular tu clima astral personalizado de hoy.
+                                </div>
+                                
+                                <!-- CTAs Flujo de Entrada -->
+                                <div id="greeting-ctas" style="display: flex; gap: 8px; margin-top: 14px;">
+                                    <button class="cta-btn-primary" onclick="scrollToMainContent()" style="background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: white; border: none; border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2); transition: all 0.2s;">
+                                        Ver tu carta completa ↓
+                                    </button>
+                                    <button class="cta-btn-secondary" onclick="openNewChartCalculator()" style="background: rgba(255, 255, 255, 0.05); color: #E5E5F0; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                        Calcular Otra Carta
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Icono Prominente Planetario -->
+                            <div id="greeting-planet-avatar" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 50%; font-size: 26px; box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); animation: float-avatar 3s infinite ease-in-out;">
+                                🪐
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 6px; background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 20px; padding: 3px 8px; font-size: 8px; font-weight: 700; color: #00e5ff; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <i class="fa-solid fa-star-of-david"></i> Guía Astral
+                    </div>
+
+                    <!-- ACORDEÓN RELOCALIZADO DE LA CALCULADORA -->
+                    <div id="calculator-fields-container" style="display: none; background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed); border-radius: 16px; padding: 1px; box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2), 0 0 15px rgba(6, 182, 212, 0.05); margin-bottom: 16px;">
+                        <div class="birth-info-card" style="border: none; background: linear-gradient(135deg, #080818 0%, #0e0626 55%, #080f1e 100%); border-radius: 15px; padding: 0; overflow: hidden; position: relative;">
+                            <div style="position: absolute; top: -30px; right: -20px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0;"></div>
+                            
+                            <h3 style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(13, 13, 23, 0.4) 100%); color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0; font-family: 'Cinzel', serif; position: relative; z-index: 1;" onclick="toggleCalculator()">
+                                <span style="background: linear-gradient(90deg, #c4b5fd, #ffffff); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;"><i class="fa-solid fa-calculator" style="margin-right: 6px; color: #c4b5fd;"></i> Calcular Otra Carta</span>
+                                <i class="fa-solid fa-chevron-down" id="calc-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: #c4b5fd; font-size: 10px;"></i>
+                            </h3>
+                            
+                            <div id="calculator-fields" style="display: block; padding: 14px; position: relative; z-index: 1;">
+                                <div class="input-group autocomplete-container">
+                                    <label class="input-label" style="color: rgba(255,255,255,0.7);">Ciudad de Nacimiento</label>
+                                    <input type="text" id="city-search" value="" placeholder="Busca tu ciudad de nacimiento..." class="text-input" oninput="onCitySearchInput()" autocomplete="on" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                    <div id="search-results" class="search-results-dropdown"></div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px;" class="input-group">
+                                    <div>
+                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Fecha de Nacimiento</label>
+                                        <input type="text" id="date-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                    </div>
+                                    <div>
+                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Hora (Local)</label>
+                                        <input type="text" id="time-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 12px; margin-top: 4px;">
+                                    <button type="button" onclick="toggleAdvancedFields()" style="background: none; border: none; color: #00e5ff; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px; outline: none;">
+                                        <i class="fa-solid fa-gear" style="color: #00e5ff;"></i> Ajustes Avanzados <i class="fa-solid fa-chevron-down" id="advanced-chevron" style="transition: transform 0.2s; color: #00e5ff;"></i>
+                                    </button>
+                                </div>
+
+                                <div id="advanced-calculator-fields" style="display: none; border-left: 2px solid rgba(0, 229, 255, 0.3); padding-left: 10px; margin-bottom: 14px; margin-top: 8px;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" class="input-group">
+                                        <div>
+                                            <label class="input-label" style="color: rgba(255,255,255,0.7);">Latitud</label>
+                                            <input type="number" step="0.0001" id="lat-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                        </div>
+                                        <div>
+                                            <label class="input-label" style="color: rgba(255,255,255,0.7);">Longitud</label>
+                                            <input type="number" step="0.0001" id="lon-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group" style="margin-bottom: 0;">
+                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Zona Horaria (GMT/UTC) <span id="timezone-notice" style="color: #00e5ff; font-weight: bold; font-size: 9px; text-transform: none; display: none;">(Detectado automáticamente)</span></label>
+                                        <select id="timezone-input" class="select-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                            <option value="14">GMT+14</option>
+                                            <option value="13">GMT+13</option>
+                                            <option value="12">GMT+12</option>
+                                            <option value="11">GMT+11</option>
+                                            <option value="10">GMT+10</option>
+                                            <option value="9">GMT+9</option>
+                                            <option value="8">GMT+8</option>
+                                            <option value="7">GMT+7</option>
+                                            <option value="6">GMT+6</option>
+                                            <option value="5">GMT+5</option>
+                                            <option value="4">GMT+4</option>
+                                            <option value="3">GMT+3</option>
+                                            <option value="2">GMT+2 (ej. Europa Central Invierno)</option>
+                                            <option value="1">GMT+1 (ej. Londres)</option>
+                                            <option value="0">GMT 0 (UTC/Greenwich)</option>
+                                            <option value="-1">GMT-1</option>
+                                            <option value="-2">GMT-2</option>
+                                            <option value="-3" selected>GMT-3 (ej. Argentina, Brasil)</option>
+                                            <option value="-4">GMT-4 (ej. Chile, Bolivia)</option>
+                                            <option value="-5">GMT-5 (ej. Colombia, Perú, Miami)</option>
+                                            <option value="-6">GMT-6 (ej. México, Chicago)</option>
+                                            <option value="-7">GMT-7 (ej. Denver)</option>
+                                            <option value="-8">GMT-8 (ej. Los Ángeles)</option>
+                                            <option value="-9">GMT-9 (ej. Alaska)</option>
+                                            <option value="-10">GMT-10 (ej. Hawaii)</option>
+                                            <option value="-11">GMT-11</option>
+                                            <option value="-12">GMT-12</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button onclick="handleCalculateNewChart()" style="width: 100%; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.8px; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(6, 182, 212, 0.6), 0 0 15px rgba(124, 58, 237, 0.4)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.boxShadow='0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2)'; this.style.transform='none';">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Carta
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -2471,100 +2628,7 @@
                         })();
                     </script>
 
-                    <!-- ACORDEÓN: CALCULADORA DINÁMICA -->
-                    <div style="background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed); border-radius: 16px; padding: 1px; box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2), 0 0 15px rgba(6, 182, 212, 0.05); margin-bottom: 16px;">
-                        <div class="birth-info-card" style="border: none; background: linear-gradient(135deg, #080818 0%, #0e0626 55%, #080f1e 100%); border-radius: 15px; padding: 0; overflow: hidden; position: relative;">
-                            <!-- Decoración mística -->
-                            <div style="position: absolute; top: -30px; right: -20px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0;"></div>
-                            
-                            <h3 style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(13, 13, 23, 0.4) 100%); color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0; font-family: 'Cinzel', serif; position: relative; z-index: 1;" onclick="toggleCalculator()">
-                                <span style="background: linear-gradient(90deg, #c4b5fd, #ffffff); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;"><i class="fa-solid fa-calculator" style="margin-right: 6px; color: #c4b5fd;"></i> Calcular Otra Carta</span>
-                                <i class="fa-solid fa-chevron-down" id="calc-chevron" style="transition: transform 0.2s; transform: rotate(180deg); color: #c4b5fd; font-size: 10px;"></i>
-                            </h3>
-                            
-                            <div id="calculator-fields" style="display: block; padding: 14px; position: relative; z-index: 1;">
-                                
-                                <!-- Buscador Nominatim -->
-                                <div class="input-group autocomplete-container">
-                                    <label class="input-label" style="color: rgba(255,255,255,0.7);">Ciudad de Nacimiento</label>
-                                    <input type="text" id="city-search" value="" placeholder="Busca tu ciudad de nacimiento..." class="text-input" oninput="onCitySearchInput()" autocomplete="on" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                    <div id="search-results" class="search-results-dropdown"></div>
-                                </div>
 
-                                <!-- Fecha / Hora -->
-                                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px;" class="input-group">
-                                    <div>
-                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Fecha de Nacimiento</label>
-                                        <input type="date" id="date-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                    </div>
-                                    <div>
-                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Hora (Local)</label>
-                                        <input type="time" id="time-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                    </div>
-                                </div>
-
-                                <!-- Ajustes Avanzados Toggle -->
-                                <div style="margin-bottom: 12px; margin-top: 4px;">
-                                    <button type="button" onclick="toggleAdvancedFields()" style="background: none; border: none; color: #00e5ff; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px; outline: none;">
-                                        <i class="fa-solid fa-gear" style="color: #00e5ff;"></i> Ajustes Avanzados <i class="fa-solid fa-chevron-down" id="advanced-chevron" style="transition: transform 0.2s; color: #00e5ff;"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Bloque Avanzado (Oculto por defecto) -->
-                                <div id="advanced-calculator-fields" style="display: none; border-left: 2px solid rgba(0, 229, 255, 0.3); padding-left: 10px; margin-bottom: 14px; margin-top: 8px;">
-                                    <!-- Latitud / Longitud -->
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" class="input-group">
-                                        <div>
-                                            <label class="input-label" style="color: rgba(255,255,255,0.7);">Latitud</label>
-                                            <input type="number" step="0.0001" id="lat-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                        </div>
-                                        <div>
-                                            <label class="input-label" style="color: rgba(255,255,255,0.7);">Longitud</label>
-                                            <input type="number" step="0.0001" id="lon-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                        </div>
-                                    </div>
-
-                                    <!-- Timezone Offset -->
-                                    <div class="input-group" style="margin-bottom: 0;">
-                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Zona Horaria (GMT/UTC) <span id="timezone-notice" style="color: #00e5ff; font-weight: bold; font-size: 9px; text-transform: none; display: none;">(Detectado automáticamente)</span></label>
-                                        <select id="timezone-input" class="select-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
-                                            <option value="14">GMT+14</option>
-                                            <option value="13">GMT+13</option>
-                                            <option value="12">GMT+12</option>
-                                            <option value="11">GMT+11</option>
-                                            <option value="10">GMT+10</option>
-                                            <option value="9">GMT+9</option>
-                                            <option value="8">GMT+8</option>
-                                            <option value="7">GMT+7</option>
-                                            <option value="6">GMT+6</option>
-                                            <option value="5">GMT+5</option>
-                                            <option value="4">GMT+4</option>
-                                            <option value="3">GMT+3</option>
-                                            <option value="2">GMT+2 (ej. Europa Central Invierno)</option>
-                                            <option value="1">GMT+1 (ej. Londres)</option>
-                                            <option value="0">GMT 0 (UTC/Greenwich)</option>
-                                            <option value="-1">GMT-1</option>
-                                            <option value="-2">GMT-2</option>
-                                            <option value="-3" selected>GMT-3 (ej. Argentina, Brasil)</option>
-                                            <option value="-4">GMT-4 (ej. Chile, Bolivia)</option>
-                                            <option value="-5">GMT-5 (ej. Colombia, Perú, Miami)</option>
-                                            <option value="-6">GMT-6 (ej. México, Chicago)</option>
-                                            <option value="-7">GMT-7 (ej. Denver)</option>
-                                            <option value="-8">GMT-8 (ej. Los Ángeles)</option>
-                                            <option value="-9">GMT-9 (ej. Alaska)</option>
-                                            <option value="-10">GMT-10 (ej. Hawaii)</option>
-                                            <option value="-11">GMT-11</option>
-                                            <option value="-12">GMT-12</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <button onclick="handleCalculateNewChart()" style="width: 100%; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.8px; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(6, 182, 212, 0.6), 0 0 15px rgba(124, 58, 237, 0.4)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.boxShadow='0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2)'; this.style.transform='none';">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Carta
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Tarjeta de Nacimiento Activa -->
                     <div class="birth-info-card" id="active-data-card" style="display: none; border: 1px solid rgba(224, 176, 255, 0.15); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25); margin-bottom: 16px;">
@@ -2799,14 +2863,18 @@
                                 <i class="fa-solid fa-chevron-down" id="pos-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 10px;"></i>
                             </div>
                         </div>
-                        <div id="natal-positions-list-container" style="display: none; padding: 14px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+                        <div id="natal-positions-list-container" style="display: none; padding: 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); text-align: center;">
+                            <!-- Rueda Zodiacal Estática (Fase 2) -->
+                            <div style="margin: 10px auto 20px; display: inline-block; position: relative;">
+                                <canvas id="zodiac-wheel-canvas" width="300" height="300" style="background: rgba(13, 13, 23, 0.5); border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);"></canvas>
+                            </div>
                             <div id="natal-positions-list"></div>
                         </div>
                     </div>
 
                     <!-- Borrar mis datos -->
-                    <div style="margin-top: 12px; text-align: center;">
-                        <button onclick="borrarMisDatos()" style="background:none; border:none; color:rgba(255,255,255,0.2); font-size:10px; cursor:pointer; transition:color 0.2s; padding:6px 12px;" onmouseover="this.style.color='rgba(255,80,80,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.2)'">
+                    <div style="margin-top: 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+                        <button onclick="borrarMisDatos()" style="background: rgba(255, 80, 80, 0.05); border: 1px solid rgba(255, 80, 80, 0.2); border-radius: 8px; color: rgba(255, 120, 120, 0.75); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(255, 80, 80, 0.15)'; this.style.borderColor='rgba(255, 80, 80, 0.45)'; this.style.color='#ff9999';" onmouseout="this.style.background='rgba(255, 80, 80, 0.05)'; this.style.borderColor='rgba(255, 80, 80, 0.2)'; this.style.color='rgba(255, 120, 120, 0.75)';">
                             <i class="fa-solid fa-trash-can"></i> Borrar mis datos
                         </button>
                     </div>
@@ -2854,11 +2922,11 @@
                             <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px;" class="input-group">
                                 <div>
                                     <label class="input-label" style="color: #00bcd4;">Fecha Nacimiento P2</label>
-                                    <input type="date" id="date-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                                    <input type="text" id="date-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
                                 </div>
                                 <div>
                                     <label class="input-label" style="color: #00bcd4;">Hora P2</label>
-                                    <input type="time" id="time-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                                    <input type="text" id="time-input-p2" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
                                 </div>
                             </div>
 
@@ -3130,7 +3198,7 @@
                     <!-- Selector de fecha para buscar "el mejor momento" -->
                     <div class="input-group" style="margin-bottom: 14px;">
                         <label class="input-label" style="color: var(--accent-gold); font-size: 11px;"><i class="fa-solid fa-calendar-days"></i> Evaluar Fecha</label>
-                        <input type="date" id="daily-date-input" class="text-input" onchange="onDailyDateChange()" style="border-color: rgba(179, 134, 0, 0.3); background: rgba(179, 134, 0, 0.01);">
+                        <input type="text" id="daily-date-input" class="text-input" onchange="onDailyDateChange()" style="border-color: rgba(179, 134, 0, 0.3); background: rgba(179, 134, 0, 0.01);">
                     </div>
 
                     <!-- Indicadores de energía (puntuaciones diarias) -->
@@ -3313,6 +3381,7 @@
 
         <!-- Mapa -->
         <div id="map"></div>
+        <div id="map-hint-tooltip" class="map-hint-tooltip">Tocá una línea para ver su significado ✦</div>
 
         <!-- BOTÓN FLOTANTE DE AYUDA / LEYENDA -->
         <button class="floating-help-btn" onclick="openHelpModal()">
@@ -4129,7 +4198,7 @@
         });
 
         function openCalculator() {
-            const fields = document.getElementById('calculator-fields');
+            const fields = document.getElementById('calculator-fields-container');
             const chevron = document.getElementById('calc-chevron');
             if (fields) fields.style.display = 'block';
             if (chevron) chevron.style.transform = 'rotate(180deg)';
@@ -4407,6 +4476,9 @@
             // Capa predeterminada clara y colorida
             activeTileLayer.addTo(map);
 
+            // Show map hint tooltip (Fase 4)
+            setTimeout(showMapTooltip, 1000);
+
             // Evitar que los clics en el selector de estilos y el botón de ayuda se propaguen al mapa Leaflet (vital en móviles)
             const styleSel = document.getElementById('style-selector');
             if (styleSel) {
@@ -4441,6 +4513,9 @@
                 if (el.style.display === 'none' || el.style.display === '') {
                     el.style.display = 'block';
                     if (chev) chev.style.transform = 'rotate(180deg)';
+                    if (elementId === 'natal-positions-list-container') {
+                        setTimeout(drawZodiacWheel, 50);
+                    }
                 } else {
                     el.style.display = 'none';
                     if (chev) chev.style.transform = 'rotate(0deg)';
@@ -4732,9 +4807,9 @@
                         <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; color: #ffffff;">
                             <thead>
                                 <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.4); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.8px; text-align: left;">
-                                    <th style="padding: 8px 6px;">Astro</th>
-                                    <th style="padding: 8px 6px;">Signo</th>
-                                    <th style="padding: 8px 6px; text-align: right;">Posición</th>
+                                    <th style="padding: 8px 8px;">Astro</th>
+                                    <th style="padding: 8px 8px;">Signo</th>
+                                    <th style="padding: 8px 8px; text-align: right;">Posición</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -4742,18 +4817,23 @@
                     
                     const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'ASC', 'MC'];
                     const pIcons = {
-                        'Sun': '<i class="fa-solid fa-sun" style="color: #ffd700; width: 14px; text-align: center;"></i> Sol',
-                        'Moon': '<i class="fa-solid fa-moon" style="color: #cbd5e1; width: 14px; text-align: center;"></i> Luna',
-                        'Mercury': '<i class="fa-solid fa-mercury" style="color: #34d399; width: 14px; text-align: center;"></i> Mercurio',
-                        'Venus': '<i class="fa-solid fa-venus" style="color: #f472b6; width: 14px; text-align: center;"></i> Venus',
-                        'Mars': '<i class="fa-solid fa-mars" style="color: #f87171; width: 14px; text-align: center;"></i> Marte',
-                        'Jupiter': '<i class="fa-solid fa-circle-radiation" style="color: #c084fc; width: 14px; text-align: center;"></i> Júpiter',
-                        'Saturn': '<i class="fa-solid fa-ring" style="color: #fb923c; width: 14px; text-align: center;"></i> Saturno',
-                        'Uranus': '<i class="fa-solid fa-atom" style="color: #22d3ee; width: 14px; text-align: center;"></i> Urano',
-                        'Neptune': '<i class="fa-solid fa-water" style="color: #60a5fa; width: 14px; text-align: center;"></i> Neptuno',
-                        'Pluto': '<i class="fa-solid fa-skull" style="color: #a78bfa; width: 14px; text-align: center;"></i> Plutón',
-                        'ASC': '<i class="fa-solid fa-arrow-up-right-from-square" style="color: #a78bfa; width: 14px; text-align: center;"></i> Ascendente',
-                        'MC': '<i class="fa-solid fa-circle-up" style="color: #fbbf24; width: 14px; text-align: center;"></i> Medio Cielo'
+                        'Sun': '☀️ Sol',
+                        'Moon': '🌙 Luna',
+                        'Mercury': '🧠 Mercurio',
+                        'Venus': '💖 Venus',
+                        'Mars': '💥 Marte',
+                        'Jupiter': '🪐 Júpiter',
+                        'Saturn': '⏳ Saturno',
+                        'Uranus': '⚡ Urano',
+                        'Neptune': '🌊 Neptuno',
+                        'Pluto': '🌋 Plutón',
+                        'ASC': '🎭 Ascendente',
+                        'MC': '🎯 Medio Cielo'
+                    };
+                    const pColors = {
+                        'Sun': '#ffd700', 'Moon': '#cbd5e1', 'Mercury': '#34d399', 'Venus': '#f472b6', 'Mars': '#f87171',
+                        'Jupiter': '#c084fc', 'Saturn': '#fb923c', 'Uranus': '#22d3ee', 'Neptune': '#60a5fa', 'Pluto': '#a78bfa',
+                        'ASC': '#a78bfa', 'MC': '#fbbf24'
                     };
                     
                     pOrder.forEach((p, idx) => {
@@ -4762,12 +4842,21 @@
                             const sign = getZodiacSign(lonVal);
                             const deg = Math.floor(lonVal % 30);
                             const min = Math.floor(((lonVal % 30) - deg) * 60);
-                            const bgStyle = idx % 2 === 0 ? 'background: rgba(255,255,255,0.01);' : '';
+                            
+                            const isCore = ['Sun', 'Moon', 'ASC', 'MC'].includes(p);
+                            const rowClass = isCore ? '' : 'extra-planet-row';
+                            const displayStyle = isCore ? '' : 'display: none;';
+                            
+                            const color = pColors[p] || '#ffffff';
+                            const bgStyle = idx % 2 === 0 ? 'background: #13131F;' : 'background: #16162a;';
+                            
                             pTableHtml += `
-                                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); transition: background-color 0.2s; ${bgStyle}" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='${idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'}'">
-                                    <td style="padding: 9px 6px; font-weight: 500; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.95);">${pIcons[p]}</td>
-                                    <td style="padding: 9px 6px; color: rgba(255,255,255,0.85);">${sign.symbol} ${sign.name}</td>
-                                    <td style="padding: 9px 6px; text-align: right; font-family: 'Inter', monospace; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.95);">${deg}° ${min}'</td>
+                                <tr class="${rowClass}" style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid ${color}; ${bgStyle} ${displayStyle} transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='${idx % 2 === 0 ? '#13131F' : '#16162a'}'">
+                                    <td style="padding: 9px 8px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.95);">${pIcons[p]}</td>
+                                    <td style="padding: 9px 8px; color: rgba(255,255,255,0.85);">${sign.symbol} ${sign.name}</td>
+                                    <td style="padding: 9px 8px; text-align: right; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">
+                                        <span style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2px 8px; color: rgba(255,255,255,0.95);">${deg}° ${min}'</span>
+                                    </td>
                                 </tr>
                             `;
                         }
@@ -4776,12 +4865,17 @@
                     pTableHtml += `
                             </tbody>
                         </table>
+                        <div style="text-align: center; margin-top: 12px; margin-bottom: 6px;">
+                            <button id="toggle-extra-planets-btn" onclick="toggleExtraPlanets()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #c4b5fd; padding: 6px 16px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; outline: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
+                                Ver todos los planetas ↓
+                            </button>
+                        </div>
                     `;
                     
                     // Agregar acordeones de interpretación individual de los planetas personales
                     pTableHtml += `
                         <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-                            <h4 style="color: var(--accent-gold); font-size: 13.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; font-family: 'Cinzel', serif;">
+                            <h4 style="color: var(--accent-gold); font-size: 13.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; font-family: 'Cinzel', serif;">
                                 <i class="fa-solid fa-book-open"></i> Interpretación Personal
                             </h4>
                     `;
@@ -4804,12 +4898,12 @@
                                 const posStr = `${degVal}° ${minVal}'`;
 
                                 pTableHtml += `
-                                    <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-purple); border-radius: 4px; padding: 12px; margin-bottom: 12px; font-size: 13.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                                        <strong style="color: var(--accent-purple-light); display: block; margin-bottom: 4px; font-size: 13.5px; font-weight: 600; letter-spacing: 0.3px;">
+                                    <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-purple); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                                        <strong style="color: var(--accent-purple-light); display: block; margin-bottom: 6px; font-size: 17px; font-weight: 700; letter-spacing: 0.3px;">
                                             ${interpData.symbol} ${formattedTitle}
                                         </strong>
-                                        <div style="display: inline-block; background: rgba(255,255,255,0.06); border-radius: 4px; padding: 2.5px 8px; font-size: 11px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; font-family: 'Inter', sans-serif;">${posStr}</div>
-                                        <span style="color: #ccccdd; line-height: 1.55; display: block; font-size: 12.5px;">${descText}</span>
+                                        <div style="display: inline-block; background: rgba(255,255,255,0.04); border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 10px; font-family: 'Inter', sans-serif;">${posStr}</div>
+                                        <span style="color: #E5E5F0; line-height: 1.6; display: block; font-size: 13.5px;">${descText}</span>
                                     </div>
                                 `;
                             }
@@ -4844,13 +4938,13 @@
                             }
 
                             pTableHtml += `
-                                <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-gold); border-radius: 4px; padding: 12px; margin-bottom: 12px; font-size: 13.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                                    <strong style="color: var(--accent-gold); display: block; margin-bottom: 4px; font-size: 13.5px; font-weight: 600; letter-spacing: 0.3px;">
+                                <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-gold); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                                    <strong style="color: var(--accent-gold); display: block; margin-bottom: 6px; font-size: 17px; font-weight: 700; letter-spacing: 0.3px;">
                                         🎯 Medio Cielo · Vocación · ${mcSign.name}
                                     </strong>
-                                    <div style="display: inline-block; background: rgba(255,255,255,0.06); border-radius: 4px; padding: 2.5px 8px; font-size: 11px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; font-family: 'Inter', sans-serif;">${mcPosStr}</div>
-                                    <span style="color: #ccccdd; line-height: 1.55; display: block; font-size: 12.5px; margin-bottom: 6px;">${mcInterp.desc}</span>
-                                    <span style="color: var(--accent-gold); display: block; font-size: 11.5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; margin-top: 6px; letter-spacing: 0.3px; margin-bottom: 4px;"><strong>Recomendado:</strong> ${mcInterp.jobs}</span>
+                                    <div style="display: inline-block; background: rgba(255,255,255,0.04); border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 10px; font-family: 'Inter', sans-serif;">${mcPosStr}</div>
+                                    <span style="color: #E5E5F0; line-height: 1.6; display: block; font-size: 13.5px; margin-bottom: 8px;">${mcInterp.desc}</span>
+                                    <span style="color: rgba(255, 255, 255, 0.5); display: block; font-size: 11.5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; margin-top: 6px;">Profesiones afines: <span style="color: var(--accent-gold); font-weight: 600;">${mcInterp.jobs}</span></span>
                                     ${culmHtml}
                                 </div>
                             `;
@@ -5058,7 +5152,12 @@
                 }
                 const birthIcon = L.divIcon({
                     className: 'birth-marker',
-                    html: '<i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 20px; text-shadow: 0 0 10px rgba(156, 39, 176, 0.4);"></i>',
+                    html: `
+                        <div class="pulsing-marker-container">
+                            <div class="pulse-halo"></div>
+                            <i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 22px; position: relative; z-index: 2; text-shadow: 0 0 10px rgba(156, 39, 176, 0.6);"></i>
+                        </div>
+                    `,
                     iconSize: [20, 20],
                     iconAnchor: [10, 10]
                 });
@@ -5081,7 +5180,7 @@
 
                 // Colapsar el calculador solo si se solicitó explícitamente (al hacer clic en los botones de calcular/generar)
                 if (collapseForm) {
-                    const fields = document.getElementById('calculator-fields');
+                    const fields = document.getElementById('calculator-fields-container');
                     const chevron = document.getElementById('calc-chevron');
                     if (fields) {
                         fields.style.display = 'none';
@@ -5093,6 +5192,9 @@
                 
                 // Actualizar CTA flotante
                 showCalculateCTA();
+                
+                // Redibujar rueda zodiacal
+                setTimeout(drawZodiacWheel, 150);
             } catch (error) {
                 showToast('⚠️ Error al calcular la carta. Verificá los datos ingresados.');
             }
@@ -5655,6 +5757,14 @@
             // Sincronizar navegación móvil inferior
             updateMobileNavActiveState(tabId);
             updateFloatingPDFButton();
+
+            // Redraw zodiac wheel if profile is activated and positions list is open
+            if (tabId === 'profile') {
+                const positionsContainer = document.getElementById('natal-positions-list-container');
+                if (positionsContainer && positionsContainer.style.display === 'block') {
+                    setTimeout(drawZodiacWheel, 100);
+                }
+            }
         }
 
         // --- MANEJADORES DE NAVEGACIÓN MÓVIL ---
@@ -5758,7 +5868,7 @@
         }
 
         function openCalculator() {
-            const fields = document.getElementById('calculator-fields');
+            const fields = document.getElementById('calculator-fields-container');
             const chevron = document.getElementById('calc-chevron');
             if (fields) {
                 fields.style.display = 'block';
@@ -5766,8 +5876,247 @@
             }
         }
 
+        function toggleCalculator() {
+            const fields = document.getElementById('calculator-fields-container');
+            const chevron = document.getElementById('calc-chevron');
+            if (fields) {
+                if (fields.style.display === 'none' || fields.style.display === '') {
+                    fields.style.display = 'block';
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    fields.style.display = 'none';
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        function openNewChartCalculator() {
+            // Limpiar todos los campos del calculador
+            const city = document.getElementById('city-search');
+            const date = document.getElementById('date-input');
+            const time = document.getElementById('time-input');
+            const lat = document.getElementById('lat-input');
+            const lon = document.getElementById('lon-input');
+            const tz = document.getElementById('timezone-input');
+            const notice = document.getElementById('timezone-notice');
+            
+            if (city) city.value = '';
+            if (date) {
+                date.value = '';
+                if (date._flatpickr) date._flatpickr.clear();
+            }
+            if (time) {
+                time.value = '';
+                if (time._flatpickr) time._flatpickr.clear();
+            }
+            if (lat) lat.value = '';
+            if (lon) lon.value = '';
+            if (tz) tz.value = '-3'; // Fallback por defecto (GMT-3)
+            if (notice) notice.style.display = 'none';
+
+            // Cerrar también los campos avanzados por defecto al calcular una nueva
+            const advFields = document.getElementById('advanced-calculator-fields');
+            if (advFields) advFields.style.display = 'none';
+            const advChevron = document.getElementById('advanced-chevron');
+            if (advChevron) advChevron.style.transform = 'rotate(0deg)';
+
+            // Abrir el contenedor de la calculadora
+            const fields = document.getElementById('calculator-fields-container');
+            const chevron = document.getElementById('calc-chevron');
+            if (fields) {
+                fields.style.display = 'block';
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+            
+            // Hacer scroll hasta el calculador para centrar la vista
+            const calculatorBlock = document.getElementById('calculator-fields-container');
+            if (calculatorBlock) {
+                calculatorBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function scrollToMainContent() {
+            const el = document.getElementById('active-data-card') || document.querySelector('.planet-cards-container') || document.getElementById('sidebar');
+            if (el) {
+                const sidebarContent = document.querySelector('.panel-content');
+                if (sidebarContent) {
+                    sidebarContent.scrollTo({ top: 300, behavior: 'smooth' });
+                } else {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        function toggleExtraPlanets() {
+            const rows = document.querySelectorAll('.extra-planet-row');
+            const btn = document.getElementById('toggle-extra-planets-btn');
+            if (rows.length === 0 || !btn) return;
+            
+            const isHidden = rows[0].style.display === 'none';
+            rows.forEach(row => {
+                row.style.display = isHidden ? '' : 'none';
+            });
+            
+            btn.innerHTML = isHidden ? 'Ocultar planetas ↑' : 'Ver todos los planetas ↓';
+        }
+
+        function showMapTooltip() {
+            const tooltip = document.getElementById('map-hint-tooltip');
+            if (!tooltip) return;
+            tooltip.style.display = 'block';
+            setTimeout(() => {
+                tooltip.classList.add('show');
+            }, 50);
+            
+            const hideTooltip = () => {
+                tooltip.classList.remove('show');
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 500);
+                if (map && typeof map.off === 'function') map.off('click', hideTooltip);
+            };
+            
+            setTimeout(hideTooltip, 4000);
+            if (map && typeof map.on === 'function') map.on('click', hideTooltip);
+        }
+
+        function drawZodiacWheel() {
+            const canvas = document.getElementById('zodiac-wheel-canvas');
+            if (!canvas || !natalPlanets) return;
+            
+            const ctx = canvas.getContext('2d');
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = Math.min(cx, cy) - 20;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Outer ring
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Inner ring
+            const rInner = r - 22;
+            ctx.beginPath();
+            ctx.arc(cx, cy, rInner, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            const signSymbols = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+            
+            const getCanvasAngle = (deg) => {
+                const ascLon = natalPlanets['ASC'] || 0;
+                return Math.PI + (deg - ascLon) * Math.PI / 180.0;
+            };
+            
+            // Draw cusps and sign labels
+            for (let i = 0; i < 12; i++) {
+                const startDeg = i * 30;
+                const endDeg = (i + 1) * 30;
+                const aStart = getCanvasAngle(startDeg);
+                const aEnd = getCanvasAngle(endDeg);
+                
+                ctx.beginPath();
+                ctx.moveTo(cx + rInner * Math.cos(aStart), cy + rInner * Math.sin(aStart));
+                ctx.lineTo(cx + r * Math.cos(aStart), cy + r * Math.sin(aStart));
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+                ctx.stroke();
+                
+                const aMid = (aStart + aEnd) / 2;
+                const textR = r - 11;
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(signSymbols[i], cx + textR * Math.cos(aMid), cy + textR * Math.sin(aMid));
+            }
+            
+            // Draw aspect lines
+            const aspectColors = {
+                'Conjunción': 'rgba(0, 229, 255, 0.2)',
+                'Oposición': 'rgba(244, 63, 94, 0.2)',
+                'Trígono': 'rgba(16, 185, 129, 0.2)',
+                'Cuadratura': 'rgba(245, 158, 11, 0.2)',
+                'Sextil': 'rgba(59, 130, 246, 0.2)'
+            };
+            
+            const aspectTypes = [
+                { name: 'Conjunción', angle: 0, orbe: 8 },
+                { name: 'Oposición', angle: 180, orbe: 8 },
+                { name: 'Trígono', angle: 120, orbe: 8 },
+                { name: 'Cuadratura', angle: 90, orbe: 7 },
+                { name: 'Sextil', angle: 60, orbe: 6 }
+            ];
+            
+            const pKeys = Object.keys(natalPlanets).filter(k => k !== 'MC' && k !== 'ASC');
+            for (let i = 0; i < pKeys.length; i++) {
+                for (let j = i + 1; j < pKeys.length; j++) {
+                    const p1 = pKeys[i];
+                    const p2 = pKeys[j];
+                    const lon1 = natalPlanets[p1];
+                    const lon2 = natalPlanets[p2];
+                    if (lon1 === undefined || lon2 === undefined) continue;
+                    
+                    let diff = Math.abs(lon1 - lon2) % 360;
+                    if (diff > 180) diff = 360 - diff;
+                    
+                    aspectTypes.forEach(asp => {
+                        if (Math.abs(diff - asp.angle) < asp.orbe) {
+                            const a1 = getCanvasAngle(lon1);
+                            const a2 = getCanvasAngle(lon2);
+                            const x1 = cx + (rInner - 20) * Math.cos(a1);
+                            const y1 = cy + (rInner - 20) * Math.sin(a1);
+                            const x2 = cx + (rInner - 20) * Math.cos(a2);
+                            const y2 = cy + (rInner - 20) * Math.sin(a2);
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.strokeStyle = aspectColors[asp.name] || 'rgba(255, 255, 255, 0.1)';
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    });
+                }
+            }
+            
+            // Draw planet dots
+            const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'ASC', 'MC'];
+            const pColors = {
+                'Sun': '#ffd700', 'Moon': '#cbd5e1', 'Mercury': '#34d399', 'Venus': '#f472b6', 'Mars': '#f87171',
+                'Jupiter': '#c084fc', 'Saturn': '#fb923c', 'Uranus': '#22d3ee', 'Neptune': '#60a5fa', 'Pluto': '#a78bfa',
+                'ASC': '#a78bfa', 'MC': '#fbbf24'
+            };
+            
+            pOrder.forEach(p => {
+                const lonVal = natalPlanets[p];
+                if (lonVal !== undefined) {
+                    const a = getCanvasAngle(lonVal);
+                    const ptR = rInner - 12;
+                    const x = cx + ptR * Math.cos(a);
+                    const y = cy + ptR * Math.sin(a);
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = pColors[p] || '#ffffff';
+                    ctx.fill();
+                    
+                    if (['Sun', 'Moon', 'ASC', 'MC'].includes(p)) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 7, 0, 2 * Math.PI);
+                        ctx.strokeStyle = (pColors[p] || '#ffffff') + '55';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
+
         function updateDynamicSalutation() {
-            const name = localStorage.getItem('orbitae_name') || 'Viajero';
+            const rawName = localStorage.getItem('orbitae_name') || 'Viajero';
+            const name = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
             
             // Saludo según hora del día
             const h = new Date().getHours();
@@ -6592,20 +6941,7 @@
         function updateSyncButtonVisibility() {
         }
 
-        // Toggle del Acordeón del Calculador
-        function toggleCalculator() {
-            const fields = document.getElementById('calculator-fields');
-            const chevron = document.getElementById('calc-chevron');
-            
-            if (fields.style.display === 'none') {
-                fields.style.display = 'block';
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                fields.style.display = 'none';
-                chevron.style.transform = 'rotate(0deg)';
-            }
-            updateSyncButtonVisibility();
-        }
+        // Toggle del Acordeón del Calculador (Removido duplicado para usar la versión relocalizada)
 
         function toggleAdvancedFields() {
             const advFields = document.getElementById('advanced-calculator-fields');
@@ -7374,7 +7710,17 @@
                     calculateNewChart();
                     
                     if (birthMarker) map.removeLayer(birthMarker);
-                    const birthIcon = L.divIcon({ className: 'birth-marker', html: '<i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 20px;"></i>', iconSize: [20, 20], iconAnchor: [10, 10] });
+                    const birthIcon = L.divIcon({
+                        className: 'birth-marker',
+                        html: `
+                            <div class="pulsing-marker-container">
+                                <div class="pulse-halo"></div>
+                                <i class="fa-solid fa-bahai" style="color: #9c27b0; font-size: 22px; position: relative; z-index: 2; text-shadow: 0 0 10px rgba(156, 39, 176, 0.6);"></i>
+                            </div>
+                        `,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
                     birthMarker = L.marker([lat, lon], { icon: birthIcon }).addTo(map);
                     map.flyTo([lat, lon], 5, { animate: true, duration: 1.5 });
                     
@@ -7454,6 +7800,77 @@
                 Object.keys(scores).forEach(k => scores[k] = Math.max(10, Math.min(95, Math.round(scores[k]))));
                 dailyScores = { ...scores };
                 
+                // Buscar el tránsito más activo (menor orbe)
+                const greetingDailyMsgEl = document.getElementById('greeting-daily-msg');
+                const greetingPlanetAvatarEl = document.getElementById('greeting-planet-avatar');
+                
+                if (greetingDailyMsgEl && aspects.length > 0) {
+                    const sortedAspects = [...aspects].sort((a, b) => a.orb - b.orb);
+                    const activeAsp = sortedAspects[0];
+                    
+                    const planetSp = {
+                        'Sun': 'el Sol', 'Moon': 'la Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
+                        'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
+                        'ASC': 'tu Ascendente', 'MC': 'tu Medio Cielo'
+                    };
+                    const natalSp = {
+                        'Sun': 'Sol', 'Moon': 'Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
+                        'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
+                        'ASC': 'Ascendente', 'MC': 'Medio Cielo'
+                    };
+                    const planetEmoji = {
+                        'Sun': '☀️', 'Moon': '🌙', 'Mercury': '🧠', 'Venus': '💖', 'Mars': '💥',
+                        'Jupiter': '🪐', 'Saturn': '⏳', 'Uranus': '⚡', 'Neptune': '🌊', 'Pluto': '🌋',
+                        'ASC': '🎭', 'MC': '🎯'
+                    };
+                    const pColors = {
+                        'Sun': '#ffd700', 'Moon': '#cbd5e1', 'Mercury': '#34d399', 'Venus': '#f472b6', 'Mars': '#f87171',
+                        'Jupiter': '#c084fc', 'Saturn': '#fb923c', 'Uranus': '#22d3ee', 'Neptune': '#60a5fa', 'Pluto': '#a78bfa',
+                        'ASC': '#a78bfa', 'MC': '#fbbf24'
+                    };
+                    const transitMessages = {
+                        'Sun': 'Día de vitalidad, claridad de propósito y autoexpresión. Ideal para mostrar tu brillo natal.',
+                        'Moon': 'Momento de conexión emocional, intuición profunda y confort interior. Excelente para escuchar tu corazón.',
+                        'Mercury': 'Fluidez en comunicación, ideas brillantes y acuerdos. Tu mente está aguda y lista para socializar.',
+                        'Venus': 'Armonía, magnetismo afectivo y disfrute estético. Excelente para conectar con seres queridos.',
+                        'Mars': 'Iniciativa, energía física y acción enfocada. Ideal para tomar decisiones firmes y avanzar.',
+                        'Jupiter': 'Expansión, optimismo, suerte y oportunidades de aprendizaje. Confía en la guía del universo hoy.',
+                        'Saturn': 'Disciplina, orden y madurez. Excelente momento para sentar bases sólidas y organizar responsabilidades.',
+                        'Uranus': 'Revelaciones repentinas, cambios liberadores y originalidad. Sal de la rutina y abraza la innovación.',
+                        'Neptune': 'Inspiración artística, empatía profunda y sueños. Momento propicio para la meditación y la creatividad.',
+                        'Pluto': 'Poder de transformación, regeneración interna y enfoque absoluto. Momento ideal para soltar lo viejo.'
+                    };
+                    
+                    const tName = activeAsp.transit;
+                    const nName = activeAsp.natal;
+                    const tSp = planetSp[tName] || tName;
+                    const nSp = natalSp[nName] || nName;
+                    const aspectName = activeAsp.type.toLowerCase();
+                    const emoji = planetEmoji[tName] || '🪐';
+                    
+                    const explanation = transitMessages[tName] || 'Las energías planetarias se alinean hoy para guiar tu camino natal.';
+                    
+                    greetingDailyMsgEl.innerHTML = `<strong>Hoy ${tSp} activa tu ${nSp} natal</strong> mediante una ${aspectName}. <br>${explanation}`;
+                    if (greetingPlanetAvatarEl) {
+                        greetingPlanetAvatarEl.innerText = emoji;
+                        greetingPlanetAvatarEl.style.borderColor = pColors[tName] || 'rgba(124, 58, 237, 0.25)';
+                        greetingPlanetAvatarEl.style.background = (pColors[tName] || '#7c3aed') + '15';
+                        greetingPlanetAvatarEl.style.boxShadow = `0 0 15px ${(pColors[tName] || '#7c3aed')}25`;
+                    }
+                } else if (greetingDailyMsgEl) {
+                    let sunSignName = 'Aries';
+                    if (natalPlanets && natalPlanets['Sun'] !== undefined) {
+                        sunSignName = getZodiacSign(natalPlanets['Sun']).name;
+                    }
+                    greetingDailyMsgEl.innerHTML = `El clima astral hoy te invita a fluir. Sintoniza con la energía y vitalidad de tu Sol natal en <strong>${sunSignName}</strong>.`;
+                    if (greetingPlanetAvatarEl) {
+                        greetingPlanetAvatarEl.innerText = '☀️';
+                        greetingPlanetAvatarEl.style.borderColor = 'rgba(255, 215, 0, 0.25)';
+                        greetingPlanetAvatarEl.style.background = 'rgba(255, 215, 0, 0.08)';
+                        greetingPlanetAvatarEl.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.15)';
+                    }
+                }
+
                 document.getElementById('score-love-val').innerText = `${scores.love}%`;
                 document.getElementById('score-love-bar').style.width = `${scores.love}%`;
                 document.getElementById('score-career-val').innerText = `${scores.career}%`;

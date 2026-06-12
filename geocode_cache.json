@@ -623,5 +623,391 @@
         "-114.0541379"
       ]
     }
+  ],
+  "los": [
+    {
+      "place_id": 40647293,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 370666112,
+      "lat": "6.5743175",
+      "lon": "3.3208504",
+      "class": "aeroway",
+      "type": "aerodrome",
+      "place_rank": 30,
+      "importance": 0.48892975400351835,
+      "addresstype": "aeroway",
+      "name": "Murtala Mohammed International Airport",
+      "display_name": "Murtala Mohammed International Airport, Olu Adeogun Street, Alimosho, Lagos, 102213, Nigeria",
+      "boundingbox": [
+        "6.5420305",
+        "6.6062340",
+        "3.3031330",
+        "3.3370194"
+      ]
+    },
+    {
+      "place_id": 161965802,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 31116251,
+      "lat": "61.7365134",
+      "lon": "15.1692093",
+      "class": "place",
+      "type": "village",
+      "place_rank": 19,
+      "importance": 0.33399297642662173,
+      "addresstype": "village",
+      "name": "Los",
+      "display_name": "Los, Ljusdals kommun, Gävleborgs län, 827 70, Sverige",
+      "boundingbox": [
+        "61.7165134",
+        "61.7565134",
+        "15.1492093",
+        "15.1892093"
+      ]
+    },
+    {
+      "place_id": 28813403,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 931541563,
+      "lat": "-2.1191670",
+      "lon": "130.3111110",
+      "class": "place",
+      "type": "island",
+      "place_rank": 17,
+      "importance": 0.17334333333333332,
+      "addresstype": "island",
+      "name": "Los",
+      "display_name": "Los, Raja Ampat, Papua Barat Daya, Irian Barat, Indonesia",
+      "boundingbox": [
+        "-2.4391670",
+        "-1.7991670",
+        "129.9911110",
+        "130.6311110"
+      ]
+    },
+    {
+      "place_id": 260575476,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 3233302490,
+      "lat": "1.2088000",
+      "lon": "121.4153000",
+      "class": "place",
+      "type": "village",
+      "place_rank": 19,
+      "importance": 0.14670666742961772,
+      "addresstype": "village",
+      "name": "Los",
+      "display_name": "Los, Buol, Sulawesi Tengah, Sulawesi, 94563, Indonesia",
+      "boundingbox": [
+        "1.1888000",
+        "1.2288000",
+        "121.3953000",
+        "121.4353000"
+      ]
+    },
+    {
+      "place_id": 29736130,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 11377344633,
+      "lat": "-7.8962652",
+      "lon": "113.8481664",
+      "class": "place",
+      "type": "hamlet",
+      "place_rank": 20,
+      "importance": 0.1333733340962844,
+      "addresstype": "hamlet",
+      "name": "Los",
+      "display_name": "Los, Pejaten, Bondowoso, Jawa Timur, 68217, Indonesia",
+      "boundingbox": [
+        "-7.9162652",
+        "-7.8762652",
+        "113.8281664",
+        "113.8681664"
+      ]
+    },
+    {
+      "place_id": 68952918,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 669794774,
+      "lat": "46.0563827",
+      "lon": "14.4744461",
+      "class": "natural",
+      "type": "grassland",
+      "place_rank": 22,
+      "importance": 0.10674208361943997,
+      "addresstype": "grassland",
+      "name": "Los",
+      "display_name": "Los, Rožna dolina, Četrtna skupnost Rožnik, Ljubljana, Upravna Enota Ljubljana, 1000, Slovenija",
+      "boundingbox": [
+        "46.0561025",
+        "46.0567093",
+        "14.4740126",
+        "14.4748722"
+      ]
+    },
+    {
+      "place_id": 166226215,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 7471118798,
+      "lat": "61.6848231",
+      "lon": "16.0571535",
+      "class": "place",
+      "type": "isolated_dwelling",
+      "place_rank": 22,
+      "importance": 0.10672489585717553,
+      "addresstype": "isolated_dwelling",
+      "name": "Los",
+      "display_name": "Los, Ljusdals kommun, Gävleborgs län, 827 53, Sverige",
+      "boundingbox": [
+        "61.6847731",
+        "61.6848731",
+        "16.0571035",
+        "16.0572035"
+      ]
+    },
+    {
+      "place_id": 290253294,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 3877732583,
+      "lat": "44.7457106",
+      "lon": "-0.3922065",
+      "class": "place",
+      "type": "isolated_dwelling",
+      "place_rank": 22,
+      "importance": 0.10671713969634544,
+      "addresstype": "isolated_dwelling",
+      "name": "Los",
+      "display_name": "Los, Lubert, Saint-Genès-de-Lombaud, Bordeaux, Gironde, Nouvelle-Aquitaine, France métropolitaine, 33670, France",
+      "boundingbox": [
+        "44.7456606",
+        "44.7457606",
+        "-0.3922565",
+        "-0.3921565"
+      ]
+    },
+    {
+      "place_id": 69582581,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "node",
+      "osm_id": 2049638334,
+      "lat": "46.4705487",
+      "lon": "13.0071968",
+      "class": "place",
+      "type": "hamlet",
+      "place_rank": 20,
+      "importance": 0.13339379949645225,
+      "addresstype": "hamlet",
+      "name": "Loz",
+      "display_name": "Loz, Fielis, Zuglio / Zui, Udine / Udin / Videm, Friuli-Venezia Giulia, 33020, Italia",
+      "boundingbox": [
+        "46.4505487",
+        "46.4905487",
+        "12.9871968",
+        "13.0271968"
+      ]
+    }
+  ],
+  "los pol": [
+    {
+      "place_id": 512033,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 134708532,
+      "lat": "-41.4267915",
+      "lon": "-73.0969087",
+      "class": "aeroway",
+      "type": "apron",
+      "place_rank": 30,
+      "importance": 5.930189974818063e-05,
+      "addresstype": "aeroway",
+      "name": "POL",
+      "display_name": "POL, Aeropuerto El Tepual, El Tepual, Puerto Montt, Provincia de Llanquihue, Región de Los Lagos, Chile",
+      "boundingbox": [
+        "-41.4268719",
+        "-41.4265944",
+        "-73.0971687",
+        "-73.0966510"
+      ]
+    },
+    {
+      "place_id": 317553767,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 441089782,
+      "lat": "33.7933973",
+      "lon": "-118.0621533",
+      "class": "aeroway",
+      "type": "hangar",
+      "place_rank": 30,
+      "importance": 5.372472724493809e-05,
+      "addresstype": "aeroway",
+      "name": "POL",
+      "display_name": "POL, Freedom Way, Los Alamitos, Orange County, California, 90720, United States",
+      "boundingbox": [
+        "33.7933535",
+        "33.7934411",
+        "-118.0623075",
+        "-118.0619991"
+      ]
+    },
+    {
+      "place_id": 307609454,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 202157720,
+      "lat": "18.4506187",
+      "lon": "-66.6742983",
+      "class": "aeroway",
+      "type": "aerodrome",
+      "place_rank": 30,
+      "importance": 0.32363080181052895,
+      "addresstype": "aeroway",
+      "name": "Aeropuerto Regional Antonio \"Nery\" Juarbe Pol",
+      "display_name": "Aeropuerto Regional Antonio \"Nery\" Juarbe Pol, Avenida Puerto Rico, Santana, Arecibo, Puerto Rico, 00616, United States",
+      "boundingbox": [
+        "18.4475756",
+        "18.4548261",
+        "-66.6815748",
+        "-66.6666597"
+      ]
+    },
+    {
+      "place_id": 83440843,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 138941332,
+      "lat": "41.4090915",
+      "lon": "2.0061330",
+      "class": "landuse",
+      "type": "industrial",
+      "place_rank": 24,
+      "importance": 0.0800610597390707,
+      "addresstype": "industrial",
+      "name": "Polígon industrial Pla del Ricard",
+      "display_name": "Polígon industrial Pla del Ricard, Sant Vicenç dels Horts, Baix Llobregat, Barcelona, Catalunya, 08620, España",
+      "boundingbox": [
+        "41.4067563",
+        "41.4113383",
+        "2.0029430",
+        "2.0097813"
+      ]
+    }
+  ],
+  "los polvo": [
+    {
+      "place_id": 313325032,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 696757924,
+      "lat": "20.1123650",
+      "lon": "-101.1623526",
+      "class": "highway",
+      "type": "residential",
+      "place_rank": 26,
+      "importance": 0.05337628976882578,
+      "addresstype": "road",
+      "name": "Calle Polvo",
+      "display_name": "Calle Polvo, Los Pinos, Uriangato, Guanajuato, 38983, México",
+      "boundingbox": [
+        "20.1123118",
+        "20.1124181",
+        "-101.1629333",
+        "-101.1617720"
+      ]
+    },
+    {
+      "place_id": 299218354,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 203378287,
+      "lat": "28.4526451",
+      "lon": "-16.4176092",
+      "class": "highway",
+      "type": "residential",
+      "place_rank": 26,
+      "importance": 0.053385571831845544,
+      "addresstype": "road",
+      "name": "Camino del Polvo",
+      "display_name": "Camino del Polvo, El Pino, El Sauzal, Santa Cruz de Tenerife, Canarias, 38359, España",
+      "boundingbox": [
+        "28.4520775",
+        "28.4532320",
+        "-16.4178512",
+        "-16.4175940"
+      ]
+    },
+    {
+      "place_id": 310100278,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 1080208349,
+      "lat": "13.4832148",
+      "lon": "-87.5618497",
+      "class": "waterway",
+      "type": "stream",
+      "place_rank": 22,
+      "importance": 0.1067101571679255,
+      "addresstype": "stream",
+      "name": "Quebrada Los Camales",
+      "display_name": "Quebrada Los Camales, El Polvo, Agua Fría, Nacaome, Valle, Honduras",
+      "boundingbox": [
+        "13.4810012",
+        "13.4897607",
+        "-87.5684469",
+        "-87.5590904"
+      ]
+    },
+    {
+      "place_id": 309489621,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 1080208350,
+      "lat": "13.4907615",
+      "lon": "-87.5597229",
+      "class": "waterway",
+      "type": "stream",
+      "place_rank": 22,
+      "importance": 0.1067101571679255,
+      "addresstype": "stream",
+      "name": "Quebrada Los Camales",
+      "display_name": "Quebrada Los Camales, El Polvo, Nacaome, Valle, Honduras",
+      "boundingbox": [
+        "13.4897607",
+        "13.4911798",
+        "-87.5597788",
+        "-87.5589754"
+      ]
+    }
+  ],
+  "los polvorines": [
+    {
+      "place_id": 17349088,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "relation",
+      "osm_id": 1784675,
+      "lat": "-34.5106413",
+      "lon": "-58.6990720",
+      "class": "boundary",
+      "type": "administrative",
+      "place_rank": 16,
+      "importance": 0.44476072109127485,
+      "addresstype": "town",
+      "name": "Los Polvorines",
+      "display_name": "Los Polvorines, Partido de Malvinas Argentinas, Buenos Aires, Argentina",
+      "boundingbox": [
+        "-34.5327217",
+        "-34.4824694",
+        "-58.7285625",
+        "-58.6713139"
+      ]
+    }
   ]
 }
