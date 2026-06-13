@@ -2287,6 +2287,18 @@
             text-transform: uppercase;
         }
 
+        /* Fuerza a los wrappers de Flatpickr a respetar el flex container */
+        .flatpickr-wrapper {
+            width: 100% !important;
+            min-width: 0 !important;
+            display: block !important;
+        }
+
+        .flatpickr-input {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+
     </style>
 </head>
 <body>
