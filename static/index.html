@@ -319,6 +319,32 @@
             border-bottom-right-radius: 20px;
         }
 
+        
+        /* Separador de Sección Linear-style */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0 16px 0;
+            user-select: none;
+            width: 100%;
+        }
+        .section-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+            margin-left: 10px;
+        }
+        .section-divider span {
+            font-size: 8.5px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.38);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+
         /* Sección de Información de Nacimiento */
         .birth-info-card {
             background: linear-gradient(135deg, rgba(20, 20, 31, 0.95) 0%, rgba(13, 13, 20, 0.98) 100%);
@@ -2844,6 +2870,7 @@
 
 
                     <!-- Tarjeta de Nacimiento Activa -->
+                    <div class="section-divider" id="divider-active-data" style="display: none;"><span>Datos Astrales</span></div>
                     <div class="birth-info-card" id="active-data-card" style="display: none; border: 0.5px solid rgba(224, 176, 255, 0.08); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25); margin-bottom: 20px; padding: 10px;">
                         <h3 style="font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #e0b0ff; letter-spacing: 1.2px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(224, 176, 255, 0.1); padding-bottom: 6px;">
                             <i class="fa-solid fa-dharmachakra" style="color: #e0b0ff;"></i> Datos Activos
@@ -2863,6 +2890,7 @@
                     </div>
 
                     <!-- WIDGET DE CLIMA ASTRAL DIARIO (DINÁMICO) -->
+                    <div class="section-divider" id="divider-daily-widget" style="display: none;"><span>Clima Astral</span></div>
                     <div class="birth-info-card" id="daily-widget-card" style="display: none; border: none; background: transparent; box-shadow: none; padding: 0; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px; margin-bottom: 12px;">
                             <h4 style="font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; color: var(--accent-gold); margin: 0; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
@@ -3064,6 +3092,7 @@
 
 
                     <!-- Tarjeta de Posiciones Planetas Natales -->
+                    <div class="section-divider" id="divider-natal-positions" style="display: none;"><span>Posiciones Celestes</span></div>
                     <div class="birth-info-card" id="natal-positions-card" style="display: none; border: 0.5px solid rgba(186, 85, 211, 0.1); margin-top: 15px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(186, 85, 211, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), 0 0 15px rgba(186, 85, 211, 0.04); padding: 0; overflow: hidden; border-radius: 12px;">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(186, 85, 211, 0.08) 0%, rgba(13, 13, 23, 0.4) 100%);" onclick="toggleSection('natal-positions-list-container', 'pos-chevron')">
                             <h3 style="font-family: 'Cinzel', serif; color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px; letter-spacing: 0.8px;">
@@ -3181,12 +3210,14 @@
                     </div>
 
                     <!-- Contenedor dinámico de resultados -->
+                    <div class="section-divider" id="divider-compat-results" style="display: none;"><span>Resultado de Sinastría</span></div>
                     <div id="compat-results-placeholder"></div>
                 </div>
 
                 <!-- Contenido Pestaña: Destinos (Consolidada) -->
                 <div id="tab-cities" class="tab-content" style="display: none;">
                     
+                    <div class="section-divider"><span>Lecturas de IA</span></div>
                     <!-- SECCIÓN 1: GUÍA ASTRAL IA (ACORDEÓN UNIFICADO) -->
                     <div class="birth-info-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); box-shadow: 0 0 8px rgba(156, 39, 176, 0.08); padding: 0; overflow: hidden; margin-bottom: 20px; background: rgba(13, 13, 23, 0.4);">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(156, 39, 176, 0.15) 0%, rgba(13, 13, 23, 1) 100%);" onclick="toggleSection('destinos-objetivos-fields', 'obj-chevron')">
@@ -3312,6 +3343,7 @@
                         </div>
                     </div>
 
+                    <div class="section-divider"><span>Planificación Geográfica</span></div>
                     <!-- SECCIÓN 2: CALENDARIO DE VIAJES & MEJORES CIUDADES (ACORDEÓN) -->
                     <div class="birth-info-card" style="border: 0.5px solid rgba(255, 215, 0, 0.12); padding: 0; overflow: hidden; background: rgba(13, 13, 23, 0.4); margin-bottom: 20px;">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(13, 13, 23, 1) 100%);" onclick="toggleSection('destinos-calendar-fields', 'cal-chevron')">
@@ -3340,6 +3372,7 @@
                             <div id="destination-report" style="display: none; margin-bottom: 14px;"></div>
 
                             <div style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 12px; margin-top: 12px;">
+                                <div class="section-divider" style="margin: 12px 0 10px 0;"><span>Ranking Personalizado</span></div>
                                 <h4 style="margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark); display: flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-star" style="color: #ffd54f;"></i> Tus Mejores Destinos
                                 </h4>
@@ -3359,6 +3392,7 @@
                 <div id="tab-daily" class="tab-content" style="display: none;">
 
                     <!-- Tarjeta de Vocación Astrológica (movida desde MI CARTA) -->
+                    <div class="section-divider" id="divider-daily-vocation" style="display: none;"><span>Vocación Astrológica</span></div>
                     <div class="birth-info-card" id="vocation-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); display: none; margin-bottom: 20px; padding: 10px;">
                         <h3 style="color: var(--accent-purple); font-size: 13px; font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-user-tie"></i> Vocación Astrológica</h3>
                         <div style="margin-top: 10px; font-size: 13px; line-height: 1.4;">
@@ -3378,6 +3412,7 @@
                         </div>
                     </div>
 
+                    <div class="section-divider" id="divider-daily-weekly"><span>Pronóstico Semanal</span></div>
                     <!-- Pronóstico Semanal de Tránsitos -->
                     <div class="weekly-transit-alert" id="weekly-transits-dashboard">
                         <h4 style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
@@ -3393,6 +3428,7 @@
                         Analiza las energías planetarias en tránsito hoy (o en la fecha que elijas) para la ciudad activa:
                     </div>
 
+                    <div class="section-divider" id="divider-daily-scores"><span>Tránsitos Diarios</span></div>
                     <!-- Selector de fecha para buscar "el mejor momento" -->
                     <div class="input-group" style="margin-bottom: 14px;">
                         <label class="input-label" style="color: var(--accent-gold); font-size: 11px;"><i class="fa-solid fa-calendar-days"></i> Evaluar Fecha</label>
@@ -3444,6 +3480,7 @@
                         </div>
                     </div>
 
+                    <div class="section-divider" style="margin: 18px 0 12px 0;"><span>Líneas Activas Locales</span></div>
                     <!-- Activaciones Geográficas de Líneas en el Destino -->
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; margin-bottom: 10px;">
                         <div class="active-city-title" id="daily-active-city-name" style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; margin: 0; padding: 0; border: none;">
@@ -3483,6 +3520,7 @@
                         </ul>
                     </div>
 
+                    <div class="section-divider"><span>Filtros del Mapa</span></div>
                     <!-- FILTRAR LÍNEAS PLANETARIAS -->
                     <div class="birth-info-card" style="border: 0.5px solid rgba(255, 255, 255, 0.035); background: rgba(255, 255, 255, 0.015); margin-bottom: 20px; padding: 10px;">
                         <h3 style="font-size: 13px; text-transform: uppercase; color: var(--text-dark); margin-bottom: 8px;"><i class="fa-solid fa-eye"></i> Visibilidad de Líneas</h3>
@@ -3510,6 +3548,7 @@
                         </div>
                     </div>
 
+                    <div class="section-divider"><span>Significado de Ángulos</span></div>
                     <div class="legend-section">
                         <h4 style="font-size: 11px; text-transform: uppercase; color: var(--accent-purple); letter-spacing: 0.5px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4px; margin-bottom: 4px;">Ángulos (Lugar de Expresión)</h4>
                         
@@ -3530,6 +3569,7 @@
                             <span class="legend-desc"><strong>Fondo del Cielo (Hogar/Paz):</strong> Rige tu vida hogareña, la familia, compra de inmuebles y tu paz e intimidad personal.</span>
                         </div>
 
+                        <div class="section-divider" style="margin: 16px 0 10px 0;"><span>Significado de Planetas</span></div>
                         <h4 style="font-size: 11px; text-transform: uppercase; color: var(--accent-purple); letter-spacing: 0.5px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4px; margin-top: 12px; margin-bottom: 4px;">Planetas (Energía Activa)</h4>
                         
                         <div class="legend-item">
@@ -5072,6 +5112,8 @@
                 const activeDataCard = document.getElementById('active-data-card');
                 if (activeDataCard) {
                     activeDataCard.style.display = 'block';
+                    const divActive = document.getElementById('divider-active-data');
+                    if (divActive) divActive.style.display = 'flex';
                 }
                 updateCompatP1Status();
                 updateAIAdvisorVisibility();
@@ -5240,6 +5282,8 @@
                     
                     listContainer.innerHTML = pTableHtml;
                     document.getElementById('natal-positions-card').style.display = 'block';
+                    const divPos = document.getElementById('divider-natal-positions');
+                    if (divPos) divPos.style.display = 'flex';
                 }
                 
                 // Calcular el Medio Cielo (MC) natal exacto para la vocación profesional
@@ -5255,6 +5299,8 @@
                 const vocCard = document.getElementById('vocation-card');
                 if (vocCard) {
                     vocCard.style.display = 'block';
+                    const divVoc = document.getElementById('divider-daily-vocation');
+                    if (divVoc) divVoc.style.display = 'flex';
                     document.getElementById('vocation-mc-sign').innerText = `${mcSign.symbol} ${mcSign.name} a ${mcDegInSign}° ${mcMinInSign}'`;
                     
                     const interpretation = vocationInterpretations[mcSign.name];
@@ -8786,6 +8832,8 @@
             
             const encCard = document.getElementById('mutual-encounters-container');
             if (encCard) encCard.remove();
+            const divCompat = document.getElementById('divider-compat-results');
+            if (divCompat) divCompat.style.display = 'none';
             
             const clearBtn = document.getElementById('clear-compat-btn');
             if (clearBtn) clearBtn.style.display = 'none';
@@ -8902,6 +8950,8 @@
             
             const encCard = document.getElementById('mutual-encounters-container');
             if (encCard) encCard.remove();
+            const divCompat = document.getElementById('divider-compat-results');
+            if (divCompat) divCompat.style.display = 'none';
             
             const purpose = document.getElementById('compatibility-type-select').value;
             let beneficialPlanets = ['Sun', 'Venus', 'Jupiter'];
@@ -9464,6 +9514,8 @@
             };
 
             target.appendChild(encDiv);
+            const divCompat = document.getElementById('divider-compat-results');
+            if (divCompat) divCompat.style.display = 'flex';
             setTimeout(() => { encDiv.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 150);
         }
 
@@ -10753,6 +10805,8 @@
                 const widgetCard = document.getElementById('daily-widget-card');
                 if (widgetCard) {
                     widgetCard.style.display = 'block';
+                    const divDaily = document.getElementById('divider-daily-widget');
+                    if (divDaily) divDaily.style.display = 'flex';
                     
                     const dateObj = new Date();
                     const monthsSpanish = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
