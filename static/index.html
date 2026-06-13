@@ -4441,7 +4441,7 @@
         let activeTileLayer = tileLayers.voyager; // Suave Voyager es el predeterminado (más moderno)
 
         // Inicializar la aplicación de forma segura
-        window.addEventListener('load', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             initAppWithRetry();
             // Cerrar selector de estilos de mapa al hacer clic afuera
             document.addEventListener('click', function(e) {
@@ -9514,7 +9514,6 @@
             };
 
             target.appendChild(encDiv);
-            const divCompat = document.getElementById('divider-compat-results');
             if (divCompat) divCompat.style.display = 'flex';
             setTimeout(() => { encDiv.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 150);
         }
