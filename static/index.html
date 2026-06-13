@@ -112,7 +112,7 @@
             color: #777799;
             border-radius: 20px;
             padding: 8px 14px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -273,7 +273,7 @@
         }
 
         .panel-subtitle {
-            font-size: 9px;
+            font-size: 11px;
             color: #e0b0ff; /* Muted premium lavender */
             text-transform: uppercase;
             letter-spacing: 2.5px;
@@ -288,15 +288,35 @@
             overflow-x: hidden;
             padding: 20px;
             scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+            scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
         }
 
         .panel-content::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         .panel-content::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        
+        /* Fade overlay for scrollable indicator */
+        .panel-fade-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to top, rgba(13, 13, 23, 0.95) 15%, rgba(13, 13, 23, 0));
+            pointer-events: none;
+            z-index: 15;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
         }
 
         /* Sección de Información de Nacimiento */
@@ -325,7 +345,7 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 13px;
             margin-bottom: 8px;
         }
 
@@ -421,7 +441,7 @@
         .search-result-item {
             padding: 10px 12px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-dark);
             transition: background 0.2s;
@@ -456,7 +476,7 @@
             background: none;
             border: 1px solid transparent;
             color: rgba(255, 255, 255, 0.45);
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             padding: 10px 8px;
             cursor: pointer;
@@ -524,7 +544,7 @@
         }
 
         .city-coords {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-gray);
             margin-top: 2px;
         }
@@ -535,7 +555,7 @@
             border: 1px solid rgba(156, 39, 176, 0.3);
             border-radius: 12px;
             padding: 3px 8px;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: 600;
             white-space: nowrap;
         }
@@ -556,7 +576,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-dark);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -593,7 +613,7 @@
         .legend-item {
             display: flex;
             gap: 12px;
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
         }
 
@@ -601,7 +621,7 @@
             font-weight: bold;
             color: var(--accent-purple);
             min-width: 40px;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .legend-desc {
@@ -613,7 +633,20 @@
         }
 
         /* Personalización de Popups de Leaflet */
+        @keyframes popup-zoom-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.92) translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
         .leaflet-popup-content-wrapper {
+            animation: popup-zoom-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: bottom center;
             background: rgba(13, 13, 23, 0.98) !important;
             border: 1px solid var(--accent-purple);
             border-radius: 12px !important;
@@ -621,6 +654,10 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
         }
 
+        .leaflet-popup-tip-container {
+            animation: popup-zoom-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top center;
+        }
         .leaflet-popup-tip {
             background: rgba(13, 13, 23, 0.98) !important;
             border-left: 1px solid var(--accent-purple);
@@ -641,7 +678,7 @@
         }
 
         .popup-body {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.5;
             color: #d1d5db;
         }
@@ -651,7 +688,7 @@
             color: var(--accent-purple);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
@@ -731,7 +768,7 @@
         }
         .more-sheet-header h3 {
             font-family: 'Cinzel', serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #e0b0ff;
             letter-spacing: 2px;
@@ -749,7 +786,7 @@
             border-radius: 14px;
             padding: 16px 14px;
             color: rgba(255,255,255,0.8);
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             text-align: left;
             cursor: pointer;
@@ -869,7 +906,7 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 5px;
-                font-size: 9px;
+                font-size: 11px;
                 font-weight: 700;
                 cursor: pointer;
                 flex: 1;
@@ -1015,7 +1052,7 @@
             }
             .tab-btn .tab-text {
                 display: inline-block !important;
-                font-size: 8px !important;
+                font-size: 10px !important;
                 letter-spacing: 0px !important;
             }
             .tab-btn i {
@@ -1029,7 +1066,7 @@
                 font-size: 13px !important;
             }
             .city-badge {
-                font-size: 12px !important;
+                font-size: 13px !important;
             }
             .filter-btn {
                 font-size: 15px !important;
@@ -1041,10 +1078,14 @@
                 font-size: 15px !important;
             }
             .input-label {
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
             .panel-subtitle {
                 font-size: 13px !important;
+            }
+            .panel-fade-overlay {
+                border-radius: 0;
+                background: linear-gradient(to top, #0d0d17 15%, transparent);
             }
             
             /* Ajustar textos de objetivos generados dinámicamente */
@@ -1052,10 +1093,10 @@
                 font-size: 15px !important;
             }
             .objective-city-item p {
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
             .objective-city-item div span {
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
             #objective-details-content h3 {
                 font-size: 18px !important;
@@ -1098,7 +1139,7 @@
                 font-size: 15px !important;
             }
             #vocation-card p {
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
             #vocation-card span {
                 font-size: 15px !important;
@@ -1130,12 +1171,55 @@
             border-radius: 12px;
             padding: 6px;
             display: flex;
-            gap: 4px;
+            align-items: center;
+            gap: 6px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             z-index: 3000;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            max-width: 36px;
+            height: 38px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        @media (min-width: 769px) {
+            .map-style-selector:hover {
+                max-width: 380px;
+            }
+            .map-style-selector:hover .map-style-options {
+                opacity: 1;
+            }
+            .map-style-selector:hover .map-style-toggle-btn {
+                transform: rotate(90deg);
+            }
+        }
+
+        .map-style-toggle-btn {
+            background: none;
+            border: none;
+            color: #d1d5db;
+            font-size: 13px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.3s ease, color 0.2s;
+        }
+
+        .map-style-toggle-btn:hover {
+            color: var(--accent-purple);
+        }
+
+        .map-style-options {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .map-style-btn {
@@ -1284,7 +1368,7 @@
 
         .help-modal-section h3 {
             font-family: 'Cinzel', serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--accent-purple);
             margin-bottom: 8px;
@@ -1317,7 +1401,7 @@
             border-radius: 8px;
             padding: 10px 20px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
             transition: all 0.2s;
@@ -1360,7 +1444,7 @@
             border: none;
             color: var(--text-gray);
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .dest-card-close:hover {
@@ -1382,13 +1466,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .influence-orb {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-gray);
             font-weight: normal;
         }
@@ -1411,7 +1495,7 @@
             padding: 8px 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             z-index: 100;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-dark);
             display: flex;
@@ -1458,7 +1542,7 @@
             border: 1px solid var(--accent-purple);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             animation: none; /* Sin pulsación agresiva */
-            font-size: 10px;
+            font-size: 11px;
             padding: 8px 14px;
         }
 
@@ -1499,17 +1583,34 @@
         @media (max-width: 768px), (max-height: 500px) {
             .map-style-selector {
                 position: fixed;
-                bottom: 80px; /* Sobre la barra de navegación de móvil */
-                left: 10px;
-                right: 10px;
-                justify-content: space-around;
+                bottom: 85px; /* Sobre la barra de navegación de móvil */
+                right: 15px;
+                left: auto;
+                max-width: 36px;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .map-style-selector.expanded {
+                max-width: 230px;
+            }
+            .map-style-selector.expanded .map-style-options {
+                opacity: 1;
+            }
+            .map-style-selector.expanded .map-style-toggle-btn {
+                transform: rotate(90deg);
+            }
+            .map-style-btn span {
+                display: none !important;
+            }
+            .map-style-btn {
+                padding: 8px;
+                font-size: 13px;
             }
             .map-style-btn span {
                 display: none; /* Solo mostrar iconos en móvil */
             }
             .map-style-btn {
                 padding: 8px;
-                font-size: 14px;
+                font-size: 13px;
             }
             .floating-help-btn {
                 position: fixed;
@@ -1533,7 +1634,7 @@
             }
             .help-modal-body {
                 padding: 16px;
-                font-size: 12px;
+                font-size: 13px;
             }
             .help-modal-footer {
                 flex-direction: column;
@@ -1609,7 +1710,7 @@
             margin: 0;
         }
         .objective-score-badge {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             padding: 3px 8px;
             border-radius: 12px;
@@ -1688,7 +1789,7 @@
             margin-bottom: 8px;
         }
         .upgrade-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(255,255,255,0.5);
             margin-bottom: 24px;
             line-height: 1.5;
@@ -1755,7 +1856,7 @@
             border: 1px solid rgba(255,215,0,0.2);
             border-radius: 20px;
             padding: 4px 14px;
-            font-size: 12px;
+            font-size: 13px;
             color: #ffd700;
             font-weight: 600;
             margin-bottom: 20px;
@@ -1777,7 +1878,7 @@
             border: 1px solid rgba(186,85,211,0.4);
             border-radius: 12px;
             color: #ce93d8;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -1793,7 +1894,7 @@
             border: 1px solid rgba(255,215,0,0.3);
             border-radius: 12px;
             color: #ffd700;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
@@ -1914,7 +2015,7 @@
             align-items: center;
         }
         .travel-calendar-header h3 {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--accent-gold);
             font-weight: 700;
             margin: 0;
@@ -1968,7 +2069,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -1998,7 +2099,7 @@
         .calendar-legend {
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
+            font-size: 11px;
             color: var(--text-gray);
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 8px;
@@ -2119,7 +2220,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .custom-compat-option i {
-            font-size: 14px;
+            font-size: 13px;
             width: 20px;
             text-align: center;
         }
@@ -2136,7 +2237,7 @@
             transition: color 0.3s ease;
         }
         .custom-compat-option .option-details span {
-            font-size: 9px;
+            font-size: 11px;
             color: var(--text-gray);
         }
         .custom-compat-option:hover {
@@ -2179,7 +2280,7 @@
             text-align: left;
         }
         .custom-question-option i {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-gray);
             width: 20px;
             text-align: center;
@@ -2265,7 +2366,7 @@
             display: inline-flex;
             gap: 2px;
             color: var(--accent-gold);
-            font-size: 12px;
+            font-size: 13px;
         }
         .mutual-encounter-card {
             background: rgba(186, 85, 211, 0.06);
@@ -2300,7 +2401,7 @@
             pointer-events: none;
         }
         .transit-badge {
-            font-size: 9px;
+            font-size: 11px;
             font-weight: 700;
             padding: 2px 6px;
             border-radius: 4px;
@@ -2329,23 +2430,23 @@
         <div id="onboarding-step-1" style="display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 320px; gap: 20px;">
             <div style="font-family: 'Cinzel', serif; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: 2px;">✦ ORBITAE</div>
             <div style="font-size: 11px; color: var(--accent-purple-light); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: -10px;">Tu guía astral personal</div>
-            <p style="font-size: 14px; color: #ccccdd; line-height: 1.6; margin: 10px 0;">Descubrí qué te deparan los astros hoy.</p>
-            <button style="justify-content: center; background: var(--accent-purple); color: white; border: none; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 16px; border-radius: 8px; width: 100%; box-shadow: 0 4px 15px rgba(155, 93, 229, 0.4); cursor: pointer; transition: background 0.2s;" onclick="goToOnboardingStep(2)" onmouseover="this.style.background='#b070f0'" onmouseout="this.style.background='var(--accent-purple)'">
+            <p style="font-size: 13px; color: #ccccdd; line-height: 1.6; margin: 10px 0;">Descubrí qué te deparan los astros hoy.</p>
+            <button style="justify-content: center; background: var(--accent-purple); color: white; border: none; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 16px; border-radius: 8px; width: 100%; box-shadow: 0 4px 15px rgba(155, 93, 229, 0.4); cursor: pointer; transition: background 0.2s;" onclick="goToOnboardingStep(2)" onmouseover="this.style.background='#b070f0'" onmouseout="this.style.background='var(--accent-purple)'">
                 Comenzar mi carta
             </button>
         </div>
 
         <!-- Paso 2: Nombre -->
         <div id="onboarding-step-2" style="display: none; flex-direction: column; align-items: center; text-align: center; max-width: 320px; gap: 15px; width: 100%;">
-            <div style="font-size: 10px; color: var(--accent-teal); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">1 DE 2</div>
+            <div style="font-size: 11px; color: var(--accent-teal); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">1 DE 2</div>
             <h2 style="font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; margin: 0; color: #ffffff;">¿Cómo te llamamos?</h2>
-            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 10px;">Tu nombre hace la experiencia única.</p>
+            <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 10px;">Tu nombre hace la experiencia única.</p>
             
             <input type="text" id="onboarding-name-input" placeholder="Ingresá tu nombre" style="width: 100%; padding: 14px 16px; background: #14141f; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #ffffff; font-size: 15px; outline: none; text-align: center; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-purple)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'" onkeydown="if(event.key === 'Enter') saveOnboardingName()">
-            <p style="font-size: 10px; color: var(--text-gray); margin-top: -5px;">Solo lo usamos para personalizar tu carta.</p>
+            <p style="font-size: 11px; color: var(--text-gray); margin-top: -5px;">Solo lo usamos para personalizar tu carta.</p>
             
-            <button style="justify-content: center; background: var(--accent-teal); color: #0d0d14; border: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 16px; border-radius: 8px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;" onclick="saveOnboardingName()" onmouseover="this.style.background='#40ebd7'" onmouseout="this.style.background='var(--accent-teal)'">
-                Continuar <i class="fa-solid fa-arrow-right" style="color: #0d0d14; font-size: 12px;"></i>
+            <button style="justify-content: center; background: var(--accent-teal); color: #0d0d14; border: none; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; padding: 16px; border-radius: 8px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;" onclick="saveOnboardingName()" onmouseover="this.style.background='#40ebd7'" onmouseout="this.style.background='var(--accent-teal)'">
+                Continuar <i class="fa-solid fa-arrow-right" style="color: #0d0d14; font-size: 13px;"></i>
             </button>
         </div>
     </div>
@@ -2395,14 +2496,14 @@
                     <div id="welcome-greeting-block" style="margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, rgba(20, 20, 31, 0.8) 0%, rgba(13, 13, 23, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                             <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 12px;">
-                                <div style="font-size: 10px; color: rgba(255, 255, 255, 0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;" id="greeting-time-text">Buenos días,</div>
+                                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;" id="greeting-time-text">Buenos días,</div>
                                 <div style="font-family: 'Cinzel', serif; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; line-height: 1.2; margin-bottom: 8px;">
                                     <span id="greeting-username" style="background: linear-gradient(90deg, #ffffff 60%, #c4b5fd 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;">Viajero</span>
                                     <span id="greeting-sun-symbol" style="color: #ffd700; font-size: 18px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);">✦</span>
                                 </div>
                                 
                                 <!-- Mensaje Diario / Clima Astral -->
-                                <div id="greeting-daily-msg" style="font-size: 12px; color: #E5E5F0; line-height: 1.6; margin-top: 4px;">
+                                <div id="greeting-daily-msg" style="font-size: 13px; color: #E5E5F0; line-height: 1.6; margin-top: 4px;">
                                     Ingresá tus datos de nacimiento para calcular tu clima astral personalizado de hoy.
                                 </div>
                                 
@@ -2418,7 +2519,7 @@
                             </div>
                             
                             <!-- Icono Prominente Planetario -->
-                            <div id="greeting-planet-avatar" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 50%; font-size: 26px; box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); animation: float-avatar 3s infinite ease-in-out;">
+                            <div id="greeting-planet-avatar" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 50%; font-size: 26px; box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); animation: float-avatar 2s infinite ease-in-out;">
                                 🪐
                             </div>
                         </div>
@@ -2431,7 +2532,7 @@
                             
                             <h3 style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(13, 13, 23, 0.4) 100%); color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0; font-family: 'Cinzel', serif; position: relative; z-index: 1;" onclick="toggleCalculator()">
                                 <span style="background: linear-gradient(90deg, #c4b5fd, #ffffff); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;"><i class="fa-solid fa-calculator" style="margin-right: 6px; color: #c4b5fd;"></i> Calcular Otra Carta</span>
-                                <i class="fa-solid fa-chevron-down" id="calc-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: #c4b5fd; font-size: 10px;"></i>
+                                <i class="fa-solid fa-chevron-down" id="calc-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: #c4b5fd; font-size: 11px;"></i>
                             </h3>
                             
                             <div id="calculator-fields" style="display: block; padding: 14px; position: relative; z-index: 1;">
@@ -2471,7 +2572,7 @@
                                     </div>
 
                                     <div class="input-group" style="margin-bottom: 0;">
-                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Zona Horaria (GMT/UTC) <span id="timezone-notice" style="color: #00e5ff; font-weight: bold; font-size: 9px; text-transform: none; display: none;">(Detectado automáticamente)</span></label>
+                                        <label class="input-label" style="color: rgba(255,255,255,0.7);">Zona Horaria (GMT/UTC) <span id="timezone-notice" style="color: #00e5ff; font-weight: bold; font-size: 11px; text-transform: none; display: none;">(Detectado automáticamente)</span></label>
                                         <select id="timezone-input" class="select-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
                                             <option value="14">GMT+14</option>
                                             <option value="13">GMT+13</option>
@@ -2505,7 +2606,7 @@
                                 </div>
 
                                 <button id="btn-calculate-chart" onclick="handleCalculateNewChart()" style="width: 100%; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: white; border: none; border-radius: 8px; padding: 14px 16px; font-weight: 700; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(6, 182, 212, 0.6), 0 0 15px rgba(124, 58, 237, 0.4)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.boxShadow='0 4px 15px rgba(6, 182, 212, 0.4), 0 0 10px rgba(124, 58, 237, 0.2)'; this.style.transform='none';">
-                                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 14px;"></i> Generar Carta
+                                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 13px;"></i> Generar Carta
                                 </button>
                             </div>
                         </div>
@@ -2590,7 +2691,7 @@
                         }
                         .banner-title {
                             font-family: 'Cinzel', serif;
-                            font-size: 14px;
+                            font-size: 13px;
                             font-weight: 800;
                             letter-spacing: 0.8px;
                             margin: 6px 0 3px 0;
@@ -2631,7 +2732,7 @@
                             border: 1px solid rgba(255, 255, 255, 0.05);
                             border-radius: 10px;
                             padding: 10px;
-                            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
                             display: flex;
                             flex-direction: column;
                             gap: 3px;
@@ -2666,7 +2767,7 @@
                             color: #ffffff;
                         }
                         .intro-feature-card .feat-desc {
-                            font-size: 9px;
+                            font-size: 11px;
                             color: rgba(255, 255, 255, 0.45);
                             line-height: 1.3;
                             transition: color 0.4s ease;
@@ -2749,15 +2850,15 @@
                             <i class="fa-solid fa-dharmachakra" style="color: #e0b0ff;"></i> Datos Activos
                         </h3>
                         <div class="info-row" style="margin-top: 6px;">
-                            <span class="info-label" style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Fecha y Hora</span>
+                            <span class="info-label" style="font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Fecha y Hora</span>
                             <span class="info-val" id="birth-info-date" style="font-size: 11px; font-weight: 600; color: #ffffff;">—</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label" style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Ciudad</span>
+                            <span class="info-label" style="font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Ciudad</span>
                             <span class="info-val" id="birth-info-loc" style="font-size: 11px; font-weight: 600; color: #ffffff;">—</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label" style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Coordenadas</span>
+                            <span class="info-label" style="font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.45);">Coordenadas</span>
                             <span class="info-val" id="birth-info-coords" style="font-size: 11px; font-weight: 600; color: #ffffff; font-family: monospace;">—</span>
                         </div>
                     </div>
@@ -2894,7 +2995,7 @@
                                 <span style="font-weight: 700; color: #c4b5fd; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; text-transform: uppercase; font-size: 8.5px; letter-spacing: 0.8px;">
                                     <i class="fa-solid fa-wand-magic-sparkles" style="color: #00e5ff; filter: drop-shadow(0 0 4px #00e5ff);"></i> Aspecto Clave Activo
                                 </span>
-                                <p id="widget-transit-text" style="color: rgba(255, 255, 255, 0.85); margin: 0; line-height: 1.45; font-size: 10px;">
+                                <p id="widget-transit-text" style="color: rgba(255, 255, 255, 0.85); margin: 0; line-height: 1.45; font-size: 11px;">
                                     Cargando tránsitos para hoy...
                                 </p>
                             </div>
@@ -2922,7 +3023,7 @@
                                 <span style="font-size: 9.5px; font-weight: 700; color: #ffb74d; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
                                     <i class="fa-solid fa-fire" style="color: #ffa726; animation: pulse 1.5s infinite; filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.8));"></i> Racha Activa
                                 </span>
-                                <span id="daily-streak-count" style="font-size: 10px; font-weight: 700; color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.4); background: rgba(255, 167, 38, 0.15); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(255, 167, 38, 0.3);">1 día</span>
+                                <span id="daily-streak-count" style="font-size: 11px; font-weight: 700; color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.4); background: rgba(255, 167, 38, 0.15); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(255, 167, 38, 0.3);">1 día</span>
                             </div>
                         </div>
 
@@ -2973,7 +3074,7 @@
                                 <button onclick="downloadNatalPDF()" style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 4px 10px; border-radius: 6px; font-size: 8.5px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 700; outline: none; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='rgba(186, 85, 211, 0.35)';" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)';">
                                     <i class="fa-solid fa-file-pdf"></i> PDF
                                 </button>
-                                <i class="fa-solid fa-chevron-down" id="pos-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 10px;"></i>
+                                <i class="fa-solid fa-chevron-down" id="pos-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 11px;"></i>
                             </div>
                         </div>
                         <div id="natal-positions-list-container" style="display: none; padding: 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); text-align: center;">
@@ -2997,7 +3098,7 @@
                 <!-- Contenido Pestaña: Compatibilidad (Independiente) -->
                 <div id="tab-compat" class="tab-content" style="display: none;">
                     <div class="birth-info-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); box-shadow: 0 0 8px rgba(156, 39, 176, 0.08); margin-bottom: 20px; padding: 10px;">
-                        <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-heart" style="color: #a78bfa;"></i> Sinastría de Pareja
                         </h3>
 
@@ -3010,12 +3111,12 @@
                         <div style="display: flex; gap: 14px; margin-bottom: 14px;" class="input-group">
                             <!-- Persona 1 -->
                             <div style="flex: 1; min-width: 0;">
-                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px;"></i> Tu nombre</label>
+                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 11px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 11px;"></i> Tu nombre</label>
                                 <input type="text" id="name-input-p1" placeholder="Tu nombre" value="" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 13px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
                             </div>
                             <!-- Persona 2 -->
                             <div style="flex: 1; min-width: 0;">
-                                <label class="input-label" style="color: #00bcd4; font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px;"></i> Nombre de tu pareja</label>
+                                <label class="input-label" style="color: #00bcd4; font-size: 11px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 11px;"></i> Nombre de tu pareja</label>
                                 <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 13px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
                             </div>
                         </div>
@@ -3069,7 +3170,7 @@
                                 <button type="button" onclick="calculateCompatibility()" style="width:100%; background:#00bcd4; color:#0d0d1e; border:none; border-radius:8px; padding:10px; font-weight:700; font-size:11px; cursor:pointer; box-shadow: 0 0 10px rgba(0, 188, 212, 0.3); display:flex; align-items:center; justify-content:center; gap:8px; text-transform:uppercase; letter-spacing:0.5px;">
                                     <i class="fa-solid fa-heart-circle-bolt"></i> Calcular Compatibilidad
                                 </button>
-                                <button type="button" id="clear-compat-btn" onclick="clearCompatibility()" style="width:100%; background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.15); color:var(--text-gray); border-radius:8px; padding:8px; font-weight:600; font-size:10px; cursor:pointer; display:none; align-items:center; justify-content:center; gap:6px;">
+                                <button type="button" id="clear-compat-btn" onclick="clearCompatibility()" style="width:100%; background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.15); color:var(--text-gray); border-radius:8px; padding:8px; font-weight:600; font-size:11px; cursor:pointer; display:none; align-items:center; justify-content:center; gap:6px;">
                                     <i class="fa-solid fa-trash-can"></i> Desactivar y Limpiar
                                 </button>
                             </div>
@@ -3093,7 +3194,7 @@
                             <h3 style="color: var(--accent-purple); font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-brain" style="color: var(--accent-gold);"></i> Guía Astral IA
                             </h3>
-                            <i class="fa-solid fa-chevron-down" id="obj-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 10px;"></i>
+                            <i class="fa-solid fa-chevron-down" id="obj-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 11px;"></i>
                         </div>
                         
                         <div id="destinos-objetivos-fields" style="display: none; padding: 14px; border-top: 1px solid rgba(255,255,255,0.06);">
@@ -3106,10 +3207,10 @@
                             <!-- Contenedor del Consejero de IA -->
                             <div id="ai-advisor-container" style="display: none;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <h3 style="font-family:'Cinzel', serif; font-size:12px; color:#ffffff; margin: 0; display:flex; align-items:center; gap:6px;">
+                                    <h3 style="font-family:'Cinzel', serif; font-size:13px; color:#ffffff; margin: 0; display:flex; align-items:center; gap:6px;">
                                         <i class="fa-solid fa-brain" style="color:var(--accent-gold);"></i> Guía Astral Personalizado
                                     </h3>
-                                    <span id="ai-limit-badge" onclick="openUpgradeModal()" style="cursor:pointer; font-size:9px; font-weight:700; padding:2px 8px; border-radius:20px; background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.25); color:#ffd700; white-space:nowrap;" title="Consultas gratuitas este mes">3 gratis</span>
+                                    <span id="ai-limit-badge" onclick="openUpgradeModal()" style="cursor:pointer; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.25); color:#ffd700; white-space:nowrap;" title="Consultas gratuitas este mes">3 gratis</span>
                                 </div>
                                 <p style="font-size:11px; color:var(--text-gray); line-height:1.4; margin-bottom:12px;">
                                     Selecciona tu propósito o enfoque de vida y una ciudad de interés. Nuestro consejero interpretará tu carta natal en esa ubicación y te sugerirá los mejores lugares alternativos del mundo, con su respectiva influencia astral.
@@ -3122,66 +3223,66 @@
                                         <div class="custom-question-options" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 6px; background: rgba(0, 0, 0, 0.2);">
                                             
                                             <div class="custom-question-option active" data-value="mudanza" onclick="selectAIQuestion(this, 'mudanza')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-house-chimney" style="color: #1e90ff; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-house-chimney" style="color: #1e90ff; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Mudanza y Relocalización</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde mudarme para encontrar paz, estabilidad y hogar?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde mudarme para encontrar paz, estabilidad y hogar?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="viaje" onclick="selectAIQuestion(this, 'viaje')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-plane-departure" style="color: #f48fb1; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-plane-departure" style="color: #f48fb1; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Viajes y Vacaciones</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Qué destino es ideal para viajar, descansar y vacacionar?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Qué destino es ideal para viajar, descansar y vacacionar?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="negocios" onclick="selectAIQuestion(this, 'negocios')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-chart-line" style="color: #ffd700; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-chart-line" style="color: #ffd700; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Negocios y Emprendimiento</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde invertir o emprender con menor riesgo financiero?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde invertir o emprender con menor riesgo financiero?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="trabajo" onclick="selectAIQuestion(this, 'trabajo')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-briefcase" style="color: #4caf50; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-briefcase" style="color: #4caf50; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Trabajo y Carrera</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde buscar trabajo o impulsar mi crecimiento profesional?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde buscar trabajo o impulsar mi crecimiento profesional?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="conexiones" onclick="selectAIQuestion(this, 'conexiones')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-landmark" style="color: #ba55d3; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-landmark" style="color: #ba55d3; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Conexiones del Pasado</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde explorar afinidades culturales o lazos kármicos?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde explorar afinidades culturales o lazos kármicos?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="amor" onclick="selectAIQuestion(this, 'amor')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-heart" style="color: #e91e63; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-heart" style="color: #e91e63; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Pareja y Familia</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde convivir con mi pareja o establecer mi familia?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde convivir con mi pareja o establecer mi familia?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="salud" onclick="selectAIQuestion(this, 'salud')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-hand-holding-heart" style="color: #00bcd4; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-hand-holding-heart" style="color: #00bcd4; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Salud y Bienestar</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Dónde sanar emocionalmente y realizar retiros espirituales?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Dónde sanar emocionalmente y realizar retiros espirituales?</span>
                                                 </div>
                                             </div>
                                             
                                             <div class="custom-question-option" data-value="estudios" onclick="selectAIQuestion(this, 'estudios')" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent;">
-                                                <i class="fa-solid fa-graduation-cap" style="color: #ff9800; font-size: 14px; width: 16px; text-align: center;"></i>
+                                                <i class="fa-solid fa-graduation-cap" style="color: #ff9800; font-size: 13px; width: 16px; text-align: center;"></i>
                                                 <div style="display: flex; flex-direction: column; text-align: left; gap: 1px;">
                                                     <span style="font-size: 11px; font-weight: 600; color: #fff;">Estudios y Crecimiento</span>
-                                                    <span style="font-size: 9px; color: var(--text-gray);">¿Qué ciudad es mejor para estudiar o expandir mi mente?</span>
+                                                    <span style="font-size: 11px; color: var(--text-gray);">¿Qué ciudad es mejor para estudiar o expandir mi mente?</span>
                                                 </div>
                                             </div>
                                             
@@ -3205,7 +3306,7 @@
                                 
                                 <!-- Contenedor del Chat (Visible solo al enviar) -->
                                 <div id="ai-chat-container" style="display: none; margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
-                                    <h4 style="font-size:10px; text-transform:uppercase; color:var(--accent-gold); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px; margin-top: 6px;"><i class="fa-solid fa-comments"></i> Lectura del Consejero</h4>
+                                    <h4 style="font-size:11px; text-transform:uppercase; color:var(--accent-gold); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px; margin-top: 6px;"><i class="fa-solid fa-comments"></i> Lectura del Consejero</h4>
                                     <div class="ai-chat-box" id="ai-chat-box"></div>
                                 </div>
                             </div>
@@ -3218,14 +3319,14 @@
                             <h3 style="color: var(--accent-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-calendar-days" style="color: #ffd700;"></i> Calendario de Viajes & Ciudades
                             </h3>
-                            <i class="fa-solid fa-chevron-down" id="cal-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 10px;"></i>
+                            <i class="fa-solid fa-chevron-down" id="cal-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: var(--text-gray); font-size: 11px;"></i>
                         </div>
                         
                         <div id="destinos-calendar-fields" style="display: none; padding: 14px; border-top: 1px solid rgba(255,255,255,0.06);">
                             <!-- CONSULTA DE CALENDARIO DE VIAJES -->
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                                 <h4 style="color: var(--accent-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; margin:0;"><i class="fa-solid fa-calendar-days"></i> Calendario de Viajes (90 días)</h4>
-                                <span id="city-limit-badge" onclick="openUpgradeModal()" style="cursor:pointer; font-size:9px; font-weight:700; padding:2px 8px; border-radius:20px; background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.25); color:#ffd700; white-space:nowrap;" title="Consultas gratuitas este mes">3 gratis</span>
+                                <span id="city-limit-badge" onclick="openUpgradeModal()" style="cursor:pointer; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.25); color:#ffd700; white-space:nowrap;" title="Consultas gratuitas este mes">3 gratis</span>
                             </div>
                             <p style="font-size: 10.5px; color: var(--text-gray); line-height: 1.4; margin-bottom: 8px;">Elige un destino para ver cuáles son tus mejores días para viajar en los próximos 3 meses:</p>
                             <div class="input-group autocomplete-container" style="margin-top: 10px; margin-bottom: 12px;">
@@ -3260,8 +3361,8 @@
 
                     <!-- Tarjeta de Vocación Astrológica (movida desde MI CARTA) -->
                     <div class="birth-info-card" id="vocation-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); display: none; margin-bottom: 20px; padding: 10px;">
-                        <h3 style="color: var(--accent-purple); font-size: 12px; font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-user-tie"></i> Vocación Astrológica</h3>
-                        <div style="margin-top: 10px; font-size: 12px; line-height: 1.4;">
+                        <h3 style="color: var(--accent-purple); font-size: 13px; font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-user-tie"></i> Vocación Astrológica</h3>
+                        <div style="margin-top: 10px; font-size: 13px; line-height: 1.4;">
                             <div style="display: flex; justify-content: space-between; font-weight: bold; color: var(--text-dark); margin-bottom: 6px;">
                                 <span>Medio Cielo (MC) Natal:</span>
                                 <span id="vocation-mc-sign" style="color: var(--accent-gold);">--</span>
@@ -3280,7 +3381,7 @@
 
                     <!-- Pronóstico Semanal de Tránsitos -->
                     <div class="weekly-transit-alert" id="weekly-transits-dashboard">
-                        <h4 style="font-size: 10px; text-transform: uppercase; color: var(--accent-gold); margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
+                        <h4 style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-bell"></i> Pronóstico Semanal de Tránsitos (Líneas Activas)
                         </h4>
                         <div id="weekly-alerts-list" style="font-size: 11px; color: var(--text-gray); line-height: 1.4; display: flex; flex-direction: column; gap: 6px;">
@@ -3301,10 +3402,10 @@
 
                     <!-- Indicadores de energía (puntuaciones diarias) -->
                     <div class="daily-scores-container" style="margin-bottom: 16px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05);">
-                        <h4 style="font-size: 10px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 8px; letter-spacing: 0.5px;"><i class="fa-solid fa-chart-simple"></i> Puntuación de Energía</h4>
+                        <h4 style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 8px; letter-spacing: 0.5px;"><i class="fa-solid fa-chart-simple"></i> Puntuación de Energía</h4>
                         
                         <div class="score-row" style="margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                                 <span>💖 Amor y Relaciones</span>
                                 <span id="score-love-val">50%</span>
                             </div>
@@ -3314,7 +3415,7 @@
                         </div>
 
                         <div class="score-row" style="margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                                 <span>💼 Carrera y Éxito</span>
                                 <span id="score-career-val">50%</span>
                             </div>
@@ -3324,7 +3425,7 @@
                         </div>
 
                         <div class="score-row" style="margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                                 <span>🧠 Mente y Negocios</span>
                                 <span id="score-mind-val">50%</span>
                             </div>
@@ -3334,7 +3435,7 @@
                         </div>
 
                         <div class="score-row">
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                                 <span>🏡 Hogar y Bienestar</span>
                                 <span id="score-home-val">50%</span>
                             </div>
@@ -3349,7 +3450,7 @@
                         <div class="active-city-title" id="daily-active-city-name" style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; margin: 0; padding: 0; border: none;">
                             Ciudad: Los Polvorines
                         </div>
-                        <button onclick="detectGPSLocation()" style="background: rgba(186, 85, 211, 0.1); border: 1px solid rgba(186, 85, 211, 0.3); color: var(--accent-purple); font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; outline: none;" id="btn-gps-detect">
+                        <button onclick="detectGPSLocation()" style="background: rgba(186, 85, 211, 0.1); border: 1px solid rgba(186, 85, 211, 0.3); color: var(--accent-purple); font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; outline: none;" id="btn-gps-detect">
                             <i class="fa-solid fa-location-crosshairs"></i> Usar GPS
                         </button>
                     </div>
@@ -3359,7 +3460,7 @@
                     
                     <!-- Aspectos Generales del Día -->
                     <div style="margin-top: 14px;">
-                        <h4 style="font-size: 10px; text-transform: uppercase; color: var(--text-gray); margin-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4px;"><i class="fa-solid fa-circle-nodes"></i> Tránsitos Planetarios Activos</h4>
+                        <h4 style="font-size: 11px; text-transform: uppercase; color: var(--text-gray); margin-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4px;"><i class="fa-solid fa-circle-nodes"></i> Tránsitos Planetarios Activos</h4>
                         <div id="daily-transits-container" style="max-height: 180px; overflow-y: auto; font-size: 11px; color: var(--text-gray); line-height: 1.4;">
                             <!-- Generado dinámicamente -->
                         </div>
@@ -3370,7 +3471,7 @@
                 <div id="tab-legend" class="tab-content" style="display: none;">
                     <!-- GUÍA EXPLICATIVA RÁPIDA -->
                     <div class="birth-info-card" style="background: rgba(156, 39, 176, 0.03); border: 0.5px solid rgba(156, 39, 176, 0.15); margin-bottom: 20px; padding: 10px;">
-                        <h3 style="color: var(--accent-purple); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <h3 style="color: var(--accent-purple); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-circle-info"></i> ¿Para qué sirve este mapa?
                         </h3>
                         <p style="font-size: 11px; color: var(--text-gray); line-height: 1.5; margin-top: 8px;">
@@ -3385,16 +3486,16 @@
 
                     <!-- FILTRAR LÍNEAS PLANETARIAS -->
                     <div class="birth-info-card" style="border: 0.5px solid rgba(255, 255, 255, 0.035); background: rgba(255, 255, 255, 0.015); margin-bottom: 20px; padding: 10px;">
-                        <h3 style="font-size: 12px; text-transform: uppercase; color: var(--text-dark); margin-bottom: 8px;"><i class="fa-solid fa-eye"></i> Visibilidad de Líneas</h3>
+                        <h3 style="font-size: 13px; text-transform: uppercase; color: var(--text-dark); margin-bottom: 8px;"><i class="fa-solid fa-eye"></i> Visibilidad de Líneas</h3>
                         
                         <!-- Filtros Temáticos Rápidos -->
                         <div style="margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 12px;">
-                            <span class="input-label" style="font-size: 9px; margin-bottom: 8px; color: var(--accent-purple); font-weight: bold; letter-spacing: 0.5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Enfoque del Mapa</span>
+                            <span class="input-label" style="font-size: 11px; margin-bottom: 8px; color: var(--accent-purple); font-weight: bold; letter-spacing: 0.5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Enfoque del Mapa</span>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                                <button class="filter-btn" style="font-size: 10px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('love')">❤️ Amor y Armonía</button>
-                                <button class="filter-btn" style="font-size: 10px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('success')">💼 Éxito y Trabajo</button>
-                                <button class="filter-btn" style="font-size: 10px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('challenges')">🛡️ Retos y Lecciones</button>
-                                <button class="filter-btn" style="font-size: 10px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('all')">👁️ Mostrar Todo</button>
+                                <button class="filter-btn" style="font-size: 11px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('love')">❤️ Amor y Armonía</button>
+                                <button class="filter-btn" style="font-size: 11px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('success')">💼 Éxito y Trabajo</button>
+                                <button class="filter-btn" style="font-size: 11px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('challenges')">🛡️ Retos y Lecciones</button>
+                                <button class="filter-btn" style="font-size: 11px; justify-content: center; padding: 6px 4px;" onclick="applyThemeFilter('all')">👁️ Mostrar Todo</button>
                             </div>
                         </div>
 
@@ -3405,8 +3506,8 @@
                             <!-- Generado dinámicamente -->
                         </div>
                         <div style="margin-top: 14px; display: flex; gap: 8px;">
-                            <button class="filter-btn" style="flex:1; justify-content:center; font-size:10px; padding: 6px;" onclick="setAllPlanets(true)">Mostrar Todos</button>
-                            <button class="filter-btn" style="flex:1; justify-content:center; font-size:10px; padding: 6px;" onclick="setAllPlanets(false)">Ocultar Todos</button>
+                            <button class="filter-btn" style="flex:1; justify-content:center; font-size:11px; padding: 6px;" onclick="setAllPlanets(true)">Mostrar Todos</button>
+                            <button class="filter-btn" style="flex:1; justify-content:center; font-size:11px; padding: 6px;" onclick="setAllPlanets(false)">Ocultar Todos</button>
                         </div>
                     </div>
 
@@ -3475,6 +3576,7 @@
                     </div>
                 </div>
             </div>
+            <div class="panel-fade-overlay"></div>
         </div>
 
         <!-- Mapa -->
@@ -3489,21 +3591,26 @@
 
         <!-- SELECTOR FLOTANTE DE ESTILOS DE MAPA -->
         <div class="map-style-selector" id="style-selector">
-            <button class="map-style-btn" id="style-classic" onclick="changeMapStyle('classic')" title="Clásico Brillante">
-                <i class="fa-solid fa-map"></i> <span>Clásico</span>
+            <button class="map-style-toggle-btn" onclick="toggleMapStyleSelector(event)" title="Cambiar estilo de mapa">
+                <i class="fa-solid fa-layer-group"></i>
             </button>
-            <button class="map-style-btn" id="style-light" onclick="changeMapStyle('light')" title="Claro Mínimo">
-                <i class="fa-regular fa-square"></i> <span>Claro</span>
-            </button>
-            <button class="map-style-btn active" id="style-voyager" onclick="changeMapStyle('voyager')" title="Suave Voyager">
-                <i class="fa-solid fa-compass"></i> <span>Suave</span>
-            </button>
-            <button class="map-style-btn" id="style-satellite" onclick="changeMapStyle('satellite')" title="Satélite">
-                <i class="fa-solid fa-globe"></i> <span>Satélite</span>
-            </button>
-            <button class="map-style-btn" id="style-dark" onclick="changeMapStyle('dark')" title="Noche Oscuro">
-                <i class="fa-solid fa-moon"></i> <span>Noche</span>
-            </button>
+            <div class="map-style-options">
+                <button class="map-style-btn" id="style-classic" onclick="changeMapStyle('classic')" title="Clásico Brillante">
+                    <i class="fa-solid fa-map"></i> <span>Clásico</span>
+                </button>
+                <button class="map-style-btn" id="style-light" onclick="changeMapStyle('light')" title="Claro Mínimo">
+                    <i class="fa-regular fa-square"></i> <span>Claro</span>
+                </button>
+                <button class="map-style-btn active" id="style-voyager" onclick="changeMapStyle('voyager')" title="Suave Voyager">
+                    <i class="fa-solid fa-compass"></i> <span>Suave</span>
+                </button>
+                <button class="map-style-btn" id="style-satellite" onclick="changeMapStyle('satellite')" title="Satélite">
+                    <i class="fa-solid fa-globe"></i> <span>Satélite</span>
+                </button>
+                <button class="map-style-btn" id="style-dark" onclick="changeMapStyle('dark')" title="Noche Oscuro">
+                    <i class="fa-solid fa-moon"></i> <span>Noche</span>
+                </button>
+            </div>
         </div>
 
         <!-- Barra de navegación para móvil -->
@@ -4297,6 +4404,14 @@
         // Inicializar la aplicación de forma segura
         window.addEventListener('load', () => {
             initAppWithRetry();
+            // Cerrar selector de estilos de mapa al hacer clic afuera
+            document.addEventListener('click', function(e) {
+                const selector = document.getElementById('style-selector');
+                if (selector && !selector.contains(e.target)) {
+                    selector.classList.remove('expanded');
+                }
+            });
+
             
             // Registrar Service Worker para habilitar la instalación como App (PWA)
             if ('serviceWorker' in navigator) {
@@ -4330,7 +4445,7 @@
                         <div style="font-size:48px;">⚠️</div>
                         <div style="font-family:'Cinzel',serif;font-size:20px;color:#ba55d3;">Error de Carga</div>
                         <div style="font-size:13px;color:#666;text-align:center;max-width:280px;">No se pudieron cargar las librerías necesarias. Verificá tu conexión a internet y recargá la página.</div>
-                        <button onclick="location.reload()" style="padding:12px 28px;background:#9c27b0;color:white;border:none;border-radius:12px;font-size:14px;cursor:pointer;margin-top:8px;">Recargar</button>
+                        <button onclick="location.reload()" style="padding:12px 28px;background:#9c27b0;color:white;border:none;border-radius:12px;font-size:13px;cursor:pointer;margin-top:8px;">Recargar</button>
                     </div>`;
                     return;
                 }
@@ -4636,6 +4751,15 @@
         }
 
         // Alternar entre los estilos de mapas flotantes
+
+        function toggleMapStyleSelector(event) {
+            if (event) event.stopPropagation();
+            const selector = document.getElementById('style-selector');
+            if (selector) {
+                selector.classList.toggle('expanded');
+            }
+        }
+
         function changeMapStyle(styleKey) {
             if (!map || !tileLayers[styleKey]) return;
             
@@ -4719,7 +4843,7 @@
             if (btn) {
                 originalHTML = btn.innerHTML;
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size: 14px;"></i> Calculando...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size: 13px;"></i> Calculando...';
             }
             try {
                 const latEl = document.getElementById('lat-input');
@@ -5016,7 +5140,7 @@
                                 <tr class="${rowClass}" style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid ${color}; ${bgStyle} ${displayStyle} transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='${idx % 2 === 0 ? '#13131F' : '#16162a'}'">
                                     <td style="padding: 9px 8px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.95);">${pIcons[p]}</td>
                                     <td style="padding: 9px 8px; color: rgba(255,255,255,0.85);">${sign.symbol} ${sign.name}</td>
-                                    <td style="padding: 9px 8px; text-align: right; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">
+                                    <td style="padding: 9px 8px; text-align: right; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;">
                                         <span style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2px 8px; color: rgba(255,255,255,0.95);">${deg}° ${min}'</span>
                                     </td>
                                 </tr>
@@ -5028,7 +5152,7 @@
                             </tbody>
                         </table>
                         <div style="text-align: center; margin-top: 12px; margin-bottom: 6px;">
-                            <button id="toggle-extra-planets-btn" onclick="toggleExtraPlanets()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #c4b5fd; padding: 6px 16px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; outline: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
+                            <button id="toggle-extra-planets-btn" onclick="toggleExtraPlanets()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #c4b5fd; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; outline: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
                                 Ver todos los planetas ↓
                             </button>
                         </div>
@@ -5153,7 +5277,7 @@
                                 if (interp) {
                                     culmHtml += `<div style="font-size: 11px; margin-bottom: 6px;">`;
                                     culmHtml += `<strong style="color: var(--accent-gold);">${interp.symbol} ${interp.name}:</strong> <span style="color: rgba(255,255,255,0.85);">${interp.text}</span><br>`;
-                                    culmHtml += `<span style="color: #00bcd4; font-size: 10px; font-weight: 600;">Opciones extra: ${interp.jobs}</span>`;
+                                    culmHtml += `<span style="color: #00bcd4; font-size: 11px; font-weight: 600;">Opciones extra: ${interp.jobs}</span>`;
                                     culmHtml += `</div>`;
                                 }
                             });
@@ -5551,7 +5675,7 @@
                     .addTo(map)
                     .bindPopup(`
                         <div class="popup-title"><i class="fa-solid fa-location-dot"></i> ${city.name}</div>
-                        <div class="popup-body" style="font-size: 12px; max-height: 250px; overflow-y: auto;">
+                        <div class="popup-body" style="font-size: 13px; max-height: 250px; overflow-y: auto;">
                             <p style="color:#d1d5db; line-height:1.4;">${city.desc}</p>
                         </div>
                     `);
@@ -5606,11 +5730,11 @@
                     
                     const popupContent = `
                         <div class="popup-title">
-                            <span style="color:${color}">${titleSymbol}</span> ${nameSp} en ${type} ${isP2 ? '<span style="color:#00bcd4; font-size:9px; font-weight:bold;">(Persona 2)</span>' : ''}
+                            <span style="color:${color}">${titleSymbol}</span> ${nameSp} en ${type} ${isP2 ? '<span style="color:#00bcd4; font-size:11px; font-weight:bold;">(Persona 2)</span>' : ''}
                         </div>
                         <div class="popup-body">
                             <span class="popup-badge" style="background:${color}1A; color:${color};">${typeSp}</span>
-                            <p style="margin-top: 10px; font-size:12px; line-height:1.4; color:#d1d5db;">${explanation}</p>
+                            <p style="margin-top: 10px; font-size:13px; line-height:1.4; color:#d1d5db;">${explanation}</p>
                         </div>
                     `;
 
@@ -6956,7 +7080,7 @@
             if (q.length < 3) return;
             
             const dropdown = document.getElementById('search-results');
-            dropdown.innerHTML = '<div id="search-spinner" style="padding:10px; font-size:12px; color:var(--text-gray); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-spinner fa-spin" style="color:#00bcd4;"></i> Buscando ciudad...</div>';
+            dropdown.innerHTML = '<div id="search-spinner" style="padding:10px; font-size:13px; color:var(--text-gray); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-spinner fa-spin" style="color:#00bcd4;"></i> Buscando ciudad...</div>';
             dropdown.style.display = 'block';
             
             // 1. Búsqueda local en worldCities
@@ -7003,7 +7127,7 @@
                     if (spinner) spinner.remove();
                     
                     if (localMatches.length === 0 && data.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">No se encontraron resultados.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">No se encontraron resultados.</div>';
                         return;
                     }
                     
@@ -7042,7 +7166,7 @@
                     const spinner = document.getElementById('search-spinner');
                     if (spinner) spinner.remove();
                     if (localMatches.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">Error en la conexión.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">Error en la conexión.</div>';
                     }
                 });
         }
@@ -7217,7 +7341,7 @@
             if (q.length < 3) return;
             
             const dropdown = document.getElementById('dest-search-results');
-            dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">Buscando...</div>';
+            dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">Buscando...</div>';
             dropdown.style.display = 'block';
             
             fetch(getGeocodeUrl(q))
@@ -7225,7 +7349,7 @@
                 .then(data => {
                     dropdown.innerHTML = '';
                     if (data.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">No se encontraron resultados.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">No se encontraron resultados.</div>';
                         return;
                     }
                     
@@ -7258,7 +7382,7 @@
                     });
                 })
                 .catch(() => {
-                    dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:red;">Error en la conexión.</div>';
+                    dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:red;">Error en la conexión.</div>';
                 });
         }
 
@@ -7330,7 +7454,7 @@
                     <div class="destination-report-card">
                         <button class="dest-card-close" onclick="closeDestinationReport()">&times;</button>
                         <h3><i class="fa-solid fa-plane-arrival"></i> Reporte: ${mainCityName}</h3>
-                        <p style="font-size: 10px; color: var(--text-gray); margin-top: 4px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 6px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${cityName}">
+                        <p style="font-size: 11px; color: var(--text-gray); margin-top: 4px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 6px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${cityName}">
                             ${countryName || 'Destino Consultado'} • ${destLat.toFixed(2)}°, ${destLon.toFixed(2)}°
                         </p>
                 `;
@@ -7338,8 +7462,8 @@
                 if (alignments.length === 0) {
                     html += `
                         <div style="margin-top: 12px;">
-                            <span class="popup-badge" style="background: rgba(102, 187, 106, 0.15); color: #66bb6a; font-size: 10px; font-weight: bold; padding: 3px 10px; border-radius: 12px; display: inline-block;">Zona Neutra</span>
-                            <p style="margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.5;">
+                            <span class="popup-badge" style="background: rgba(102, 187, 106, 0.15); color: #66bb6a; font-size: 11px; font-weight: bold; padding: 3px 10px; border-radius: 12px; display: inline-block;">Zona Neutra</span>
+                            <p style="margin-top: 8px; font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.5;">
                                 No hay líneas planetarias principales pasando cerca de esta región geográfica.
                             </p>
                             <p style="margin-top: 6px; font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.4;">
@@ -7381,13 +7505,13 @@
                         html += `
                             <div class="influence-item">
                                 <div class="influence-header">
-                                    <span style="color: ${color}; font-weight: 700; font-size: 14px; text-shadow: 0 0 8px ${color}33;">${pSymbol} ${nameSp} en ${al.type}</span>
-                                    <span class="popup-badge" style="background: ${badgeBg}; color: ${badgeColor}; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 10px;">${orbClass} (${orbKm} km)</span>
+                                    <span style="color: ${color}; font-weight: 700; font-size: 13px; text-shadow: 0 0 8px ${color}33;">${pSymbol} ${nameSp} en ${al.type}</span>
+                                    <span class="popup-badge" style="background: ${badgeBg}; color: ${badgeColor}; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px;">${orbClass} (${orbKm} km)</span>
                                 </div>
-                                <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
                                     ${angleDesc}
                                 </div>
-                                <p style="color: rgba(255,255,255,0.85); font-size: 12px; line-height: 1.5; margin: 0;">${explanation}</p>
+                                <p style="color: rgba(255,255,255,0.85); font-size: 13px; line-height: 1.5; margin: 0;">${explanation}</p>
                             </div>
                         `;
                     });
@@ -7398,14 +7522,14 @@
                 html += `
                     <div class="report-action-bar" style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
                         <button onclick="downloadReportPDF('${mainCityName.replace(/'/g,"\\'")}')"
-                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%);border:none;border-radius:12px;color:#ffffff;font-size:12px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255, 64, 129, 0.3);transition:all 0.2s;"
+                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%);border:none;border-radius:12px;color:#ffffff;font-size:13px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255, 64, 129, 0.3);transition:all 0.2s;"
                             onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 6px 20px rgba(255, 64, 129, 0.5)';"
                             onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 15px rgba(255, 64, 129, 0.3)';"
                             onmousedown="this.style.transform='scale(0.98)'">
                             <i class="fa-solid fa-file-pdf" style="font-size:15px;"></i>
                             Descargar PDF Carta Natal
                         </button>
-                        <a href="/privacidad" target="_blank" style="text-align:center; color:rgba(255,255,255,0.4); font-size:10px; text-decoration:underline;">Política de Privacidad</a>
+                        <a href="/privacidad" target="_blank" style="text-align:center; color:rgba(255,255,255,0.4); font-size:11px; text-decoration:underline;">Política de Privacidad</a>
                     </div>
                 `;
                 
@@ -7436,7 +7560,7 @@
                         <p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px; color:#ccc;">
                             Tiene <strong>${alignments.length} influencias planetarias</strong> activas.
                         </p>
-                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%); border:none; border-radius:6px; color:#ffffff; font-size:10px; font-weight:bold; cursor:pointer;">
+                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%); border:none; border-radius:6px; color:#ffffff; font-size:11px; font-weight:bold; cursor:pointer;">
                             <i class="fa-solid fa-file-pdf"></i> Ver Reporte y PDF
                         </button>
                     `;
@@ -7445,7 +7569,7 @@
                         <p style="margin-top:6px; border-top:1px solid #ddd; padding-top:6px; font-size:11px; color: #81c784;">
                             <strong>Zona Neutra:</strong> Influencia tranquila y estable.
                         </p>
-                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:rgba(0,188,212,0.2); border:1px solid rgba(0,188,212,0.4); border-radius:6px; color:#00bcd4; font-size:10px; font-weight:bold; cursor:pointer;">
+                        <button onclick="showMobileView('info')" style="width:100%; margin-top:8px; padding:6px 10px; background:rgba(0,188,212,0.2); border:1px solid rgba(0,188,212,0.4); border-radius:6px; color:#00bcd4; font-size:11px; font-weight:bold; cursor:pointer;">
                             <i class="fa-solid fa-file-pdf"></i> Ver Reporte y PDF
                         </button>
                     `;
@@ -8088,7 +8212,7 @@
                             div.innerHTML = `
                                 <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--accent-gold); margin-bottom:4px;">
                                     <span>${planetSymbols[asp.transit]} ${planetSpanish[asp.transit]} aspecta a tu ${planetSpanish[asp.natal]} natal</span>
-                                    <span style="font-size:9px; background:rgba(186,85,211,0.15); color:var(--accent-purple); padding:1px 5px; border-radius:4px; font-weight:600;">${asp.type}</span>
+                                    <span style="font-size:11px; background:rgba(186,85,211,0.15); color:var(--accent-purple); padding:1px 5px; border-radius:4px; font-weight:600;">${asp.type}</span>
                                 </div>
                                 <div style="color:var(--text-dark); margin-bottom:4px; font-weight:600; font-size:11px;">
                                     <i class="fa-solid fa-bolt" style="color:var(--accent-purple)"></i> ¡Activa tu línea del ${angleSp[angle]} local!
@@ -8128,7 +8252,7 @@
                         div.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
                         div.style.paddingBottom = '4px';
                         div.innerHTML = `
-                            • <strong>${planetSp[asp.transit]}</strong> (${sign.symbol} ${sign.name}) en <strong>${asp.type}</strong> a tu <strong>${planetSp[asp.natal]} natal</strong> <span style="font-size:9px; color:var(--text-gray);">(orbe ${asp.orb.toFixed(1)}°)</span>
+                            • <strong>${planetSp[asp.transit]}</strong> (${sign.symbol} ${sign.name}) en <strong>${asp.type}</strong> a tu <strong>${planetSp[asp.natal]} natal</strong> <span style="font-size:11px; color:var(--text-gray);">(orbe ${asp.orb.toFixed(1)}°)</span>
                         `;
                         transitsContainer.appendChild(div);
                     });
@@ -8193,7 +8317,7 @@
                             <h3><i class="fa-solid fa-calendar-days"></i> Calendario: ${cityName.split(',')[0]}</h3>
                             <button class="travel-calendar-close" onclick="closeTravelCalendar()">&times;</button>
                         </div>
-                        <div style="font-size:10px; color:var(--text-gray); margin-bottom: 4px;">
+                        <div style="font-size:11px; color:var(--text-gray); margin-bottom: 4px;">
                             Tránsitos planetarios en los próximos 90 días sobre tus ángulos locales en ${cityName.split(',')[0]}:
                         </div>
                         <div class="calendar-months-container" id="calendar-months-list"></div>
@@ -8559,14 +8683,14 @@
                 el.innerHTML = `
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
                         <span>👤 <strong>Tu Carta Natal:</strong> <span style="color:#00bcd4;">${loc}</span></span>
-                        <span style="background: rgba(124, 58, 237, 0.2); border: 1px solid #7C3AED; color: #A78BFA; border-radius: 8px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; padding: 3px 10px; text-transform: uppercase;">Activa</span>
+                        <span style="background: rgba(124, 58, 237, 0.2); border: 1px solid #7C3AED; color: #A78BFA; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 3px 10px; text-transform: uppercase;">Activa</span>
                     </div>
                 `;
             } else {
                 el.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:4px;">
                         <span style="color:#ff6b6b; font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Falta tu Carta Natal</span>
-                        <span style="color:var(--text-gray); font-size:10px;">Ve a la pestaña <strong>"Mi Carta"</strong> para ingresar tus datos primero. Orbitae los necesita para contrastarlos con los de tu pareja/socio.</span>
+                        <span style="color:var(--text-gray); font-size:11px;">Ve a la pestaña <strong>"Mi Carta"</strong> para ingresar tus datos primero. Orbitae los necesita para contrastarlos con los de tu pareja/socio.</span>
                     </div>
                 `;
             }
@@ -8688,7 +8812,7 @@
             if (q.length < 3) return;
             
             const dropdown = document.getElementById('search-results-p2');
-            dropdown.innerHTML = '<div id="search-spinner-p2" style="padding:10px; font-size:12px; color:var(--text-gray); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-spinner fa-spin" style="color:#00bcd4;"></i> Buscando ciudad...</div>';
+            dropdown.innerHTML = '<div id="search-spinner-p2" style="padding:10px; font-size:13px; color:var(--text-gray); display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-spinner fa-spin" style="color:#00bcd4;"></i> Buscando ciudad...</div>';
             dropdown.style.display = 'block';
             
             // 1. Búsqueda local en worldCities
@@ -8729,7 +8853,7 @@
                     if (spinner) spinner.remove();
                     
                     if (localMatches.length === 0 && data.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">No se encontraron resultados.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">No se encontraron resultados.</div>';
                         return;
                     }
                     
@@ -8763,7 +8887,7 @@
                     const spinner = document.getElementById('search-spinner-p2');
                     if (spinner) spinner.remove();
                     if (localMatches.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">Error en la conexión.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">Error en la conexión.</div>';
                     }
                 });
         }
@@ -8884,7 +9008,7 @@
                 
                 const heartIcon = L.divIcon({
                     className: 'encounter-marker',
-                    html: `<div style="display:flex; justify-content:center; align-items:center; width:26px; height:26px; border-radius:50%; background:rgba(0,188,212,0.2); border:2px solid #00bcd4; box-shadow:0 0 10px #00bcd4; color:#ffffff; font-size:12px;"><i class="fa-solid fa-heart" style="color:#00bcd4;"></i></div>`,
+                    html: `<div style="display:flex; justify-content:center; align-items:center; width:26px; height:26px; border-radius:50%; background:rgba(0,188,212,0.2); border:2px solid #00bcd4; box-shadow:0 0 10px #00bcd4; color:#ffffff; font-size:13px;"><i class="fa-solid fa-heart" style="color:#00bcd4;"></i></div>`,
                     iconSize: [26, 26],
                     iconAnchor: [13, 13]
                 });
@@ -9185,7 +9309,7 @@
                     color:${c.active?'#e0f7fa':'rgba(255,255,255,0.3)'};">
                     <span>${c.icon}</span>
                     <span style="font-weight:${c.active?'600':'400'};">${c.label}</span>
-                    ${c.active?'<i class="fa-solid fa-check" style="color:#00e5ff;font-size:9px;margin-left:auto;"></i>':''}
+                    ${c.active?'<i class="fa-solid fa-check" style="color:#00e5ff;font-size:11px;margin-left:auto;"></i>':''}
                 </div>`).join('');
 
             // HTML de Posiciones Individuales
@@ -9193,7 +9317,7 @@
             if (individualPlacements.length > 0) {
                 individualHTML = `
                 <div style="padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:8px;font-weight:700;"><i class="fa-solid fa-user-friends" style="margin-right:4px;"></i>Comparación de Cartas Natales</div>
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:8px;font-weight:700;"><i class="fa-solid fa-user-friends" style="margin-right:4px;"></i>Comparación de Cartas Natales</div>
                     <div style="display:flex;flex-direction:column;gap:6px;">
                 `;
                 individualPlacements.forEach(item => {
@@ -9204,8 +9328,8 @@
                         <span style="font-weight:700;color:#e0f7fa;text-align:left;display:flex;align-items:center;gap:6px;">
                             <span style="color:#00bcd4;">${pSym}</span> ${pName}
                         </span>
-                        <span style="color:rgba(255,255,255,0.7);font-size:10px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nameP1}: ${item.p1Symbol} ${item.p1Sign} ${item.p1Deg}°</span>
-                        <span style="color:#00bcd4;font-size:10px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nameP2}: ${item.p2Symbol} ${item.p2Sign} ${item.p2Deg}°</span>
+                        <span style="color:rgba(255,255,255,0.7);font-size:11px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nameP1}: ${item.p1Symbol} ${item.p1Sign} ${item.p1Deg}°</span>
+                        <span style="color:#00bcd4;font-size:11px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nameP2}: ${item.p2Symbol} ${item.p2Sign} ${item.p2Deg}°</span>
                     </div>
                     `;
                 });
@@ -9220,8 +9344,8 @@
             if (Object.keys(compositeChart).length > 0) {
                 compositeHTML = `
                 <div style="padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#ba55d3;margin-bottom:8px;font-weight:700;"><i class="fa-solid fa-dharmachakra" style="margin-right:4px;"></i>Esencia del Vínculo (Carta Compuesta)</div>
-                    <p style="font-size:10px;color:rgba(255,255,255,0.38);margin:0 0 10px;line-height:1.4;">Esta carta representa la energía de la relación como una tercera entidad única:</p>
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#ba55d3;margin-bottom:8px;font-weight:700;"><i class="fa-solid fa-dharmachakra" style="margin-right:4px;"></i>Esencia del Vínculo (Carta Compuesta)</div>
+                    <p style="font-size:11px;color:rgba(255,255,255,0.38);margin:0 0 10px;line-height:1.4;">Esta carta representa la energía de la relación como una tercera entidad única:</p>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                 `;
                 compositeBodies.forEach(body => {
@@ -9234,9 +9358,9 @@
                         <div style="background:rgba(186,85,211,0.04);border:1px solid rgba(186,85,211,0.18);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;">
                             <div style="display:flex;align-items:center;justify-content:space-between;">
                                 <div style="display:flex;align-items:center;gap:6px;">
-                                    <span style="font-size:14px;color:#ba55d3;font-weight:bold;line-height:1;">${symbol}</span>
+                                    <span style="font-size:13px;color:#ba55d3;font-weight:bold;line-height:1;">${symbol}</span>
                                     <span style="font-size:11px;font-weight:700;color:#e0f7fa;">${name}</span>
-                                    <span style="font-size:9px;color:rgba(255,255,255,0.35);font-style:italic;">(${meaning})</span>
+                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-style:italic;">(${meaning})</span>
                                 </div>
                                 <span style="font-size:11px;color:#ffd740;font-weight:bold;">${item.symbol} ${item.sign} ${item.deg}°</span>
                             </div>
@@ -9262,10 +9386,10 @@
                 return `
                 <div style="background:rgba(0,188,212,0.06);border:1px solid rgba(0,188,212,0.2);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;">
                     <div style="display:flex;align-items:center;gap:8px;">
-                        <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,188,212,0.15);border:1.5px solid #00bcd4;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#00bcd4;">${idx+1}</div>
-                        <span style="font-weight:700;font-size:12px;color:#e0f7fa;">${locationLabel}</span>
+                        <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,188,212,0.15);border:1.5px solid #00bcd4;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:#00bcd4;">${idx+1}</div>
+                        <span style="font-weight:700;font-size:13px;color:#e0f7fa;">${locationLabel}</span>
                     </div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.45);padding-left:30px;">${planetSymbols[c.p1Planet]} ${planetSpanish[c.p1Planet]} ${descP1} &times; ${planetSymbols[c.p2Planet]} ${planetSpanish[c.p2Planet]} ${descP2}</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.45);padding-left:30px;">${planetSymbols[c.p1Planet]} ${planetSpanish[c.p1Planet]} ${descP1} &times; ${planetSymbols[c.p2Planet]} ${planetSpanish[c.p2Planet]} ${descP2}</div>
                     <p style="font-size:11px;color:#ffd740;font-style:italic;margin:0;padding-left:30px;line-height:1.4;">"${advice}"</p>
                 </div>`;
             }).join('');
@@ -9277,14 +9401,14 @@
                     <div style="padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.06);">
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
                             <div>
-                                <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.38);margin-bottom:3px;">Reporte de Compatibilidad</div>
+                                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.38);margin-bottom:3px;">Reporte de Compatibilidad</div>
                                 <div style="font-size:15px;font-weight:800;color:#e0f7fa;line-height:1.2;">${nameP1} <i class="fa-solid fa-heart" style="color:#ff6e6e;font-size:11px;"></i> ${nameP2}</div>
                                 <div style="font-size:10.5px;font-weight:700;color:${scoreColor};margin-top:3px;">${scoreEmoji} ${scoreLabel} (${score}/100)</div>
-                                <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px;">${purposeLabel}</div>
+                                <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;">${purposeLabel}</div>
                             </div>
                             <div style="flex-shrink:0;width:58px;height:58px;border-radius:50%;background:conic-gradient(${scoreColor} ${score*3.6}deg,rgba(255,255,255,0.06) 0deg);display:flex;align-items:center;justify-content:center;">
                                 <div style="width:44px;height:44px;border-radius:50%;background:#0d0d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                                    <span style="font-size:14px;font-weight:900;color:${scoreColor};line-height:1;">${score}</span>
+                                    <span style="font-size:13px;font-weight:900;color:${scoreColor};line-height:1;">${score}</span>
                                     <span style="font-size:8px;color:rgba(255,255,255,0.35);">/100</span>
                                 </div>
                             </div>
@@ -9296,7 +9420,7 @@
 
                     <!-- Análisis narrativo -->
                     <div style="padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:5px;font-weight:700;"><i class="fa-solid fa-scroll" style="margin-right:4px;"></i>Analisis Sinastrico</div>
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:5px;font-weight:700;"><i class="fa-solid fa-scroll" style="margin-right:4px;"></i>Analisis Sinastrico</div>
                         <p style="font-size:11.5px;color:rgba(255,255,255,0.72);line-height:1.55;margin:0;">${narrative}</p>
                     </div>
 
@@ -9308,21 +9432,21 @@
 
                     <!-- Categorías -->
                     <div style="padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:7px;font-weight:700;"><i class="fa-solid fa-chart-bar" style="margin-right:4px;"></i>Areas de Energia</div>
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:7px;font-weight:700;"><i class="fa-solid fa-chart-bar" style="margin-right:4px;"></i>Areas de Energia</div>
                         <div style="display:flex;flex-direction:column;gap:5px;">${catHTML}</div>
                     </div>
 
                     <!-- Puntos de encuentro -->
                     <div style="padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:5px;font-weight:700;"><i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>Puntos de Encuentro</div>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.38);margin:0 0 8px;line-height:1.4;">Lugares donde las energias de ambas cartas se cruzan favorablemente:</p>
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(0,188,212,0.7);margin-bottom:5px;font-weight:700;"><i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>Puntos de Encuentro</div>
+                        <p style="font-size:11px;color:rgba(255,255,255,0.38);margin:0 0 8px;line-height:1.4;">Lugares donde las energias de ambas cartas se cruzan favorablemente:</p>
                         <div style="display:flex;flex-direction:column;gap:7px;">${encListHTML}</div>
                     </div>
 
                     <!-- Botón PDF Premium -->
                     <div style="padding:16px;">
                         <button onclick="downloadCompatibilityPDF()"
-                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%);border:none;border-radius:12px;color:#ffffff;font-size:12px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255, 64, 129, 0.3);transition:all 0.2s;"
+                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg,#ba55d3 0%,#ff4081 100%);border:none;border-radius:12px;color:#ffffff;font-size:13px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255, 64, 129, 0.3);transition:all 0.2s;"
                             onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 6px 20px rgba(255, 64, 129, 0.5)';"
                             onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 15px rgba(255, 64, 129, 0.3)';"
                             onmousedown="this.style.transform='scale(0.98)'">
@@ -10071,7 +10195,7 @@
             if (q.length < 3) return;
             
             const dropdown = document.getElementById('ai-search-results');
-            dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">Buscando...</div>';
+            dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">Buscando...</div>';
             dropdown.style.display = 'block';
             
             fetch(getGeocodeUrl(q))
@@ -10079,7 +10203,7 @@
                 .then(data => {
                     dropdown.innerHTML = '';
                     if (data.length === 0) {
-                        dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:var(--text-gray);">No se encontraron resultados.</div>';
+                        dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:var(--text-gray);">No se encontraron resultados.</div>';
                         return;
                     }
                     
@@ -10098,7 +10222,7 @@
                     });
                 })
                 .catch(() => {
-                    dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:red;">Error en la conexión.</div>';
+                    dropdown.innerHTML = '<div style="padding:10px; font-size:13px; color:red;">Error en la conexión.</div>';
                 });
         }
 
@@ -10387,12 +10511,12 @@
                         itemsHtml += `
                             <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; transition: all 0.2s ease;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 11px; font-weight: 600; color: #fff;">📍 ${rec.name}, <span style="font-size: 9px; color: var(--text-gray); font-weight: 400;">${rec.country}</span></span>
+                                    <span style="font-size: 11px; font-weight: 600; color: #fff;">📍 ${rec.name}, <span style="font-size: 11px; color: var(--text-gray); font-weight: 400;">${rec.country}</span></span>
                                     <span style="font-size: 8px; font-weight: 700; color: var(--accent-gold); background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 1px 5px; border-radius: 4px; display: flex; align-items: center; gap: 2px;">
                                         ${icon} ${planetEs} en ${rec.alignment.type}
                                     </span>
                                 </div>
-                                <span style="font-size: 9px; color: #b3c0cb; font-style: italic; line-height: 1.3;">
+                                <span style="font-size: 11px; color: #b3c0cb; font-style: italic; line-height: 1.3;">
                                     "${expText.charAt(0).toUpperCase() + expText.slice(1)} (Orbe: ${rec.alignment.orb.toFixed(1)}°)."
                                 </span>
                             </div>
@@ -10401,7 +10525,7 @@
                     
                     recommendationsHtml = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.15);">
-                            <div style="font-size: 10px; font-weight: 700; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                            <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
                                 <i class="fa-solid fa-map-location-dot"></i> 🧭 PUNTOS MÁXIMOS RECOMENDADOS EN EL MUNDO:
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -10411,7 +10535,7 @@
                     `;
                 } else {
                     recommendationsHtml = `
-                        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.15); font-size: 9px; color: var(--text-gray); text-align: center;">
+                        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.15); font-size: 11px; color: var(--text-gray); text-align: center;">
                             <i class="fa-solid fa-circle-info"></i> No se encontraron líneas altamente activas para esta área en las principales ciudades de nuestra base de datos.
                         </div>
                     `;
@@ -10544,12 +10668,12 @@
                         <span>🧙‍♂️ Guía Astral de Orbitae</span>
                         <span class="star-rating">${starHtml}</span>
                     </div>
-                    <div style="font-size: 9px; font-weight: 700; color: #ffd700; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 1px 6px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #ffd700; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 1px 6px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
                         ${ratingText}
                     </div>
                     <p style="margin: 0; line-height: 1.4; color: #f0f8ff;">${responseText}</p>
                     ${recommendationsHtml}
-                    <p style="margin-top: 6px; font-size: 9px; color: var(--text-gray); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4px;">
+                    <p style="margin-top: 6px; font-size: 11px; color: var(--text-gray); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4px;">
                         *Análisis basado en tu carta natal y en los tránsitos planetarios activos en ${cityName.split(',')[0]}.
                     </p>
                 `;
@@ -10706,7 +10830,7 @@
                 }
                 
                 if (alerts.length === 0) {
-                    listContainer.innerHTML = '<div style="color:var(--text-gray); font-size:10px;">Esta semana no hay tránsitos mayores activando tu carta. Clima estable.</div>';
+                    listContainer.innerHTML = '<div style="color:var(--text-gray); font-size:11px;">Esta semana no hay tránsitos mayores activando tu carta. Clima estable.</div>';
                     return;
                 }
                 
@@ -10732,7 +10856,7 @@
                     div.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:4px; flex: 1;">
                             <span style="font-weight:500; color:rgba(255,255,255,0.95); font-size:10.5px; line-height:1.4;">${transitText}</span>
-                            <span style="color:var(--text-gray); font-size:9px; display:flex; align-items:center; gap:6px;">
+                            <span style="color:var(--text-gray); font-size:11px; display:flex; align-items:center; gap:6px;">
                                 <span><i class="fa-solid fa-clock"></i> ${dayText}</span>
                                 <span>•</span>
                                 <span>Aspecto: ${alert.transit} en ${alert.type} a ${alert.natal} natal</span>
@@ -10764,7 +10888,7 @@
                 
                 <div class="help-modal-section" style="margin-bottom: 16px;">
                     <h3><i class="fa-solid fa-microscope" style="color: #00bcd4; margin-right: 6px;"></i> Precisión Científica de la NASA</h3>
-                    <p style="margin: 0; font-size: 12px; color: var(--text-gray);">
+                    <p style="margin: 0; font-size: 13px; color: var(--text-gray);">
                         Olvídate de aproximaciones. Orbitae ejecuta el motor matemático <strong>astronomy.js</strong> localmente para calcular órbitas planetarias reales bajo el modelo VSOP87 de la NASA. Cada línea, aspecto, tránsito y sinastría se procesa al instante con máxima precisión geográfica y temporal.
                     </p>
                 </div>
@@ -10773,30 +10897,30 @@
                     <h3><i class="fa-solid fa-circle-play" style="color: #ba55d3; margin-right: 6px;"></i> ¿Qué puedes hacer en la aplicación?</h3>
                     <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px;">
                         <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="font-size: 14px;">🗺️</span>
+                            <span style="font-size: 13px;">🗺️</span>
                             <div>
-                                <strong style="color: #ffffff; font-size: 12px;">Astrocartografía Interactiva</strong>
+                                <strong style="color: #ffffff; font-size: 13px;">Astrocartografía Interactiva</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Visualiza cómo influyen tus líneas planetarias de nacimiento en cualquier rincón del mapa mundial (ASC, MC, DSC, IC).</p>
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="font-size: 14px;">🪐</span>
+                            <span style="font-size: 13px;">🪐</span>
                             <div>
-                                <strong style="color: #ffffff; font-size: 12px;">Carta Natal & Tránsitos</strong>
+                                <strong style="color: #ffffff; font-size: 13px;">Carta Natal & Tránsitos</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Consulta tu carta completa en tiempo real y recibe notificaciones y alertas de tránsitos diarios sobre tu cielo natal.</p>
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="font-size: 14px;">❤️</span>
+                            <span style="font-size: 13px;">❤️</span>
                             <div>
-                                <strong style="color: #ffffff; font-size: 12px;">Sinastría & Carta Compuesta</strong>
+                                <strong style="color: #ffffff; font-size: 13px;">Sinastría & Carta Compuesta</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Analiza la compatibilidad profunda de tus relaciones a través de aspectos mutuos y la carta compuesta del vínculo.</p>
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="font-size: 14px;">📄</span>
+                            <span style="font-size: 13px;">📄</span>
                             <div>
-                                <strong style="color: #ffffff; font-size: 12px;">Reportes PDF Premium</strong>
+                                <strong style="color: #ffffff; font-size: 13px;">Reportes PDF Premium</strong>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-gray);">Descarga informes estructurados de 4 páginas con interpretaciones dinámicas listas para imprimir o compartir.</p>
                             </div>
                         </div>
@@ -10858,25 +10982,25 @@
             <!-- Separador -->
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                 <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
-                <span style="font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;">¿Ya tenés un código?</span>
+                <span style="font-size:11px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;">¿Ya tenés un código?</span>
                 <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
             </div>
 
             <!-- Activación con código (server-validated) -->
             <div style="margin-bottom: 10px;">
-                <label style="font-size: 9px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing:0.5px;">Ingresá tu código de activación:</label>
+                <label style="font-size: 11px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing:0.5px;">Ingresá tu código de activación:</label>
                 <div style="display: flex; gap: 6px;">
                     <input type="text" id="activation-code-input"
                         placeholder="Código recibido por WhatsApp/Email..."
                         style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: white; flex: 1; outline: none; letter-spacing:1px; font-family:'Inter',sans-serif;"
                         onkeydown="if(event.key==='Enter') verifyActivationCode()">
                     <button id="activation-verify-btn" onclick="verifyActivationCode()"
-                        style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 9px 14px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s; white-space:nowrap;"
+                        style="background: rgba(186, 85, 211, 0.2); border: 1px solid rgba(186, 85, 211, 0.45); color: #e0b0ff; padding: 9px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; transition: background 0.2s; white-space:nowrap;"
                         onmouseover="this.style.background='rgba(186, 85, 211, 0.35)'" onmouseout="this.style.background='rgba(186, 85, 211, 0.2)'">
                         Activar
                     </button>
                 </div>
-                <p style="font-size:9px; color:rgba(255,255,255,0.3); margin-top:5px; line-height:1.4;">Recibís el código automáticamente tras confirmar el pago. Dudas: <a href="mailto:orbitae.app@gmail.com" style="color:#ba55d3;">orbitae.app@gmail.com</a></p>
+                <p style="font-size:11px; color:rgba(255,255,255,0.3); margin-top:5px; line-height:1.4;">Recibís el código automáticamente tras confirmar el pago. Dudas: <a href="mailto:orbitae.app@gmail.com" style="color:#ba55d3;">orbitae.app@gmail.com</a></p>
             </div>
 
             <button class="upgrade-btn-secondary" onclick="closeUpgradeModal()" style="margin-top: 4px;">
@@ -10885,7 +11009,7 @@
 
             <!-- Footer legal -->
             <div style="text-align:center; margin-top:12px;">
-                <a href="/privacidad" target="_blank" style="font-size:9px; color:rgba(255,255,255,0.25); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.15);">Política de Privacidad</a>
+                <a href="/privacidad" target="_blank" style="font-size:11px; color:rgba(255,255,255,0.25); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,0.15);">Política de Privacidad</a>
             </div>
         </div>
     </div>
