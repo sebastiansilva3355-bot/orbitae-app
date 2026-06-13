@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        // Force unregister service worker and clear cache to apply updates
+        if (!localStorage.getItem('sw_cleared_v45')) {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+            localStorage.setItem('sw_cleared_v45', 'true');
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 500);
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbitae — Astrocartografía Interactiva | Premium Astrology</title>
@@ -277,6 +298,7 @@
         .panel-content {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 20px;
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
@@ -351,6 +373,7 @@
 
         .text-input, .select-input {
             width: 100%;
+            min-width: 0;
             background: rgba(255, 255, 255, 0.02) !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
             border-radius: 8px;
@@ -398,7 +421,7 @@
             border-radius: 8px;
             max-height: 180px;
             overflow-y: auto;
-            z-index: 100;
+            z-index: 9999;
             display: none;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
@@ -2383,14 +2406,14 @@
                                     <div id="search-results" class="search-results-dropdown"></div>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px;" class="input-group">
-                                    <div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 12px;" class="input-group">
+                                    <div style="flex: 1.2; min-width: 0;">
                                         <label class="input-label" style="color: rgba(255,255,255,0.7);">Fecha de Nacimiento</label>
-                                        <input type="text" id="date-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                        <input type="text" id="date-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white; width: 100%; display: block; min-width: 0;">
                                     </div>
-                                    <div>
+                                    <div style="flex: 0.8; min-width: 0;">
                                         <label class="input-label" style="color: rgba(255,255,255,0.7);">Hora (Local)</label>
-                                        <input type="text" id="time-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                        <input type="text" id="time-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white; width: 100%; display: block; min-width: 0;">
                                     </div>
                                 </div>
 
@@ -2401,14 +2424,14 @@
                                 </div>
 
                                 <div id="advanced-calculator-fields" style="display: none; border-left: 2px solid rgba(0, 229, 255, 0.3); padding-left: 10px; margin-bottom: 14px; margin-top: 8px;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" class="input-group">
-                                        <div>
+                                    <div style="display: flex; gap: 8px; margin-bottom: 12px;" class="input-group">
+                                        <div style="flex: 1; min-width: 0;">
                                             <label class="input-label" style="color: rgba(255,255,255,0.7);">Latitud</label>
-                                            <input type="number" step="0.0001" id="lat-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                            <input type="number" step="0.0001" id="lat-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white; width: 100%; display: block; min-width: 0;">
                                         </div>
-                                        <div>
+                                        <div style="flex: 1; min-width: 0;">
                                             <label class="input-label" style="color: rgba(255,255,255,0.7);">Longitud</label>
-                                            <input type="number" step="0.0001" id="lon-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
+                                            <input type="number" step="0.0001" id="lon-input" value="" class="text-input" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white; width: 100%; display: block; min-width: 0;">
                                         </div>
                                     </div>
 
@@ -2938,7 +2961,7 @@
 
                 <!-- Contenido Pestaña: Compatibilidad (Independiente) -->
                 <div id="tab-compat" class="tab-content" style="display: none;">
-                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.1); margin-bottom: 16px; padding: 20px;">
+                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.1); margin-bottom: 16px; padding: 14px;">
                         <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-heart" style="color: #a78bfa;"></i> Sinastría de Pareja
                         </h3>
@@ -2949,11 +2972,17 @@
                         </div>
 
                         <!-- Nombres de las Personas (Lugar Amistoso) -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
-                            <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px; margin-bottom: 0;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px; margin-right: 4px;"></i> Tu nombre</label>
-                            <label class="input-label" style="color: #00bcd4; font-size: 10px; margin-bottom: 0;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px; margin-right: 4px;"></i> Nombre de tu pareja</label>
-                            <input type="text" id="name-input-p1" placeholder="Tu nombre" value="Sebastian" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
-                            <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="Taylor Swift" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 8px 10px; font-size: 11px;" autocomplete="on">
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;" class="input-group">
+                            <!-- Persona 1 -->
+                            <div style="flex: 1; min-width: 0;">
+                                <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px;"></i> Tu nombre</label>
+                                <input type="text" id="name-input-p1" placeholder="Tu nombre" value="" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 10.5px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
+                            </div>
+                            <!-- Persona 2 -->
+                            <div style="flex: 1; min-width: 0;">
+                                <label class="input-label" style="color: #00bcd4; font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px;"></i> Nombre de tu pareja</label>
+                                <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 10.5px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
+                            </div>
                         </div>
 
                         <!-- Formulario de Persona 2 -->
@@ -2965,16 +2994,22 @@
                             <!-- Buscador Nominatim P2 -->
                             <div class="input-group autocomplete-container" style="margin-bottom: 14px;">
                                 <label class="input-label" style="color: #00bcd4;">Ciudad de nacimiento</label>
-                                <input type="text" id="city-search-p2" placeholder="Ej: Buenos Aires, Argentina" value="West Reading, Pennsylvania, USA" class="text-input" oninput="onP2CitySearchInput()" style="border-color: rgba(0, 188, 212, 0.4); background: rgba(0, 188, 212, 0.02); color: white;" autocomplete="on">
+                                <input type="text" id="city-search-p2" placeholder="Ej: Buenos Aires, Argentina" value="" class="text-input" oninput="onP2CitySearchInput()" style="border-color: rgba(0, 188, 212, 0.4); background: rgba(0, 188, 212, 0.02); color: white;" autocomplete="on">
                                 <div id="search-results-p2" class="search-results-dropdown"></div>
                             </div>
 
                             <!-- Fecha / Hora P2 -->
-                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 6px 14px;" class="input-group">
-                                <label class="input-label" style="color: #00bcd4; margin-bottom: 0;">Fecha de nacimiento</label>
-                                <label class="input-label" style="color: #00bcd4; margin-bottom: 0;">Hora (aprox.)</label>
-                                <input type="text" id="date-input-p2" value="1989-12-13" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
-                                <input type="text" id="time-input-p2" value="05:17" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02);">
+                            <div style="display: flex; gap: 14px; margin-bottom: 14px;" class="input-group">
+                                <!-- Fecha -->
+                                <div style="flex: 1.2; min-width: 0;">
+                                    <label class="input-label" style="color: #00bcd4;">Fecha de nacimiento</label>
+                                    <input type="text" id="date-input-p2" value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02); width: 100%; display: block; min-width: 0;">
+                                </div>
+                                <!-- Hora -->
+                                <div style="flex: 0.8; min-width: 0;">
+                                    <label class="input-label" style="color: #00bcd4;">Hora (aprox.)</label>
+                                    <input type="text" id="time-input-p2" value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.3); color: white; background: rgba(0, 188, 212, 0.02); width: 100%; display: block; min-width: 0;">
+                                </div>
                             </div>
 
                             <!-- Tipo de Consulta de Compatibilidad -->
@@ -3004,9 +3039,9 @@
                                 </button>
                             </div>
 
-                            <input type="hidden" id="lat-input-p2" value="40.3340">
-                            <input type="hidden" id="lon-input-p2" value="-75.9470">
-                            <input type="hidden" id="timezone-input-p2" value="-5">
+                            <input type="hidden" id="lat-input-p2" value="">
+                            <input type="hidden" id="lon-input-p2" value="">
+                            <input type="hidden" id="timezone-input-p2" value="">
                         </div>
                     </div>
 
@@ -4230,7 +4265,7 @@
             
             // Registrar Service Worker para habilitar la instalación como App (PWA)
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/static/sw.js?v=7')
+                navigator.serviceWorker.register('/static/sw.js?v=14')
                     .then(reg => { /* SW registrado */ })
                     .catch(err => console.error('Error registrando Service Worker', err));
             }
@@ -4455,7 +4490,7 @@
                     if (savedNameP1) {
                         p1Input.value = savedNameP1.charAt(0).toUpperCase() + savedNameP1.slice(1);
                     } else {
-                        p1Input.value = "Sebastian";
+                        p1Input.value = "";
                     }
                 }
 
@@ -4469,13 +4504,13 @@
                 const sel = document.getElementById('compatibility-type-select');
 
                 if (!raw) {
-                    if (p2Input) p2Input.value = "Taylor Swift";
-                    if (cityP2) cityP2.value = "West Reading, Pennsylvania, USA";
-                    if (latP2) latP2.value = "40.3340";
-                    if (lonP2) lonP2.value = "-75.9470";
-                    if (dateP2) dateP2.value = "1989-12-13";
-                    if (timeP2) timeP2.value = "05:17";
-                    if (tzP2) tzP2.value = "-5";
+                    if (p2Input) p2Input.value = "";
+                    if (cityP2) cityP2.value = "";
+                    if (latP2) latP2.value = "";
+                    if (lonP2) lonP2.value = "";
+                    if (dateP2) dateP2.value = "";
+                    if (timeP2) timeP2.value = "";
+                    if (tzP2) tzP2.value = "";
                     if (sel) sel.value = "pareja";
                     
                     document.querySelectorAll('.compat-chip').forEach(el => {
@@ -8628,7 +8663,6 @@
                         const offset = guessTimezoneFromAddress(city.name);
                         document.getElementById('timezone-input-p2').value = offset;
                         dropdown.style.display = 'none';
-                        calculateNewChart(true);
                     };
                     dropdown.appendChild(div);
                 });
@@ -8667,7 +8701,6 @@
                             const offset = guessTimezoneFromAddress(item.display_name);
                             document.getElementById('timezone-input-p2').value = offset;
                             dropdown.style.display = 'none';
-                            calculateNewChart(true);
                         };
                         dropdown.appendChild(div);
                     });

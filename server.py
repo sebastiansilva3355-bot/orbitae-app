@@ -775,11 +775,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index.html")
+    return FileResponse("static/index.html", headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
 
 @app.get("/astro")
 async def astro_app():
-    return FileResponse("static/index.html")
+    return FileResponse("static/index.html", headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
 
 @app.get("/privacidad")
 async def privacy_policy():

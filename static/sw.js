@@ -1,5 +1,5 @@
 // Orbitae Service Worker — Offline Cache v38
-const CACHE_NAME = 'orbitae-v38';
+const CACHE_NAME = 'orbitae-v45';
 
 // Archivos a cachear al instalar (App Shell)
 // NOTA: index.html NO está aquí — siempre se sirve directo del servidor (no-cache)
@@ -58,7 +58,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Nunca cachear index.html — siempre red para tener PDF generator actualizado
-    if (url.pathname === '/static/index.html' || url.pathname === '/astro' || url.pathname === '/') {
+    if (url.pathname === '/static/index.html' || url.pathname === '/index.html' || url.pathname === '/astro' || url.pathname === '/') {
         event.respondWith(fetch(event.request));
         return;
     }
