@@ -302,10 +302,10 @@
         /* Sección de Información de Nacimiento */
         .birth-info-card {
             background: linear-gradient(135deg, rgba(20, 20, 31, 0.95) 0%, rgba(13, 13, 20, 0.98) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 0.5px solid rgba(255, 255, 255, 0.035);
             border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.02);
             position: relative;
@@ -361,21 +361,26 @@
         .text-input, .select-input {
             width: 100%;
             min-width: 0;
-            background: rgba(255, 255, 255, 0.02) !important;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%) !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
             border-radius: 8px;
-            padding: 10.5px 12px;
+            padding: 13px 12px;
             color: var(--text-dark);
             font-size: 13px;
             outline: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .text-input:focus, .select-input:focus {
-            border-color: rgba(0, 229, 255, 0.6) !important;
+            border-color: rgba(0, 229, 255, 0.85) !important;
             background: rgba(255, 255, 255, 0.04) !important;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 16px rgba(0, 229, 255, 0.45), inset 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        .text-input::placeholder, .select-input::placeholder {
+            color: rgba(255, 255, 255, 0.45) !important;
+            opacity: 1; /* Firefox */
         }
 
         /* Evitar que el autocompletado del navegador ponga el fondo blanco */
@@ -2335,12 +2340,15 @@
         <div class="control-panel" id="sidebar">
             <button class="collapse-btn" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-left" id="collapse-icon"></i></button>
             
-            <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; margin-bottom: 14px;" title="Haz clic 5 veces aquí para activar Premium">
+            <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; padding: 22px 16px 18px 16px;" title="Haz clic 5 veces aquí para activar Premium">
                 <h1 style="display: flex; align-items: center; justify-content: space-between; margin: 0; line-height: 1.2;">
-                    <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 1.2px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 21px;">✦ ORBITAE</span>
+                    <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 4.5px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 22px;">✦ ORBITAE</span>
                     <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);" id="version-badge-debug" style="display:none;">v3.8 · PDF 5 Pág</span>
                 </h1>
-                <div class="tabs" style="margin-top: 10px; margin-bottom: 0;">
+            </div>
+            
+            <div class="tabs-wrapper" style="background: rgba(10, 10, 15, 0.45); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 16px; margin-bottom: 20px;">
+                <div class="tabs" style="margin: 0; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); padding: 2px; border-radius: 8px; display: flex; overflow-x: auto; scrollbar-width: none;">
                     <button class="tab-btn active" onclick="switchTab('profile')">Carta Natal</button>
                     <button class="tab-btn" onclick="switchTab('cities')">Astrocarto</button>
                     <button class="tab-btn" onclick="switchTab('compat')">Sinastría</button>
@@ -2708,7 +2716,7 @@
 
 
                     <!-- Tarjeta de Nacimiento Activa -->
-                    <div class="birth-info-card" id="active-data-card" style="display: none; border: 1px solid rgba(224, 176, 255, 0.15); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25); margin-bottom: 16px;">
+                    <div class="birth-info-card" id="active-data-card" style="display: none; border: 0.5px solid rgba(224, 176, 255, 0.08); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25); margin-bottom: 20px; padding: 10px;">
                         <h3 style="font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #e0b0ff; letter-spacing: 1.2px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(224, 176, 255, 0.1); padding-bottom: 6px;">
                             <i class="fa-solid fa-dharmachakra" style="color: #e0b0ff;"></i> Datos Activos
                         </h3>
@@ -2727,7 +2735,7 @@
                     </div>
 
                     <!-- WIDGET DE CLIMA ASTRAL DIARIO (DINÁMICO) -->
-                    <div class="birth-info-card" id="daily-widget-card" style="display: none; border: none; background: transparent; box-shadow: none; padding: 0; margin-bottom: 16px;">
+                    <div class="birth-info-card" id="daily-widget-card" style="display: none; border: none; background: transparent; box-shadow: none; padding: 0; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px; margin-bottom: 12px;">
                             <h4 style="font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; color: var(--accent-gold); margin: 0; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-calendar-day" style="color: var(--accent-gold);"></i> Clima Astral
@@ -2928,7 +2936,7 @@
 
 
                     <!-- Tarjeta de Posiciones Planetas Natales -->
-                    <div class="birth-info-card" id="natal-positions-card" style="display: none; border: 1px solid rgba(186, 85, 211, 0.18); margin-top: 12px; background: linear-gradient(135deg, rgba(186, 85, 211, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), 0 0 15px rgba(186, 85, 211, 0.04); padding: 0; overflow: hidden; border-radius: 12px;">
+                    <div class="birth-info-card" id="natal-positions-card" style="display: none; border: 0.5px solid rgba(186, 85, 211, 0.1); margin-top: 15px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(186, 85, 211, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), 0 0 15px rgba(186, 85, 211, 0.04); padding: 0; overflow: hidden; border-radius: 12px;">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(186, 85, 211, 0.08) 0%, rgba(13, 13, 23, 0.4) 100%);" onclick="toggleSection('natal-positions-list-container', 'pos-chevron')">
                             <h3 style="font-family: 'Cinzel', serif; color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px; letter-spacing: 0.8px;">
                                 <i class="fa-solid fa-dharmachakra" style="color: #e0b0ff;"></i> Posiciones Zodiacales & Lecturas
@@ -2960,7 +2968,7 @@
 
                 <!-- Contenido Pestaña: Compatibilidad (Independiente) -->
                 <div id="tab-compat" class="tab-content" style="display: none;">
-                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.1); margin-bottom: 16px; padding: 14px;">
+                    <div class="birth-info-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); box-shadow: 0 0 8px rgba(156, 39, 176, 0.08); margin-bottom: 20px; padding: 10px;">
                         <h3 style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(156, 39, 176, 0.2)); color: white; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-heart" style="color: #a78bfa;"></i> Sinastría de Pareja
                         </h3>
@@ -2975,12 +2983,12 @@
                             <!-- Persona 1 -->
                             <div style="flex: 1; min-width: 0;">
                                 <label class="input-label" style="color: var(--accent-purple-light); font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-user" style="color: var(--accent-purple-light); font-size: 10px;"></i> Tu nombre</label>
-                                <input type="text" id="name-input-p1" placeholder="Tu nombre" value="" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 10.5px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
+                                <input type="text" id="name-input-p1" placeholder="Tu nombre" value="" class="text-input" style="border-color: rgba(186, 85, 211, 0.35); background: rgba(186, 85, 211, 0.02); color: white; padding: 13px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
                             </div>
                             <!-- Persona 2 -->
                             <div style="flex: 1; min-width: 0;">
                                 <label class="input-label" style="color: #00bcd4; font-size: 10px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-heart" style="color: #00bcd4; font-size: 10px;"></i> Nombre de tu pareja</label>
-                                <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 10.5px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
+                                <input type="text" id="name-input-p2" placeholder="Ej: Maria, Juan..." value="" class="text-input" style="border-color: rgba(0, 188, 212, 0.35); background: rgba(0, 188, 212, 0.02); color: white; padding: 13px 12px; font-size: 11px; width: 100%; display: block; min-width: 0;" autocomplete="on">
                             </div>
                         </div>
 
@@ -3052,7 +3060,7 @@
                 <div id="tab-cities" class="tab-content" style="display: none;">
                     
                     <!-- SECCIÓN 1: GUÍA ASTRAL IA (ACORDEÓN UNIFICADO) -->
-                    <div class="birth-info-card" style="border-color: var(--accent-purple); box-shadow: 0 0 8px rgba(156, 39, 176, 0.15); padding: 0; overflow: hidden; margin-bottom: 12px; background: rgba(13, 13, 23, 0.4);">
+                    <div class="birth-info-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); box-shadow: 0 0 8px rgba(156, 39, 176, 0.08); padding: 0; overflow: hidden; margin-bottom: 20px; background: rgba(13, 13, 23, 0.4);">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(156, 39, 176, 0.15) 0%, rgba(13, 13, 23, 1) 100%);" onclick="toggleSection('destinos-objetivos-fields', 'obj-chevron')">
                             <h3 style="color: var(--accent-purple); font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-brain" style="color: var(--accent-gold);"></i> Guía Astral IA
@@ -3177,7 +3185,7 @@
                     </div>
 
                     <!-- SECCIÓN 2: CALENDARIO DE VIAJES & MEJORES CIUDADES (ACORDEÓN) -->
-                    <div class="birth-info-card" style="border-color: var(--accent-gold); box-shadow: 0 0 8px rgba(255, 215, 0, 0.12); padding: 0; overflow: hidden; background: rgba(13, 13, 23, 0.4); margin-bottom: 12px;">
+                    <div class="birth-info-card" style="border: 0.5px solid rgba(255, 215, 0, 0.12); padding: 0; overflow: hidden; background: rgba(13, 13, 23, 0.4); margin-bottom: 20px;">
                         <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(13, 13, 23, 1) 100%);" onclick="toggleSection('destinos-calendar-fields', 'cal-chevron')">
                             <h3 style="color: var(--accent-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-calendar-days" style="color: #ffd700;"></i> Calendario de Viajes & Ciudades
@@ -3223,7 +3231,7 @@
                 <div id="tab-daily" class="tab-content" style="display: none;">
 
                     <!-- Tarjeta de Vocación Astrológica (movida desde MI CARTA) -->
-                    <div class="birth-info-card" id="vocation-card" style="border-color: var(--accent-purple); display: none; margin-bottom: 12px;">
+                    <div class="birth-info-card" id="vocation-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); display: none; margin-bottom: 20px; padding: 10px;">
                         <h3 style="color: var(--accent-purple); font-size: 12px; font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-user-tie"></i> Vocación Astrológica</h3>
                         <div style="margin-top: 10px; font-size: 12px; line-height: 1.4;">
                             <div style="display: flex; justify-content: space-between; font-weight: bold; color: var(--text-dark); margin-bottom: 6px;">
@@ -3333,7 +3341,7 @@
                 <!-- Contenido Pestaña: Guía (Leyenda y Filtros combinados) -->
                 <div id="tab-legend" class="tab-content" style="display: none;">
                     <!-- GUÍA EXPLICATIVA RÁPIDA -->
-                    <div class="birth-info-card" style="background: rgba(156, 39, 176, 0.05); border-color: rgba(156, 39, 176, 0.2); margin-bottom: 16px;">
+                    <div class="birth-info-card" style="background: rgba(156, 39, 176, 0.03); border: 0.5px solid rgba(156, 39, 176, 0.15); margin-bottom: 20px; padding: 10px;">
                         <h3 style="color: var(--accent-purple); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-circle-info"></i> ¿Para qué sirve este mapa?
                         </h3>
@@ -3348,7 +3356,7 @@
                     </div>
 
                     <!-- FILTRAR LÍNEAS PLANETARIAS -->
-                    <div class="birth-info-card" style="border-color: rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); margin-bottom: 16px;">
+                    <div class="birth-info-card" style="border: 0.5px solid rgba(255, 255, 255, 0.035); background: rgba(255, 255, 255, 0.015); margin-bottom: 20px; padding: 10px;">
                         <h3 style="font-size: 12px; text-transform: uppercase; color: var(--text-dark); margin-bottom: 8px;"><i class="fa-solid fa-eye"></i> Visibilidad de Líneas</h3>
                         
                         <!-- Filtros Temáticos Rápidos -->
