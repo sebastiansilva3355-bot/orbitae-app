@@ -2447,6 +2447,20 @@
             min-width: 0 !important;
         }
 
+        /* Alinear selectores de hora (timepicker) a la derecha para evitar desbordes en el panel */
+        .flatpickr-calendar.static.noCalendar {
+            left: auto !important;
+            right: 0 !important;
+        }
+        /* Mover la flecha del selector de hora a la derecha para que coincida */
+        .flatpickr-calendar.static.noCalendar.arrowTop::before,
+        .flatpickr-calendar.static.noCalendar.arrowTop::after,
+        .flatpickr-calendar.static.noCalendar.arrowBottom::before,
+        .flatpickr-calendar.static.noCalendar.arrowBottom::after {
+            left: auto !important;
+            right: 22px !important;
+        }
+
     </style>
 </head>
 <body>
