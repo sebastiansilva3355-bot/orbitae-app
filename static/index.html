@@ -4508,12 +4508,12 @@
 
                 // Inicializar selectores de fecha/hora premium (Flatpickr)
                 if (typeof flatpickr !== 'undefined') {
-                    flatpickr("#date-input", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true });
-                    flatpickr("#date-input-p2", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true });
-                    flatpickr("#daily-date-input", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true });
+                    flatpickr("#date-input", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true, static: true });
+                    flatpickr("#date-input-p2", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true, static: true });
+                    flatpickr("#daily-date-input", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true, static: true });
                     
-                    flatpickr("#time-input", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true });
-                    flatpickr("#time-input-p2", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true });
+                    flatpickr("#time-input", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true, static: true });
+                    flatpickr("#time-input-p2", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true, static: true });
                 }
 
                 initMap();
