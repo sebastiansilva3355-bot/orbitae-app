@@ -1763,9 +1763,10 @@
             background: rgba(5, 5, 15, 0.85);
             backdrop-filter: blur(8px);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -1784,6 +1785,7 @@
             text-align: center;
             box-shadow: 0 0 80px rgba(156, 39, 176, 0.3), 0 30px 60px rgba(0,0,0,0.5);
             position: relative;
+            margin: auto;
         }
         .upgrade-modal-close {
             position: absolute;
