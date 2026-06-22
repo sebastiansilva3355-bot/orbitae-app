@@ -2461,6 +2461,23 @@
             right: 22px !important;
         }
 
+        /* ── VIDEO: Textos del horóscopo detallado más grandes ── */
+        #detailed-horoscope-content p,
+        #detailed-horoscope-content .chat-bubble,
+        #det-horoscope-general-text {
+            font-size: 13px !important;
+            line-height: 1.6 !important;
+        }
+        #det-horoscope-love-text,
+        #det-horoscope-work-text,
+        #det-horoscope-health-text {
+            font-size: 12.5px !important;
+            line-height: 1.5 !important;
+        }
+        #det-horoscope-sign {
+            font-size: 16px !important;
+        }
+
     </style>
 </head>
 <body>
@@ -2513,7 +2530,7 @@
             <div class="panel-header" onclick="handleSplashLogoClick()" style="cursor: pointer; user-select: none; padding: 22px 16px 18px 16px;" title="Haz clic 5 veces aquí para activar Premium">
                 <h1 style="display: flex; align-items: center; justify-content: space-between; margin: 0; line-height: 1.2;">
                     <span style="font-family: 'Cinzel', serif; font-weight: 800; letter-spacing: 4.5px; background: linear-gradient(90deg, #c4b5fd 0%, #ffffff 50%, #67e8f9 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text; font-size: 22px;">✦ ORBITAE</span>
-                    <span style="font-size: 7.5px; font-weight: 800; background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(0, 229, 255, 0.35); color: #00e5ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; box-shadow: 0 0 8px rgba(0, 229, 255, 0.255);" id="version-badge-debug" style="display:none;">v3.8 · PDF 5 Pág</span>
+                    <span id="version-badge-debug" style="display:none !important;">v3.8 · PDF 5 Pág</span>
                 </h1>
             </div>
             
@@ -3406,6 +3423,114 @@
 
                 <!-- Contenido Pestaña: Clima Astral Diario (Tránsitos) -->
                 <div id="tab-daily" class="tab-content" style="display: none;">
+
+                    <!-- Horóscopo Diario Detallado -->
+                    <div class="section-divider" id="divider-daily-horoscope"><span>Horóscopo Diario Personalizado</span></div>
+                    
+                    <div id="detailed-horoscope-placeholder" class="birth-info-card" style="margin-bottom: 20px; text-align: center; padding: 24px 16px; border: 0.5px dashed rgba(0, 188, 212, 0.3);">
+                        <i class="fa-solid fa-moon" style="font-size: 28px; color: var(--accent-gold); margin-bottom: 12px; display: block; animation: pulse 2s infinite;"></i>
+                        <h3 style="color: #ffffff; font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Tu Predicción Personalizada</h3>
+                        <p style="color: var(--text-gray); font-size: 11px; line-height: 1.4; margin-bottom: 14px;">Completa los datos de nacimiento en la pestaña <strong>Mi Carta</strong> para revelar tu horóscopo detallado del día.</p>
+                        <button type="button" onclick="switchTab('profile')" style="background: rgba(0, 188, 212, 0.1); border: 1px solid var(--accent-teal); color: var(--accent-teal); border-radius: 6px; padding: 6px 12px; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Completar Carta</button>
+                    </div>
+
+                    <div id="detailed-horoscope-content" class="birth-info-card" style="display: none; margin-bottom: 20px; border: 0.5px solid rgba(0, 188, 212, 0.25); background: linear-gradient(135deg, rgba(13, 13, 30, 0.95) 0%, rgba(9, 9, 24, 0.95) 100%);">
+                        <!-- Cabecera del Horóscopo -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span id="det-horoscope-icon" style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(0, 188, 212, 0.4));">♈</span>
+                                <div>
+                                    <h3 id="det-horoscope-sign" style="color: #ffffff; font-size: 14px; font-weight: 800; margin: 0; line-height: 1.2;">Aries</h3>
+                                    <span id="det-horoscope-date" style="font-size: 9px; color: var(--accent-teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Predicción para hoy</span>
+                                </div>
+                            </div>
+                            <!-- Medidor de Suerte -->
+                            <div style="text-align: right;">
+                                <span style="font-size: 8px; color: var(--text-gray); display: block; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">Vibración del día</span>
+                                <span id="det-horoscope-luck-percent" style="font-size: 12px; font-weight: 800; color: #4caf50; background: rgba(76, 175, 80, 0.12); padding: 2px 6px; border-radius: 12px; border: 0.5px solid rgba(76, 175, 80, 0.3);">92%</span>
+                            </div>
+                        </div>
+
+                        <!-- Predicción General (Grande/Detallada) -->
+                        <p id="det-horoscope-general-text" style="font-size: 11.5px; color: rgba(255, 255, 255, 0.9); line-height: 1.5; margin-bottom: 16px; border-left: 2px solid var(--accent-teal); padding-left: 8px; font-style: italic;">
+                            Hoy sentirás una alineación perfecta con tus metas más profundas...
+                        </p>
+
+                        <!-- Desglose por pilares con iconos y barras de energía -->
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                            <!-- AMOR -->
+                            <div style="background: rgba(244, 63, 94, 0.03); border: 0.5px solid rgba(244, 63, 94, 0.15); border-radius: 8px; padding: 10px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="font-size: 10px; font-weight: 700; color: #f472b6; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-heart"></i> Amor & Conexión
+                                    </span>
+                                    <span id="det-horoscope-love-score" style="font-size: 10px; font-weight: 700; color: #f472b6;">85%</span>
+                                </div>
+                                <p id="det-horoscope-love-text" style="font-size: 10.5px; color: var(--text-gray); line-height: 1.4; margin: 0;"></p>
+                            </div>
+
+                            <!-- TRABAJO / FINANZAS -->
+                            <div style="background: rgba(251, 191, 36, 0.03); border: 0.5px solid rgba(251, 191, 36, 0.15); border-radius: 8px; padding: 10px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="font-size: 10px; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-briefcase"></i> Trabajo & Finanzas
+                                    </span>
+                                    <span id="det-horoscope-work-score" style="font-size: 10px; font-weight: 700; color: #fbbf24;">78%</span>
+                                </div>
+                                <p id="det-horoscope-work-text" style="font-size: 10.5px; color: var(--text-gray); line-height: 1.4; margin: 0;"></p>
+                            </div>
+
+                            <!-- BIENESTAR -->
+                            <div style="background: rgba(76, 175, 80, 0.03); border: 0.5px solid rgba(76, 175, 80, 0.15); border-radius: 8px; padding: 10px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="font-size: 10px; font-weight: 700; color: #81c784; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-bolt"></i> Energía & Bienestar
+                                    </span>
+                                    <span id="det-horoscope-health-score" style="font-size: 10px; font-weight: 700; color: #81c784;">90%</span>
+                                </div>
+                                <p id="det-horoscope-health-text" style="font-size: 10.5px; color: var(--text-gray); line-height: 1.4; margin: 0;"></p>
+                            </div>
+                        </div>
+
+                        <!-- Factores de Suerte del Día (Grid de 3 columnas) -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 12px; margin-bottom: 12px;">
+                            <div style="background: rgba(255, 255, 255, 0.02); border-radius: 6px; padding: 6px 8px; border: 0.5px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 12px; color: var(--accent-teal);">🎨</span>
+                                <div style="min-width: 0;">
+                                    <span style="font-size: 8px; color: var(--text-gray); display: block; text-transform: uppercase;">Color de la Suerte</span>
+                                    <span id="det-horoscope-color" style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Azul Turquesa</span>
+                                </div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.02); border-radius: 6px; padding: 6px 8px; border: 0.5px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 12px; color: var(--accent-gold);">🔢</span>
+                                <div style="min-width: 0;">
+                                    <span style="font-size: 8px; color: var(--text-gray); display: block; text-transform: uppercase;">Número de la Suerte</span>
+                                    <span id="det-horoscope-number" style="font-size: 10px; font-weight: 700; color: #ffffff; display: block;">7</span>
+                                </div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.02); border-radius: 6px; padding: 6px 8px; border: 0.5px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 12px; color: var(--accent-purple);">🤝</span>
+                                <div style="min-width: 0;">
+                                    <span style="font-size: 8px; color: var(--text-gray); display: block; text-transform: uppercase;">Compatibilidad de Hoy</span>
+                                    <span id="det-horoscope-compat" style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Libra ♎</span>
+                                </div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.02); border-radius: 6px; padding: 6px 8px; border: 0.5px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 12px; color: #f43f5e;">🧿</span>
+                                <div style="min-width: 0;">
+                                    <span style="font-size: 8px; color: var(--text-gray); display: block; text-transform: uppercase;">Amuleto diario</span>
+                                    <span id="det-horoscope-amulet" style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Cuarzo Rosa</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón de compartir -->
+                        <div style="display: flex; justify-content: flex-end;">
+                            <button type="button" onclick="shareDetailedHoroscope()" style="background: rgba(0, 188, 212, 0.08); border: 1px solid rgba(0, 188, 212, 0.25); color: var(--accent-teal); font-size: 9px; font-weight: 700; padding: 5px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0, 188, 212, 0.2)'" onmouseout="this.style.background='rgba(0, 188, 212, 0.08)'">
+                                <i class="fa-solid fa-share-nodes"></i> Compartir Horóscopo
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Tarjeta de Vocación Astrológica (movida desde MI CARTA) -->
                     <div class="section-divider" id="divider-daily-vocation" style="display: none;"><span>Vocación Astrológica</span></div>
@@ -4528,8 +4653,69 @@
                     flatpickr("#date-input-p2", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true, static: true });
                     flatpickr("#daily-date-input", { locale: "es", dateFormat: "Y-m-d", theme: "dark", disableMobile: true, static: true });
                     
-                    flatpickr("#time-input", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true, static: true });
-                    flatpickr("#time-input-p2", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, theme: "dark", disableMobile: true, static: true });
+                    const fpTimeP1 = flatpickr("#time-input", { 
+                        enableTime: true, 
+                        noCalendar: true, 
+                        dateFormat: "H:i", 
+                        time_24hr: true, 
+                        theme: "dark", 
+                        disableMobile: true, 
+                        static: true,
+                        onReady: function(selectedDates, dateStr, instance) {
+                            const container = instance.calendarContainer;
+                            if (container && !container.querySelector('.flatpickr-confirm-btn')) {
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'flatpickr-confirm-btn';
+                                btn.innerHTML = 'Aceptar';
+                                btn.style.cssText = 'width: 100%; margin: 6px 0; background: #00bcd4; color: #0d0d1e; border: none; border-radius: 4px; padding: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center; display: block;';
+                                btn.addEventListener('click', function() {
+                                    instance.close();
+                                });
+                                container.appendChild(btn);
+                            }
+                        }
+                    });
+                    
+                    const fpTimeP2 = flatpickr("#time-input-p2", { 
+                        enableTime: true, 
+                        noCalendar: true, 
+                        dateFormat: "H:i", 
+                        time_24hr: true, 
+                        theme: "dark", 
+                        disableMobile: true, 
+                        static: true,
+                        onReady: function(selectedDates, dateStr, instance) {
+                            const container = instance.calendarContainer;
+                            if (container && !container.querySelector('.flatpickr-confirm-btn')) {
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'flatpickr-confirm-btn';
+                                btn.innerHTML = 'Aceptar';
+                                btn.style.cssText = 'width: 100%; margin: 6px 0; background: #00bcd4; color: #0d0d1e; border: none; border-radius: 4px; padding: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center; display: block;';
+                                btn.addEventListener('click', function() {
+                                    instance.close();
+                                });
+                                container.appendChild(btn);
+                            }
+                        }
+                    });
+
+                    // Cerrar selectores de hora al hacer click fuera
+                    document.addEventListener('click', function(e) {
+                        if (fpTimeP1 && fpTimeP1.isOpen) {
+                            const isClickInside = fpTimeP1.element.contains(e.target) || (fpTimeP1.calendarContainer && fpTimeP1.calendarContainer.contains(e.target));
+                            if (!isClickInside) {
+                                fpTimeP1.close();
+                            }
+                        }
+                        if (fpTimeP2 && fpTimeP2.isOpen) {
+                            const isClickInside = fpTimeP2.element.contains(e.target) || (fpTimeP2.calendarContainer && fpTimeP2.calendarContainer.contains(e.target));
+                            if (!isClickInside) {
+                                fpTimeP2.close();
+                            }
+                        }
+                    });
                 }
 
                 initMap();
@@ -6715,6 +6901,136 @@
             if (textEl) textEl.innerText = horoscopeText;
             if (loveEl) loveEl.innerHTML = `<i class="fa-solid fa-heart" style="color: #f43f5e;"></i> ${loveTip}`;
             if (workEl) workEl.innerHTML = `<i class="fa-solid fa-briefcase" style="color: #fbbf24;"></i> ${workTip}`;
+
+            // --- DETAILED HOROSCOPE GENERATION ---
+            const detailedLoveTexts = {
+                'Aries': ["Hoy es un gran día para tomar la iniciativa afectiva. Un tránsito armónico eleva tu magnetismo, permitiéndote expresar lo que sientes sin miedos ni ataduras."],
+                'Tauro': ["Busca la estabilidad emocional a través de pequeños detalles compartidos. Evita reclamos innecesarios y prioriza el confort y la paz mental en tu relación."],
+                'Géminis': ["Las conversaciones fluidas serán la llave para resolver cualquier malentendido reciente. Tu ingenio abre puertas y enciende una curiosidad mutua muy especial."],
+                'Cáncer': ["Tu sensibilidad intuitiva te permitirá sintonizar directo con los deseos profundos de tu pareja. Crea un espacio cómodo y seguro para hablar íntimamente."],
+                'Leo': ["Brillarás con luz propia hoy. Deja que tu generosidad y entusiasmo guíen tus relaciones; un detalle creativo encenderá una pasión muy intensa hoy."],
+                'Virgo': ["Los gestos cotidianos de ayuda dirán más que las palabras vacías. Escucha con paciencia y busca la armonía en la convivencia del día a día."],
+                'Libra': ["El equilibrio estético y la diplomacia natural te ayudarán a limar cualquier aspereza. Una salida espontánea o cita romántica traerá mucha paz."],
+                'Escorpio': ["Tu intensidad magnética hoy está en su nivel más alto. Vive tus emociones con total hondura pero evita caer en celos o dinámicas de control."],
+                'Sagitario': ["El optimismo y el sentido del humor serán tus mejores herramientas afectivas. Planificar un escape o viaje corto renovará el vínculo de forma mágica."],
+                'Capricornio': ["Es el momento ideal para consolidar planes y compromisos serios. Tu lealtad será sumamente valorada; muestra tu lado más maduro y protector."],
+                'Acuario': ["La base de cualquier romance hoy será la amistad y el compañerismo intelectual. Respeta los espacios de cada uno y compartan ideas diferentes."],
+                'Piscis': ["Sintoniza en una frecuencia espiritual. Tu gran empatía natural sanará tensiones, pero recuerda establecer límites sanos para no agotarte emocionalmente."]
+            };
+
+            const detailedWorkTexts = {
+                'Aries': ["Afronta tus tareas con liderazgo y total determinación. Es buen momento para proponer proyectos, pero cuida el tono al hablar con tus compañeros."],
+                'Tauro': ["Avanza con paso lento pero firme. Tu constancia natural te facilitará la organización de presupuestos complejos y la estructuración de metas a mediano plazo."],
+                'Géminis': ["Las negociaciones, correos y llamadas darán frutos muy rápido hoy. Anota tus ideas creativas de inmediato y realiza contactos comerciales clave."],
+                'Cáncer': ["Confía plenamente en tu intuición financiera hoy. Mantén el foco en tus propios objetivos y evita distraerte con discusiones externas en tu oficina."],
+                'Leo': ["Muestra tu talento al mundo y no temas guiar a otros. Tu carisma personal te abrirá puertas muy importantes con clientes o superiores hoy."],
+                'Virgo': ["Día idóneo para la precisión técnica y el orden minucioso. Limpia tu área de trabajo, corrige archivos y perfecciona el flujo de tareas pendientes."],
+                'Libra': ["Busca consensos y asóciate con aliados estratégicos. Tu innato sentido de la equidad facilitará la resolución de cualquier conflicto laboral pendiente."],
+                'Escorpio': ["Investiga a fondo antes de tomar cualquier decisión de inversión. Tu agudeza mental te dará una ventaja única en negociaciones o contratos complejos."],
+                'Sagitario': ["Enfócate en la dirección general en lugar de perder energía en pequeños contratiempos. Tu actitud positiva atraerá nuevas soluciones hoy."],
+                'Capricornio': ["El pragmatismo es tu mejor recurso hoy. Organiza tu agenda diaria, cumple tus plazos de entrega y demuestra tu confiabilidad profesional."],
+                'Acuario': ["Propón ideas disruptivas y apóyate en herramientas digitales modernas. Colaborar de forma colectiva traerá excelentes resultados económicos."],
+                'Piscis': ["Visualiza tus objetivos laborales con calma y trabaja sin tensiones. Tu mente creativa está muy activa; aprobéchala para resolver problemas difíciles."]
+            };
+
+            const detailedHealthTexts = {
+                'Aries': ["Tu nivel de vitalidad física es excelente hoy. Canaliza el exceso de energía realizando deportes o caminatas al aire libre y evita sobrecargar tus hombros."],
+                'Tauro': ["Tu cuerpo te pide bajar el ritmo y conectar con la naturaleza. Dedica tiempo a estirar tu espalda, descansar bien y consumir alimentos frescos."],
+                'Géminis': ["Mantén tu mente estimulada pero evita el agotamiento cerebral. Tómate breves recreos de respiración consciente a lo largo de tu jornada."],
+                'Cáncer': ["Protege tu campo energético personal. Prioriza el descanso reparador, bebe suficiente agua y busca momentos de silencio en tu rincón favorito."],
+                'Leo': ["Goza de una excelente energía vital hoy. Practica actividades dinámicas o recreativas que te den felicidad y te ayuden a liberar la tensión."],
+                'Virgo': ["Presta atención a tus rutinas de alimentación y digestión. El día te pide adoptar hábitos más orgánicos y evitar la autocrítica excesiva."],
+                'Libra': ["La armonía integral es tu meta hoy. Practica disciplinas suaves como yoga o pilates que unan mente y cuerpo en un entorno visualmente agradable."],
+                'Escorpio': ["Experimentarás una revitalización física notable. Es una jornada ideal para desintoxicar tu cuerpo y soltar tensiones emocionales del pasado."],
+                'Sagitario': ["Tu espíritu activo te invita a ejercitarte. Estira tu musculatura y sal a caminar para mantener ágil tu circulación y despejar la mente."],
+                'Capricornio': ["Tu resistencia es muy fuerte hoy. Protege tus articulaciones y cuida tu postura en el escritorio para evitar contracturas leves."],
+                'Acuario': ["Atrévete con nuevas formas de relajación. Técnicas de respiración o meditación de vanguardia te ayudarán a relajar tu sistema nervioso."],
+                'Piscis': ["Reconecta con tu bienestar a través de la meditación o el contacto relajante con el agua. Regálate un baño largo y duerme las horas necesarias."]
+            };
+
+            const luckyColors = ["Azul Turquesa", "Rojo Rubí", "Verde Esmeralda", "Dorado Solar", "Púrpura Místico", "Rosa Cuarzo", "Amarillo Ámbar", "Blanco Cristal", "Naranja Coral", "Plateado Lunar", "Marrón Terracota", "Gris Acero"];
+            const amulets = ["Ojo de Tigre", "Amatista", "Pirita Dorada", "Jade Verde", "Piedra de la Luna", "Cuarzo Rosa", "Lapislázuli", "Turmalina Negra", "Obsidiana", "Citrino Brillante", "Cuarzo Transparente", "Ámbar Cálido"];
+            const signsList = ['Aries ♈', 'Tauro ♉', 'Géminis ♊', 'Cáncer ♋', 'Leo ♌', 'Virgo ♍', 'Libra ♎', 'Escorpio ♏', 'Sagitario ♐', 'Capricornio ♑', 'Acuario ♒', 'Piscis ♓'];
+
+            const detPlaceholder = document.getElementById('detailed-horoscope-placeholder');
+            const detContent = document.getElementById('detailed-horoscope-content');
+
+            if (natalPlanets && natalPlanets['Sun'] !== undefined) {
+                if (detPlaceholder) detPlaceholder.style.display = 'none';
+                if (detContent) detContent.style.display = 'block';
+
+                const detIcon = document.getElementById('det-horoscope-icon');
+                const detSignName = document.getElementById('det-horoscope-sign');
+                const detGeneralText = document.getElementById('det-horoscope-general-text');
+
+                if (detIcon) detIcon.innerText = signIcon;
+                if (detSignName) detSignName.innerText = sunSign;
+                if (detGeneralText) detGeneralText.innerText = horoscopeText;
+
+                const lTexts = detailedLoveTexts[sunSign] || detailedLoveTexts['Aries'];
+                const wTexts = detailedWorkTexts[sunSign] || detailedWorkTexts['Aries'];
+                const hTexts = detailedHealthTexts[sunSign] || detailedHealthTexts['Aries'];
+
+                const idxL = randomFromSeed(finalSeed + 10, lTexts.length);
+                const idxW = randomFromSeed(finalSeed + 11, wTexts.length);
+                const idxH = randomFromSeed(finalSeed + 12, hTexts.length);
+
+                const loveText = lTexts[idxL];
+                const workText = wTexts[idxW];
+                const healthText = hTexts[idxH];
+
+                const detLoveTextEl = document.getElementById('det-horoscope-love-text');
+                const detWorkTextEl = document.getElementById('det-horoscope-work-text');
+                const detHealthTextEl = document.getElementById('det-horoscope-health-text');
+
+                if (detLoveTextEl) detLoveTextEl.innerText = loveText;
+                if (detWorkTextEl) detWorkTextEl.innerText = workText;
+                if (detHealthTextEl) detHealthTextEl.innerText = healthText;
+
+                const luckPct = 70 + randomFromSeed(finalSeed + 15, 30);
+                const loveScore = 65 + randomFromSeed(finalSeed + 16, 35);
+                const workScore = 60 + randomFromSeed(finalSeed + 17, 40);
+                const healthScore = 70 + randomFromSeed(finalSeed + 18, 30);
+
+                const luckyColor = luckyColors[randomFromSeed(finalSeed + 19, luckyColors.length)];
+                const luckyNumber = 1 + randomFromSeed(finalSeed + 20, 99);
+                const luckySign = signsList[randomFromSeed(finalSeed + 21, signsList.length)];
+                const amulet = amulets[randomFromSeed(finalSeed + 22, amulets.length)];
+
+                const detLuckPctEl = document.getElementById('det-horoscope-luck-percent');
+                const detLoveScoreEl = document.getElementById('det-horoscope-love-score');
+                const detWorkScoreEl = document.getElementById('det-horoscope-work-score');
+                const detHealthScoreEl = document.getElementById('det-horoscope-health-score');
+
+                if (detLuckPctEl) {
+                    detLuckPctEl.innerText = `${luckPct}%`;
+                    if (luckPct < 82) {
+                        detLuckPctEl.style.color = '#ff9800';
+                        detLuckPctEl.style.background = 'rgba(255, 152, 0, 0.12)';
+                        detLuckPctEl.style.borderColor = 'rgba(255, 152, 0, 0.3)';
+                    } else {
+                        detLuckPctEl.style.color = '#4caf50';
+                        detLuckPctEl.style.background = 'rgba(76, 175, 80, 0.12)';
+                        detLuckPctEl.style.borderColor = 'rgba(76, 175, 80, 0.3)';
+                    }
+                }
+                if (detLoveScoreEl) detLoveScoreEl.innerText = `${loveScore}%`;
+                if (detWorkScoreEl) detWorkScoreEl.innerText = `${workScore}%`;
+                if (detHealthScoreEl) detHealthScoreEl.innerText = `${healthScore}%`;
+
+                const detColorEl = document.getElementById('det-horoscope-color');
+                const detNumberEl = document.getElementById('det-horoscope-number');
+                const detCompatEl = document.getElementById('det-horoscope-compat');
+                const detAmuletEl = document.getElementById('det-horoscope-amulet');
+
+                if (detColorEl) detColorEl.innerText = luckyColor;
+                if (detNumberEl) detNumberEl.innerText = luckyNumber;
+                if (detCompatEl) detCompatEl.innerText = luckySign;
+                if (detAmuletEl) detAmuletEl.innerText = amulet;
+            } else {
+                if (detPlaceholder) detPlaceholder.style.display = 'block';
+                if (detContent) detContent.style.display = 'none';
+            }
         }
 
         // ══════════════════════════════════════════════════════════════════
@@ -6901,6 +7217,35 @@
             const text = textEl ? textEl.innerText : '';
             
             const shareText = `🔮 Mi Horóscopo de hoy en Orbitae (${sunSign}):\n\n"${text}"\n\n🗺️ Calculá tu carta natal y destinos gratis en: ${window.location.origin}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mi Horóscopo en Orbitae',
+                    text: shareText,
+                    url: window.location.origin
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast('📋 Copiado al portapapeles. ¡Ya podés pegarlo donde quieras!');
+                }).catch(err => {
+                    showToast('❌ No se pudo copiar al portapapeles.');
+                });
+            }
+        }
+
+        function shareDetailedHoroscope() {
+            let sunSign = 'Aries';
+            if (natalPlanets && natalPlanets['Sun'] !== undefined) {
+                const sunLon = natalPlanets['Sun'];
+                sunSign = getZodiacSign(sunLon).name;
+            }
+            const textEl = document.getElementById('det-horoscope-general-text');
+            const text = textEl ? textEl.innerText : '';
+            const luckPct = document.getElementById('det-horoscope-luck-percent')?.innerText || '90%';
+            const color = document.getElementById('det-horoscope-color')?.innerText || 'Azul';
+            const number = document.getElementById('det-horoscope-number')?.innerText || '7';
+            
+            const shareText = `🔮 Mi Horóscopo Detallado en Orbitae (${sunSign} - Vibración: ${luckPct}):\n\n"${text}"\n\n🎨 Color: ${color}\n🔢 Número: ${number}\n\n🗺️ Calculá tu carta natal y destinos gratis en: ${window.location.origin}`;
             
             if (navigator.share) {
                 navigator.share({
