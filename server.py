@@ -89,25 +89,34 @@ def db_execute(conn, query, params=()):
     cur.execute(query, params)
     cur.close()
 
-def db_upsert_session(conn, session_token, payment_method, payment_id, email, created_at, expires_at):
+def db_upsert_session(conn, session_token, payment_method, payment_id, email, created_at, expires_at,
+                      subscription_tier='cosmos', trial_started_at=None, trial_ends_at=None, subscription_started_at=None):
     if USE_POSTGRES:
         db_execute(conn, f"""
             INSERT INTO premium_sessions
-                (session_token, payment_method, payment_id, email, created_at, expires_at, active)
-            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1)
+                (session_token, payment_method, payment_id, email, created_at, expires_at, active,
+                 subscription_tier, trial_started_at, trial_ends_at, subscription_started_at)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1,{PH},{PH},{PH},{PH})
             ON CONFLICT (session_token) DO UPDATE SET
                 payment_method = EXCLUDED.payment_method,
                 payment_id     = EXCLUDED.payment_id,
                 email          = EXCLUDED.email,
                 expires_at     = EXCLUDED.expires_at,
-                active         = 1
-        """, (session_token, payment_method, payment_id, email, created_at, expires_at))
+                active         = 1,
+                subscription_tier = EXCLUDED.subscription_tier,
+                trial_started_at = EXCLUDED.trial_started_at,
+                trial_ends_at = EXCLUDED.trial_ends_at,
+                subscription_started_at = EXCLUDED.subscription_started_at
+        """, (session_token, payment_method, payment_id, email, created_at, expires_at,
+              subscription_tier, trial_started_at, trial_ends_at, subscription_started_at))
     else:
         db_execute(conn, f"""
             INSERT OR REPLACE INTO premium_sessions
-                (session_token, payment_method, payment_id, email, created_at, expires_at, active)
-            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1)
-        """, (session_token, payment_method, payment_id, email, created_at, expires_at))
+                (session_token, payment_method, payment_id, email, created_at, expires_at, active,
+                 subscription_tier, trial_started_at, trial_ends_at, subscription_started_at)
+            VALUES ({PH},{PH},{PH},{PH},{PH},{PH},1,{PH},{PH},{PH},{PH})
+        """, (session_token, payment_method, payment_id, email, created_at, expires_at,
+              subscription_tier, trial_started_at, trial_ends_at, subscription_started_at))
 
 def db_upsert_mp_payment(conn, payment_id, status, preference_id, session_token,
                          amount, currency, created_at, raw_data):
@@ -208,9 +217,30 @@ def init_db():
             for sql in statements:
                 db_execute(conn, sql)
             conn.commit()
-            logger.info("Tablas de DB inicializadas correctamente.")
+            
+            # --- MIGRACIÓN: AGREGAR COLUMNAS PARA TIER Y TRIAL ---
+            cur = conn.cursor()
+            if USE_POSTGRES:
+                cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='premium_sessions';")
+                columns = [row[0] for row in cur.fetchall()]
+            else:
+                cur.execute("PRAGMA table_info(premium_sessions);")
+                columns = [row[1] for row in cur.fetchall()]
+            cur.close()
+            
+            if 'subscription_tier' not in columns:
+                db_execute(conn, "ALTER TABLE premium_sessions ADD COLUMN subscription_tier TEXT DEFAULT 'free'")
+            if 'trial_started_at' not in columns:
+                db_execute(conn, "ALTER TABLE premium_sessions ADD COLUMN trial_started_at TEXT")
+            if 'trial_ends_at' not in columns:
+                db_execute(conn, "ALTER TABLE premium_sessions ADD COLUMN trial_ends_at TEXT")
+            if 'subscription_started_at' not in columns:
+                db_execute(conn, "ALTER TABLE premium_sessions ADD COLUMN subscription_started_at TEXT")
+            conn.commit()
+            
+            logger.info("Tablas de DB inicializadas y migradas correctamente.")
         except Exception as e:
-            logger.error(f"Error inicializando DB: {e}")
+            logger.error(f"Error inicializando/migrando DB: {e}")
         finally:
             conn.close()
 
@@ -253,7 +283,9 @@ def save_tokens(tokens: dict):
 # ── HELPERS PREMIUM ───────────────────────────────────────────────────────────
 
 def create_premium_session(payment_method: str, payment_id: str = None,
-                           email: str = None, months: int = 1) -> str:
+                           email: str = None, months: int = 1,
+                           subscription_tier: str = 'cosmos', trial_started_at: str = None,
+                           trial_ends_at: str = None, subscription_started_at: str = None) -> str:
     """Crea una sesión premium en la DB y devuelve el session_token (UUID)."""
     session_token = str(uuid.uuid4())
     now = datetime.datetime.utcnow()
@@ -262,7 +294,11 @@ def create_premium_session(payment_method: str, payment_id: str = None,
         conn = get_db()
         try:
             db_upsert_session(conn, session_token, payment_method, payment_id,
-                              email or "", now.isoformat(), expires.isoformat())
+                              email or "", now.isoformat(), expires.isoformat(),
+                              subscription_tier=subscription_tier,
+                              trial_started_at=trial_started_at,
+                              trial_ends_at=trial_ends_at,
+                              subscription_started_at=subscription_started_at)
             conn.commit()
             logger.info(f"Sesión premium creada: {session_token[:8]}… método={payment_method}")
         finally:
@@ -330,8 +366,122 @@ async def check_premium(request: Request):
         session_token = str(data.get("session_token", "")).strip()
     except Exception:
         return JSONResponse({"premium": False, "error": "Formato inválido"}, status_code=400)
-    valid = is_valid_premium_session(session_token)
-    return {"premium": valid}
+    
+    tier = "free"
+    trial_ends_at = None
+    if session_token:
+        with db_lock:
+            conn = get_db()
+            try:
+                row = db_fetchone(
+                    conn,
+                    f"SELECT subscription_tier, expires_at, active, trial_ends_at FROM premium_sessions WHERE session_token = {PH}",
+                    (session_token,)
+                )
+            finally:
+                conn.close()
+        
+        if row and row.get("active"):
+            expires_at = row.get("expires_at")
+            is_valid = True
+            if expires_at:
+                try:
+                    if datetime.datetime.utcnow() > datetime.datetime.fromisoformat(expires_at):
+                        is_valid = False
+                except Exception:
+                    pass
+            
+            if is_valid:
+                tier = row.get("subscription_tier") or "cosmos"
+                trial_ends_at = row.get("trial_ends_at")
+    
+    return {
+        "premium": tier != "free",
+        "tier": tier,
+        "trial_ends_at": trial_ends_at
+    }
+
+@app.post("/api/premium/start-trial")
+async def start_trial(request: Request):
+    """Crea una sesión de prueba gratis de 7 días. Body: { email, tier }"""
+    try:
+        data = await request.json()
+        email = str(data.get("email", "")).strip()
+        tier = str(data.get("tier", "cosmos")).strip().lower()
+    except Exception:
+        return JSONResponse({"valid": False, "error": "Formato inválido"}, status_code=400)
+    
+    if tier not in ["stellar", "cosmos"]:
+        tier = "cosmos"
+        
+    session_token = str(uuid.uuid4())
+    now = datetime.datetime.utcnow()
+    trial_duration_days = 7
+    expires = now + datetime.timedelta(days=trial_duration_days)
+    
+    now_str = now.isoformat()
+    expires_str = expires.isoformat()
+    
+    with db_lock:
+        conn = get_db()
+        try:
+            db_upsert_session(
+                conn, 
+                session_token, 
+                "trial", 
+                None, 
+                email, 
+                now_str, 
+                expires_str,
+                subscription_tier=tier,
+                trial_started_at=now_str,
+                trial_ends_at=expires_str
+            )
+            conn.commit()
+            logger.info(f"Trial de 7 días creado para {email} tier={tier}: {session_token[:8]}…")
+        except Exception as e:
+            logger.error(f"Error creando trial: {e}")
+            return JSONResponse({"valid": False, "error": "Error interno del servidor"}, status_code=500)
+        finally:
+            conn.close()
+            
+    return {
+        "valid": True,
+        "session_token": session_token,
+        "tier": tier,
+        "trial_ends_at": expires_str
+    }
+
+@app.post("/api/admin/clean-expired-trials")
+async def clean_expired_trials(request: Request):
+    """Desactiva las sesiones de prueba cuyo tiempo expiró."""
+    try:
+        data = await request.json()
+        secret = data.get("secret", "")
+    except Exception:
+        secret = ""
+        
+    if secret != ADMIN_SECRET:
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+        
+    now_str = datetime.datetime.utcnow().isoformat()
+    with db_lock:
+        conn = get_db()
+        try:
+            db_execute(conn, f"""
+                UPDATE premium_sessions 
+                SET active = 0, subscription_tier = 'free' 
+                WHERE payment_method = 'trial' AND active = 1 AND trial_ends_at < {PH}
+            """, (now_str,))
+            conn.commit()
+            logger.info("Limpieza de trials expirados realizada.")
+        except Exception as e:
+            logger.error(f"Error limpiando trials: {e}")
+            return {"status": "error", "message": str(e)}
+        finally:
+            conn.close()
+            
+    return {"status": "success", "message": "Trials expirados desactivados correctamente."}
 
 # ── ENDPOINTS: TOKENS DE ACTIVACIÓN ──────────────────────────────────────────
 
@@ -427,13 +577,29 @@ async def activate_premium(request: Request):
 async def create_mp_preference(request: Request):
     """Crea una preferencia en Mercado Pago y devuelve el init_point."""
     import requests as req_lib
+    try:
+        data = await request.json()
+        tier = str(data.get("tier", "cosmos")).strip().lower()
+    except Exception:
+        tier = "cosmos"
+        
+    if tier not in ["stellar", "cosmos"]:
+        tier = "cosmos"
+        
+    if tier == "stellar":
+        title = "Orbitae Stellar - Acceso Mensual"
+        price = 2990
+    else:
+        title = "Orbitae Cosmos - Acceso Completo"
+        price = 6990
+        
     url = "https://api.mercadopago.com/checkout/preferences"
     headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}", "Content-Type": "application/json"}
     body = {
         "items": [{
-            "title": "Orbitae Premium - Acceso Ilimitado",
+            "title": title,
             "quantity": 1,
-            "unit_price": 4500,
+            "unit_price": price,
             "currency_id": "ARS"
         }],
         "back_urls": {
@@ -448,7 +614,7 @@ async def create_mp_preference(request: Request):
         res = req_lib.post(url, headers=headers, json=body, timeout=10)
         res.raise_for_status()
         data = res.json()
-        logger.info(f"Preferencia MP creada: {data.get('id')}")
+        logger.info(f"Preferencia MP creada ({tier}): {data.get('id')}")
         return {"init_point": data.get("init_point"), "preference_id": data.get("id")}
     except Exception as e:
         logger.error(f"Error creando preferencia MP: {e}")
@@ -494,12 +660,14 @@ async def mp_webhook(request: Request):
     currency    = payment.get("currency_id", "ARS")
     pref_id     = str(payment.get("preference_id", ""))
     now         = datetime.datetime.utcnow().isoformat()
+    description = payment.get("description", "") or ""
 
-    logger.info(f"Pago MP {payment_id}: status={status} email={email}")
+    logger.info(f"Pago MP {payment_id}: status={status} email={email} desc='{description}'")
 
     session_token = None
     if status == "approved":
-        session_token = create_premium_session("mercadopago", payment_id, email)
+        tier = "stellar" if "stellar" in description.lower() else "cosmos"
+        session_token = create_premium_session("mercadopago", payment_id, email, subscription_tier=tier)
 
     with db_lock:
         conn = get_db()
@@ -553,15 +721,17 @@ async def mp_verify_payment(payment_id: str):
         logger.error(f"Error verificando pago MP {payment_id}: {e}")
         return JSONResponse({"approved": False, "error": "No se pudo verificar"}, status_code=500)
 
-    status   = payment.get("status", "")
-    email    = payment.get("payer", {}).get("email", "")
-    amount   = payment.get("transaction_amount", 0)
-    currency = payment.get("currency_id", "ARS")
-    pref_id  = str(payment.get("preference_id", ""))
-    now      = datetime.datetime.utcnow().isoformat()
+    status      = payment.get("status", "")
+    email       = payment.get("payer", {}).get("email", "")
+    amount      = payment.get("transaction_amount", 0)
+    currency    = payment.get("currency_id", "ARS")
+    pref_id     = str(payment.get("preference_id", ""))
+    now         = datetime.datetime.utcnow().isoformat()
+    description = payment.get("description", "") or ""
 
     if status == "approved":
-        session_token = create_premium_session("mercadopago", payment_id, email)
+        tier = "stellar" if "stellar" in description.lower() else "cosmos"
+        session_token = create_premium_session("mercadopago", payment_id, email, subscription_tier=tier)
         with db_lock:
             conn = get_db()
             try:
@@ -571,7 +741,7 @@ async def mp_verify_payment(payment_id: str):
                 conn.commit()
             finally:
                 conn.close()
-        logger.info(f"Pago MP verificado y aprobado: {payment_id}")
+        logger.info(f"Pago MP verificado y aprobado: {payment_id} tier={tier}")
         return {"approved": True, "session_token": session_token}
 
     return {"approved": False, "status": status}
@@ -597,14 +767,16 @@ def get_paypal_access_token() -> str:
 async def validate_paypal_subscription(request: Request):
     """
     Valida una suscripción de PayPal contra la API oficial.
-    Body: { subscription_id } → Devuelve { valid, session_token }
+    Body: { subscription_id, tier } → Devuelve { valid, session_token }
     """
     import requests as req_lib
     try:
         data = await request.json()
         subscription_id = str(data.get("subscription_id", "")).strip()
+        requested_tier = str(data.get("tier", "cosmos")).strip().lower()
     except Exception:
-        return JSONResponse({"valid": False, "error": "Formato inválido"}, status_code=400)
+        subscription_id = ""
+        requested_tier = "cosmos"
 
     if not subscription_id or not subscription_id.startswith("I-"):
         return JSONResponse({"valid": False, "error": "subscription_id inválido"}, status_code=400)
@@ -623,17 +795,19 @@ async def validate_paypal_subscription(request: Request):
         return {"valid": True, "session_token": existing["session_token"]}
 
     now = datetime.datetime.utcnow().isoformat()
+    paypal_plan_stellar = os.environ.get("PAYPAL_PLAN_STELLAR", "P-55W80757HF211482RNIVJ6VQ")
 
     # Sin PAYPAL_SECRET: aceptar sin verificar (registrar igualmente)
     if not PAYPAL_SECRET:
         logger.warning(f"PAYPAL_SECRET no configurado. Aceptando {subscription_id} sin verificar.")
-        session_token = create_premium_session("paypal_subscription", subscription_id)
+        tier = requested_tier if requested_tier in ["stellar", "cosmos"] else "cosmos"
+        session_token = create_premium_session("paypal_subscription", subscription_id, subscription_tier=tier)
         with db_lock:
             conn = get_db()
             try:
-                db_upsert_paypal_sub(conn, subscription_id, "P-55W80757HF211482RNIVJ6VQ",
+                db_upsert_paypal_sub(conn, subscription_id, paypal_plan_stellar,
                                      "ACTIVE", session_token, "", now,
-                                     json.dumps({"note": "PAYPAL_SECRET not set"}))
+                                     json.dumps({"note": "PAYPAL_SECRET not set", "tier": tier}))
                 conn.commit()
             finally:
                 conn.close()
@@ -657,10 +831,16 @@ async def validate_paypal_subscription(request: Request):
     email     = sub_data.get("subscriber", {}).get("email_address", "")
     plan_id   = sub_data.get("plan_id", "")
 
-    logger.info(f"PayPal sub {subscription_id}: status={pp_status} email={email}")
+    logger.info(f"PayPal sub {subscription_id}: status={pp_status} email={email} plan={plan_id}")
 
     if pp_status in ("ACTIVE", "APPROVED"):
-        session_token = create_premium_session("paypal_subscription", subscription_id, email)
+        # Determinar tier según plan_id o requested_tier
+        if plan_id == paypal_plan_stellar:
+            tier = "stellar"
+        else:
+            tier = requested_tier if requested_tier in ["stellar", "cosmos"] else "cosmos"
+            
+        session_token = create_premium_session("paypal_subscription", subscription_id, email, subscription_tier=tier)
         with db_lock:
             conn = get_db()
             try:
@@ -669,7 +849,7 @@ async def validate_paypal_subscription(request: Request):
                 conn.commit()
             finally:
                 conn.close()
-        logger.info(f"Premium PayPal activado: {subscription_id}")
+        logger.info(f"Premium PayPal activado: {subscription_id} tier={tier}")
         return {"valid": True, "session_token": session_token}
 
     return {"valid": False, "status": pp_status}

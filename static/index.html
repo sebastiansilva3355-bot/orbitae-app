@@ -2482,6 +2482,140 @@
             font-size: 16px !important;
         }
 
+        /* --- STYLES: TRIAL & HARD PAYWALL FLOW --- */
+        .orbit-loader {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .orbit-loader .ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1.5px solid rgba(156, 39, 176, 0.25);
+        }
+        .orbit-loader .ring2 {
+            inset: 16px;
+            border-color: rgba(255, 215, 0, 0.18);
+        }
+        .orbit-loader .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffd700;
+            position: absolute;
+            top: calc(50% - 5px);
+            left: calc(50% - 5px);
+            animation: spin 2.4s linear infinite;
+            box-shadow: 0 0 12px #ffd700;
+        }
+        .orbit-loader .dot2 {
+            background: #ba55d3;
+            animation-duration: 1.6s;
+            animation-direction: reverse;
+            box-shadow: 0 0 12px #ba55d3;
+        }
+        .orbit-loader .core {
+            position: absolute;
+            inset: 42%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd700, #9c27b0);
+            filter: blur(1px);
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg) translateY(-50px) rotate(0deg); }
+            to { transform: rotate(360deg) translateY(-50px) rotate(-360deg); }
+        }
+
+        .compact-locked {
+            background: linear-gradient(155deg, #14101f, #0d0d17);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-purple);
+            border-radius: 14px;
+            padding: 14px 16px 16px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+        .compact-locked.cosmos {
+            border-left-color: var(--accent-gold);
+        }
+        .compact-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+        }
+        .compact-row + .compact-row {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .blurred-inline {
+            filter: blur(4.5px);
+            user-select: none;
+            opacity: 0.65;
+        }
+        .compact-cta {
+            width: 100%;
+            margin-top: 12px;
+            background: rgba(156, 39, 176, 0.15);
+            border: 1px solid var(--accent-purple);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .compact-cta:hover {
+            background: var(--accent-purple);
+        }
+        .compact-cta.cosmos-cta {
+            background: rgba(255, 215, 0, 0.12);
+            border-color: var(--accent-gold);
+            color: #ffd700;
+        }
+        .compact-cta.cosmos-cta:hover {
+            background: var(--accent-gold);
+            color: #000000;
+        }
+
+        .map-blurred {
+            filter: blur(4px) grayscale(40%);
+            opacity: 0.75;
+            pointer-events: none;
+        }
+        .map-lock-overlay-container {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 8, 18, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .map-lock-card {
+            background: linear-gradient(145deg, #17122e, #0e0a1b);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #ffffff;
+        }
+        
+        .plan-option.active {
+            border-color: var(--accent-purple) !important;
+            background: rgba(156, 39, 176, 0.08) !important;
+            box-shadow: 0 0 12px rgba(156, 39, 176, 0.25) !important;
+        }
+
     </style>
 </head>
 <body>
@@ -3854,7 +3988,107 @@
                     <button class="more-sheet-item" onclick="handleMoreSheetAction('reload')">
                         <i class="fa-solid fa-rotate-right"></i> <span>Recargar Aplicación</span>
                     </button>
+        </div>
+    </div>
+
+    <!-- Flujo de Trial / Paywall Duro Overlay -->
+    <div id="trial-flow-overlay" style="position: fixed; inset: 0; background: radial-gradient(ellipse at top, #1a1430 0%, #0a0812 55%); z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; font-family: 'Inter', sans-serif; color: #ffffff; overflow-y: auto;">
+        <!-- SCREEN 1: s-loading -->
+        <div id="s-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; max-width: 340px; gap: 26px; width: 100%;">
+            <div class="orbit-loader">
+                <div class="ring"></div><div class="ring ring2"></div>
+                <div class="dot"></div><div class="dot dot2"></div>
+                <div class="core"></div>
+            </div>
+            <div>
+                <div id="loading-step" style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 6px; font-family: 'Cinzel', serif;">Ubicando tu Sol...</div>
+                <div style="font-size: 11px; color: var(--text-gray); letter-spacing: 0.5px;">Calculando con efemérides NASA VSOP87</div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: s-reveal -->
+        <div id="s-reveal" style="display: none; flex-direction: column; align-items: center; text-align: center; max-width: 350px; gap: 15px; width: 100%;">
+            <div style="font-size: 11px; color: var(--accent-purple-light); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px;">Tu carta está lista</div>
+            <div style="font-family: 'Cinzel', serif; font-size: 26px; font-weight: 800; margin-bottom: 8px;">Hola, <span id="reveal-username" style="background: linear-gradient(90deg, #ffffff 60%, #c4b5fd 100%); -webkit-background-clip: text; -webkit-text-fillColor: transparent; background-clip: text;">Viajero</span> ✦</div>
+            
+            <div class="glow-card" id="reveal-card-sun" style="width: 100%; text-align: left; padding: 16px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 16px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.05); margin-bottom: 12px; position: relative; overflow: hidden;">
+                <h4 style="font-family: 'Cinzel', serif; font-size: 14px; margin: 0 0 4px 0; color: #ffd700; display: flex; justify-content: space-between; align-items: center;">
+                    <span>☀️ Sol en <span id="reveal-sun-sign">Escorpio</span></span>
+                    <span id="reveal-sun-deg" style="font-size: 11px; color: rgba(255, 255, 255, 0.5); font-weight: normal;">11° 43'</span>
+                </h4>
+                <p id="reveal-sun-desc" style="font-size: 11.5px; color: var(--text-gray); margin: 0; line-height: 1.45;">Esencia intensa, magnética, transformadora. Buscas la verdad profunda y la regeneración.</p>
+            </div>
+            
+            <div class="glow-card" id="reveal-card-asc" style="width: 100%; text-align: left; padding: 16px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(186, 85, 211, 0.15); border-radius: 16px; box-shadow: 0 0 15px rgba(186, 85, 211, 0.05); margin-bottom: 15px; position: relative; overflow: hidden;">
+                <h4 style="font-family: 'Cinzel', serif; font-size: 14px; margin: 0 0 4px 0; color: #ba55d3; display: flex; justify-content: space-between; align-items: center;">
+                    <span>🌅 Ascendente en <span id="reveal-asc-sign">Tauro</span></span>
+                    <span id="reveal-asc-deg" style="font-size: 11px; color: rgba(255, 255, 255, 0.5); font-weight: normal;">11° 19'</span>
+                </h4>
+                <p id="reveal-asc-desc" style="font-size: 11.5px; color: var(--text-gray); margin: 0; line-height: 1.45;">Proyección serena, sólida, amante de la naturaleza y tranquila.</p>
+            </div>
+            
+            <button style="justify-content: center; background: linear-gradient(135deg, var(--accent-purple) 0%, #a78bfa 100%); color: white; border: none; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 16px; border-radius: 12px; width: 100%; box-shadow: 0 4px 15px rgba(155, 93, 229, 0.35); cursor: pointer; transition: transform 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onclick="showTrialScreen('s-paywall')">
+                Ver mi carta completa ➜
+            </button>
+        </div>
+
+        <!-- SCREEN 3: s-paywall -->
+        <div id="s-paywall" style="display: none; flex-direction: column; align-items: center; text-align: center; max-width: 360px; width: 100%; position: relative; padding-bottom: 20px;">
+            <button style="position: absolute; top: -10px; right: -5px; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; font-weight: bold; padding: 8px;" onclick="closeTrialFlow()">✕</button>
+            
+            <div style="font-size: 9px; font-weight: 700; color: #ffd700; background: rgba(255, 215, 0, 0.08); border: 1px solid rgba(255, 215, 0, 0.25); padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">🌟 OFERTA DE BIENVENIDA</div>
+            
+            <h2 style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 800; margin: 0 0 6px 0; line-height: 1.3; color: #ffffff;">Desbloqueá el resto de tu universo</h2>
+            <p style="font-size: 11.5px; color: var(--text-gray); line-height: 1.45; margin: 0 0 16px 0; max-width: 320px;">Venus, Marte, tránsitos diarios, astrocartografía y más ➜ con 7 días sin cargo.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 16px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px;">
+                <div style="font-size: 11px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.9);"><span style="color:#00bcd4; font-weight:bold;">✔</span> Carta completa: los 10 planetas</div>
+                <div style="font-size: 11px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.9);"><span style="color:#00bcd4; font-weight:bold;">✔</span> Tránsitos diarios cruzados con tu ciudad</div>
+                <div style="font-size: 11px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.9);"><span style="color:#00bcd4; font-weight:bold;">✔</span> Vocación astrológica según tu Medio Cielo</div>
+                <div style="font-size: 11px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.9);"><span style="color:#00bcd4; font-weight:bold;">✔</span> Astrocartografía y sinastría de pareja</div>
+            </div>
+
+            <!-- Email Input for trial activation -->
+            <div style="width: 100%; margin-bottom: 14px; text-align: left;">
+                <label style="font-size: 10.5px; font-weight: bold; text-transform: uppercase; color: var(--accent-gold); letter-spacing: 0.5px; margin-bottom: 4px; display: block;">Ingresá tu Email para el Trial</label>
+                <input type="email" id="trial-email-input" placeholder="ejemplo@email.com" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #ffffff; font-size: 13px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-purple)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+            </div>
+
+            <!-- Trial toggle -->
+            <div class="trial-toggle-card" onclick="toggleTrialMode()" style="cursor:pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 14px; background: rgba(124, 58, 237, 0.06); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 12px; margin-bottom: 14px; transition: all 0.2s;">
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 1px;">
+                    <span style="font-size: 11.5px; font-weight: 700; color: #ffffff;">Prueba gratis de 7 días</span>
+                    <span style="font-size: 9.5px; color: var(--text-gray);">Cancelá cuando quieras, sin cargo</span>
                 </div>
+                <div id="trial-toggle-switch" style="width: 38px; height: 22px; background: #7c3aed; border-radius: 20px; position: relative; padding: 2px; transition: background 0.2s;">
+                    <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; right: 2px; top: 2px; transition: all 0.2s;"></div>
+                </div>
+            </div>
+            <input type="hidden" id="trial-active-flag" value="true">
+
+            <div style="font-size: 10.5px; font-weight: bold; text-transform: uppercase; color: var(--text-gray); letter-spacing: 0.5px; text-align: left; margin-bottom: 6px; width: 100%;">Seleccionar Plan</div>
+            <div class="plan-pick" style="display: flex; gap: 8px; width: 100%; margin-bottom: 16px;">
+                <div class="plan-option" id="plan-option-stellar" onclick="selectPaywallPlan('stellar')" style="cursor:pointer; flex: 1; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.2s;">
+                    <span style="font-size: 11.5px; font-weight: 700; color: #a89fc0;">Stellar</span>
+                    <span style="font-size: 13px; font-weight: 800; color: #ffffff;">$2.990<span style="font-size: 9px; font-weight: normal; color: var(--text-gray);">/mes</span></span>
+                </div>
+                <div class="plan-option active" id="plan-option-cosmos" onclick="selectPaywallPlan('cosmos')" style="cursor:pointer; flex: 1; padding: 12px; background: rgba(124, 58, 237, 0.05); border: 1px solid #7c3aed; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.2s; box-shadow: 0 0 10px rgba(124, 58, 237, 0.15);">
+                    <span style="font-size: 11.5px; font-weight: 700; color: #a78bfa;">Cosmos</span>
+                    <span style="font-size: 13px; font-weight: 800; color: #ffffff;">$6.990<span style="font-size: 9px; font-weight: normal; color: var(--text-gray);">/mes</span></span>
+                </div>
+            </div>
+            <input type="hidden" id="paywall-selected-plan" value="cosmos">
+
+            <button id="cta-trial-btn" style="justify-content: center; background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: #0d0d1e; border: none; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; padding: 16px; border-radius: 12px; width: 100%; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.35); cursor: pointer; transition: transform 0.2s; margin-bottom: 12px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onclick="submitTrialActivation()">
+                Empezar prueba gratis
+            </button>
+            
+            <div id="trial-fine-print" style="font-size: 9px; color: var(--text-gray); line-height: 1.45; margin-bottom: 12px; width: 100%; text-align: center;">
+                Se te va a cobrar $6.990/mes recién el día 8, salvo que canceles antes. Podés cancelar en un toque desde Más ➔ Mi cuenta.
+            </div>
+            
+            <div style="font-size: 11px; text-decoration: underline; color: rgba(255,255,255,0.45); cursor: pointer;" onclick="closeTrialFlow()">
+                Seguir con el plan gratis
             </div>
         </div>
     </div>
@@ -4723,12 +4957,10 @@
                 }
 
                 initMap();
+                updateCalculatorStateUI();
                 if (hasSavedData) {
                     calculateNewChart(false, true);
                 } else {
-                    // Si no hay datos guardados, abrir el formulario para que los ingrese
-                    openCalculator();
-                    // Y mostrar el CTA flotante en móviles
                     showCalculateCTA();
                 }
                 buildPlanetFilters();
@@ -5192,6 +5424,7 @@
 
                 // ── Guardar datos automáticamente en localStorage ────────────
                 saveBirthData();
+                updateCalculatorStateUI();
                 
                 const dateParts = dateVal.split('-');
                 const timeParts = timeVal.split(':');
@@ -5334,141 +5567,6 @@
 
 
                 // --- RENDERIZAR TABLA E INTERPRETACIONES NATALES EN PANTALLA ---
-                const listContainer = document.getElementById('natal-positions-list');
-                if (listContainer) {
-                    let pTableHtml = `
-                        <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; color: #ffffff;">
-                            <thead>
-                                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.4); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.8px; text-align: left;">
-                                    <th style="padding: 8px 8px;">Astro</th>
-                                    <th style="padding: 8px 8px;">Signo</th>
-                                    <th style="padding: 8px 8px; text-align: right;">Posición</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-                    
-                    const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'ASC', 'MC'];
-                    const pIcons = {
-                        'Sun': '☀️ Sol',
-                        'Moon': '🌙 Luna',
-                        'Mercury': '🧠 Mercurio',
-                        'Venus': '💖 Venus',
-                        'Mars': '💥 Marte',
-                        'Jupiter': '🪐 Júpiter',
-                        'Saturn': '⏳ Saturno',
-                        'Uranus': '⚡ Urano',
-                        'Neptune': '🌊 Neptuno',
-                        'Pluto': '🌋 Plutón',
-                        'ASC': '🎭 Ascendente',
-                        'MC': '🎯 Medio Cielo'
-                    };
-                    const pColors = {
-                        'Sun': '#ffd700', 'Moon': '#cbd5e1', 'Mercury': '#34d399', 'Venus': '#f472b6', 'Mars': '#f87171',
-                        'Jupiter': '#c084fc', 'Saturn': '#fb923c', 'Uranus': '#22d3ee', 'Neptune': '#60a5fa', 'Pluto': '#a78bfa',
-                        'ASC': '#a78bfa', 'MC': '#fbbf24'
-                    };
-                    
-                    pOrder.forEach((p, idx) => {
-                        const lonVal = natalPlanets[p];
-                        if (lonVal !== undefined) {
-                            const sign = getZodiacSign(lonVal);
-                            const deg = Math.floor(lonVal % 30);
-                            const min = Math.floor(((lonVal % 30) - deg) * 60);
-                            
-                            const isCore = ['Sun', 'Moon', 'ASC', 'MC'].includes(p);
-                            const rowClass = isCore ? '' : 'extra-planet-row';
-                            const displayStyle = isCore ? '' : 'display: none;';
-                            
-                            const color = pColors[p] || '#ffffff';
-                            const bgStyle = idx % 2 === 0 ? 'background: #13131F;' : 'background: #16162a;';
-                            
-                            pTableHtml += `
-                                <tr class="${rowClass}" style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid ${color}; ${bgStyle} ${displayStyle} transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='${idx % 2 === 0 ? '#13131F' : '#16162a'}'">
-                                    <td style="padding: 9px 8px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.95);">${pIcons[p]}</td>
-                                    <td style="padding: 9px 8px; color: rgba(255,255,255,0.85);">${sign.symbol} ${sign.name}</td>
-                                    <td style="padding: 9px 8px; text-align: right; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;">
-                                        <span style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2px 8px; color: rgba(255,255,255,0.95);">${deg}° ${min}'</span>
-                                    </td>
-                                </tr>
-                            `;
-                        }
-                    });
-                    
-                    pTableHtml += `
-                            </tbody>
-                        </table>
-                        <div style="text-align: center; margin-top: 12px; margin-bottom: 6px;">
-                            <button id="toggle-extra-planets-btn" onclick="toggleExtraPlanets()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #c4b5fd; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; outline: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
-                                Ver todos los planetas ↓
-                            </button>
-                        </div>
-                    `;
-                    
-                    // Agregar acordeones de interpretación individual de los planetas personales
-                    pTableHtml += `
-                        <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-                            <h4 style="color: var(--accent-gold); font-size: 13.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; font-family: 'Cinzel', serif;">
-                                <i class="fa-solid fa-book-open"></i> Interpretación Personal
-                            </h4>
-                    `;
-                    
-                    const interpretKeys = ['Sun', 'Moon', 'ASC', 'Venus', 'Mars'];
-                    interpretKeys.forEach(key => {
-                        const lonVal = natalPlanets[key];
-                        if (lonVal !== undefined) {
-                            const sign = getZodiacSign(lonVal);
-                            const interpData = individualInterpretations[key];
-                            if (interpData && interpData.desc[sign.name]) {
-                                const descText = interpData.desc[sign.name];
-                                const rawName = interpData.name;
-                                const mainName = rawName.split(' ')[0];
-                                const concept = rawName.includes('(') ? rawName.split('(')[1].split(' ')[0].replace(/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]/g, '') : '';
-                                const formattedTitle = concept ? `${mainName} · ${concept} · ${sign.name}` : `${mainName} · ${sign.name}`;
-                                
-                                const degVal = Math.floor(lonVal % 30);
-                                const minVal = Math.floor(((lonVal % 30) - degVal) * 60);
-                                const posStr = `${degVal}° ${minVal}'`;
-
-                                pTableHtml += `
-                                    <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-purple); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                                        <strong style="color: var(--accent-purple-light); display: block; margin-bottom: 6px; font-size: 17px; font-weight: 700; letter-spacing: 0.3px;">
-                                            ${interpData.symbol} ${formattedTitle}
-                                        </strong>
-                                        <div style="display: inline-block; background: rgba(255,255,255,0.04); border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 10px; font-family: 'Inter', sans-serif;">${posStr}</div>
-                                        <span style="color: #E5E5F0; line-height: 1.6; display: block; font-size: 13.5px;">${descText}</span>
-                                    </div>
-                                `;
-                            }
-                        }
-                    });
-                    
-                    // Mostrar también la interpretación del Medio Cielo si está calculada
-                    const mcLon = natalPlanets['MC'];
-                    if (mcLon !== undefined) {
-                        const mcSign = getZodiacSign(mcLon);
-                        const mcInterp = vocationInterpretations[mcSign.name];
-                        if (mcInterp) {
-                            const mcDegVal = Math.floor(mcLon % 30);
-                            const mcMinVal = Math.floor(((mcLon % 30) - mcDegVal) * 60);
-                            const mcPosStr = `${mcDegVal}° ${mcMinVal}'`;
-
-                            let culmHtml = '';
-                            const culmList = getCulminatingPlanets(natalPlanets);
-                            if (culmList.length > 0) {
-                                culmHtml += `<div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; display: flex; flex-direction: column; gap: 6px;">`;
-                                culmHtml += `<span style="font-weight: 600; font-size: 11px; color: var(--accent-gold); display: block; margin-bottom: 2px;"><i class="fa-solid fa-angles-up"></i> Planeta influyente en tu carrera (Culminante):</span>`;
-                                culmList.forEach(item => {
-                                    const interp = culminatingInterpretations[item.key];
-                                    if (interp) {
-                                        culmHtml += `<div style="font-size: 11.5px; color: #ccccdd; line-height: 1.45;">`;
-                                        culmHtml += `<strong style="color: #ffd740;">${interp.symbol} ${interp.name}:</strong> ${interp.text}<br>`;
-                                        culmHtml += `<span style="color: #00bcd4; font-size: 10.5px; font-weight: 500;">Profesiones sugeridas: ${interp.jobs}</span>`;
-                                        culmHtml += `</div>`;
-                                    }
-                                });
-                                culmHtml += `</div>`;
-                            }
 
                             pTableHtml += `
                                 <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-gold); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
@@ -5733,6 +5831,11 @@
                 
                 // Redibujar rueda zodiacal
                 setTimeout(drawZodiacWheel, 150);
+                
+                // Mostrar paywall/trial en el primer cálculo
+                if (localStorage.getItem('orbitae_paywall_shown') !== 'true') {
+                    startTrialFlowSimulation();
+                }
             } catch (error) {
                 showToast('⚠️ Error al calcular la carta. Verificá los datos ingresados.');
             }
@@ -7049,11 +7152,17 @@
          * Activa el premium en el cliente guardando el session_token del servidor.
          * NUNCA llamar directamente — usar solo tras confirmación del servidor.
          */
-        function _activatePremiumLocally(sessionToken) {
+        /**
+         * Activa el premium en el cliente guardando el session_token del servidor.
+         * NUNCA llamar directamente — usar solo tras confirmación del servidor.
+         */
+        function _activatePremiumLocally(sessionToken, tier = 'cosmos') {
             if (!sessionToken) return;
             localStorage.setItem('orbitae_session_token', sessionToken);
             localStorage.setItem('orbitae_premium_unlocked', 'true');
+            localStorage.setItem('orbitae_subscription_tier', tier);
             localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
+            window.userTier = tier;
         }
 
         /**
@@ -7062,7 +7171,9 @@
         function _revokePremiumLocally() {
             localStorage.removeItem('orbitae_session_token');
             localStorage.removeItem('orbitae_premium_unlocked');
+            localStorage.removeItem('orbitae_subscription_tier');
             localStorage.removeItem('orbitae_premium_verified_at');
+            window.userTier = 'free';
         }
 
         /**
@@ -7073,6 +7184,8 @@
             const sessionToken = localStorage.getItem('orbitae_session_token');
             if (!sessionToken) {
                 _revokePremiumLocally();
+                window.userTier = 'free';
+                applySubscriptionTierLimits();
                 return false;
             }
             try {
@@ -7084,27 +7197,41 @@
                 const data = await resp.json();
                 if (data.premium) {
                     localStorage.setItem('orbitae_premium_unlocked', 'true');
+                    localStorage.setItem('orbitae_subscription_tier', data.tier || 'cosmos');
                     localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
+                    window.userTier = data.tier || 'cosmos';
+                    applySubscriptionTierLimits();
                     return true;
                 } else {
-                    // Token inválido o expirado — revocar
                     _revokePremiumLocally();
+                    window.userTier = 'free';
+                    applySubscriptionTierLimits();
                     updateCityBadge();
                     return false;
                 }
             } catch (e) {
-                // Sin conexión: usar caché local (máx 24h)
                 const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
                 const cacheOk = (Date.now() - verifiedAt) < 86400000; // 24 horas
-                return cacheOk && localStorage.getItem('orbitae_premium_unlocked') === 'true';
+                if (cacheOk && localStorage.getItem('orbitae_premium_unlocked') === 'true') {
+                    window.userTier = localStorage.getItem('orbitae_subscription_tier') || 'cosmos';
+                } else {
+                    window.userTier = 'free';
+                }
+                applySubscriptionTierLimits();
+                return window.userTier !== 'free';
             }
         }
+
+        // Definición global de userTier
+        window.userTier = localStorage.getItem('orbitae_subscription_tier') || 'free';
 
         // Verificar premium con servidor al cargar (no bloquea la UI)
         (function initPremiumVerification() {
             const sessionToken = localStorage.getItem('orbitae_session_token');
             if (sessionToken) {
-                // Solo re-verificar si pasaron más de 4 horas desde la última verificación
+                window.userTier = localStorage.getItem('orbitae_subscription_tier') || 'cosmos';
+                applySubscriptionTierLimits();
+                
                 const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
                 const shouldRecheck = (Date.now() - verifiedAt) > 14400000; // 4 horas
                 if (shouldRecheck) {
@@ -7114,12 +7241,700 @@
                         }
                     });
                 }
-            } else if (localStorage.getItem('orbitae_premium_unlocked') === 'true') {
-                // Tiene el flag pero no el token → fraude o datos viejos → revocar
+            } else {
                 _revokePremiumLocally();
-                updateCityBadge();
+                window.userTier = 'free';
+                applySubscriptionTierLimits();
             }
         })();
+
+        // ── FUNCIONES DE GATING Y NIVELES (STELLAR / COSMOS) ───────────────────
+        
+        function selectUpgradeModalTier(tier) {
+            window.upgradeModalSelectedTier = tier;
+            
+            const tabStellar = document.getElementById('modal-tab-stellar');
+            const tabCosmos = document.getElementById('modal-tab-cosmos');
+            const priceVal = document.getElementById('upgrade-price-val');
+            const featuresList = document.getElementById('upgrade-modal-features-list');
+            
+            if (tier === 'stellar') {
+                if (tabStellar) {
+                    tabStellar.style.background = 'rgba(156,39,176,0.08)';
+                    tabStellar.style.borderColor = 'var(--accent-purple)';
+                    tabStellar.style.color = '#ffffff';
+                }
+                if (tabCosmos) {
+                    tabCosmos.style.background = 'rgba(255,255,255,0.02)';
+                    tabCosmos.style.borderColor = 'rgba(255,255,255,0.08)';
+                    tabCosmos.style.color = '#a89fc0';
+                }
+                if (priceVal) priceVal.innerHTML = 'USD 2.99';
+                if (featuresList) {
+                    featuresList.innerHTML = `
+                        <li><div class="feat-icon">🔮</div><span>Guías e interpretaciones de IA completas</span></li>
+                        <li><div class="feat-icon">🗺️</div><span>Consultas de destinos (Límite Free: 3/mes)</span></li>
+                        <li><div class="feat-icon">📄</div><span>Reportes PDF (No disponibles)</span></li>
+                        <li><div class="feat-icon">⚡</div><span>Acceso ilimitado a nivel Stellar</span></li>
+                    `;
+                }
+            } else { // cosmos
+                if (tabStellar) {
+                    tabStellar.style.background = 'rgba(255,255,255,0.02)';
+                    tabStellar.style.borderColor = 'rgba(255,255,255,0.08)';
+                    tabStellar.style.color = '#a89fc0';
+                }
+                if (tabCosmos) {
+                    tabCosmos.style.background = 'rgba(156,39,176,0.08)';
+                    tabCosmos.style.borderColor = 'var(--accent-purple)';
+                    tabCosmos.style.color = '#ffffff';
+                }
+                if (priceVal) priceVal.innerHTML = 'USD 6.99';
+                if (featuresList) {
+                    featuresList.innerHTML = `
+                        <li><div class="feat-icon">🗺️</div><span>Consultas <strong>ilimitadas</strong> de destinos en el mapa</span></li>
+                        <li><div class="feat-icon">📄</div><span>Reportes PDF descargables ilimitados</span></li>
+                        <li><div class="feat-icon">🔮</div><span>Guías e interpretaciones de IA completas</span></li>
+                        <li><div class="feat-icon">⚡</div><span>Acceso ilimitado a todas las herramientas</span></li>
+                    `;
+                }
+            }
+        }
+        
+        function renderNatalPositionsTable() {
+            const listContainer = document.getElementById('natal-positions-list');
+            if (!listContainer || !window.natalPlanets) return;
+            
+            const tier = window.userTier || 'free';
+            
+            let pTableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; color: #ffffff;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.4); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.8px; text-align: left;">
+                            <th style="padding: 8px 8px;">Astro</th>
+                            <th style="padding: 8px 8px;">Signo</th>
+                            <th style="padding: 8px 8px; text-align: right;">Posición</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            let pOrder = [];
+            if (tier === 'free') {
+                pOrder = ['Sun', 'Moon', 'ASC'];
+            } else {
+                pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'ASC', 'MC'];
+            }
+            
+            const pIcons = {
+                'Sun': '☀️ Sol',
+                'Moon': '🌙 Luna',
+                'Mercury': '🧠 Mercurio',
+                'Venus': '💖 Venus',
+                'Mars': '💥 Marte',
+                'Jupiter': '🪐 Júpiter',
+                'Saturn': '⏳ Saturno',
+                'Uranus': '⚡ Urano',
+                'Neptune': '🌊 Neptuno',
+                'Pluto': '🌋 Plutón',
+                'ASC': '🎭 Ascendente',
+                'MC': '🎯 Medio Cielo'
+            };
+            const pColors = {
+                'Sun': '#ffd700', 'Moon': '#cbd5e1', 'Mercury': '#34d399', 'Venus': '#f472b6', 'Mars': '#f87171',
+                'Jupiter': '#c084fc', 'Saturn': '#fb923c', 'Uranus': '#22d3ee', 'Neptune': '#60a5fa', 'Pluto': '#a78bfa',
+                'ASC': '#a78bfa', 'MC': '#fbbf24'
+            };
+            
+            pOrder.forEach((p, idx) => {
+                const lonVal = window.natalPlanets[p];
+                if (lonVal !== undefined) {
+                    const sign = getZodiacSign(lonVal);
+                    const deg = Math.floor(lonVal % 30);
+                    const min = Math.floor(((lonVal % 30) - deg) * 60);
+                    
+                    const isCore = ['Sun', 'Moon', 'ASC', 'MC'].includes(p);
+                    const rowClass = isCore ? '' : 'extra-planet-row';
+                    const displayStyle = (tier !== 'free' && !isCore) ? 'display: none;' : '';
+                    
+                    const color = pColors[p] || '#ffffff';
+                    const bgStyle = idx % 2 === 0 ? 'background: #13131F;' : 'background: #16162a;';
+                    
+                    pTableHtml += `
+                        <tr class="${rowClass}" style="border-bottom: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid ${color}; ${bgStyle} ${displayStyle} transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='${idx % 2 === 0 ? '#13131F' : '#16162a'}'">
+                            <td style="padding: 9px 8px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.95);">${pIcons[p]}</td>
+                            <td style="padding: 9px 8px; color: rgba(255,255,255,0.85);">${sign.symbol} ${sign.name}</td>
+                            <td style="padding: 9px 8px; text-align: right; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;">
+                                <span style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2px 8px; color: rgba(255,255,255,0.8);">${deg}° ${min}'</span>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            pTableHtml += `
+                    </tbody>
+                </table>
+            `;
+            
+            const showToggleBtn = tier !== 'free';
+            if (showToggleBtn) {
+                pTableHtml += `
+                    <div style="text-align: center; margin-top: 12px; margin-bottom: 6px;">
+                        <button id="toggle-extra-planets-btn" onclick="toggleExtraPlanets()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #c4b5fd; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; outline: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
+                            Ver todos los planetas ↓
+                        </button>
+                    </div>
+                `;
+            }
+            
+            pTableHtml += `
+                <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                    <h4 style="color: var(--accent-gold); font-size: 13.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; font-family: 'Cinzel', serif;">
+                        <i class="fa-solid fa-book-open"></i> Interpretación Personal
+                    </h4>
+            `;
+            
+            let interpretKeys = [];
+            if (tier === 'free') {
+                interpretKeys = ['Sun', 'Moon', 'ASC'];
+            } else {
+                interpretKeys = ['Sun', 'Moon', 'ASC', 'Venus', 'Mars'];
+            }
+            
+            interpretKeys.forEach(key => {
+                const lonVal = window.natalPlanets[key];
+                if (lonVal !== undefined) {
+                    const sign = getZodiacSign(lonVal);
+                    const interpData = individualInterpretations[key];
+                    if (interpData && interpData.desc[sign.name]) {
+                        const descText = interpData.desc[sign.name];
+                        const rawName = interpData.name;
+                        const mainName = rawName.split(' ')[0];
+                        const concept = rawName.includes('(') ? rawName.split('(')[1].split(' ')[0].replace(/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]/g, '') : '';
+                        const formattedTitle = concept ? `${mainName} · ${concept} · ${sign.name}` : `${mainName} · ${sign.name}`;
+                        
+                        const degVal = Math.floor(lonVal % 30);
+                        const minVal = Math.floor(((lonVal % 30) - degVal) * 60);
+                        const posStr = `${degVal}° ${minVal}'`;
+                        
+                        pTableHtml += `
+                            <div style="background: var(--bg-card); border: none; border-left: 3px solid var(--accent-purple); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                                <strong style="color: var(--accent-purple-light); display: block; margin-bottom: 6px; font-size: 17px; font-weight: 700; letter-spacing: 0.3px;">
+                                    ${interpData.symbol} ${formattedTitle}
+                                </strong>
+                                <div style="display: inline-block; background: rgba(255,255,255,0.04); border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 10px; font-family: 'Inter', sans-serif;">${posStr}</div>
+                                <span style="color: #E5E5F0; line-height: 1.6; display: block; font-size: 13.5px;">${descText}</span>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
+            pTableHtml += `</div>`;
+            
+            if (tier === 'free') {
+                pTableHtml += `
+                    <div class="section-divider" style="margin-top:20px; margin-bottom:10px;"><span>Contenido Premium Bloqueado</span></div>
+                    <div class="compact-locked">
+                        <div style="font-size: 11.5px; font-weight: bold; text-transform: uppercase; color: var(--accent-purple); margin-bottom: 6px;"><i class="fa-solid fa-star"></i> Nivel Stellar</div>
+                        <div class="compact-row">
+                            <span style="font-size:16px; color:var(--accent-purple-light);">♀</span>
+                            <div class="c-text">
+                                <span style="font-weight:600; color:#fff; display:block; font-size:12px;">Venus, Marte y Medio Cielo</span>
+                                <span class="c-line blurred-inline" style="font-size:11px;">Descubre tus planetas del amor, acción y vocación profesional.</span>
+                            </div>
+                        </div>
+                        <button class="compact-cta" onclick="openUpgradeModal('stellar')">➜ Desbloquear con Stellar</button>
+                    </div>
+                    
+                    <div class="compact-locked cosmos">
+                        <div style="font-size: 11.5px; font-weight: bold; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 6px;"><i class="fa-solid fa-infinity"></i> Nivel Cosmos</div>
+                        <div class="compact-row">
+                            <span style="font-size:16px; color:var(--accent-gold);">🌐</span>
+                            <div class="c-text">
+                                <span style="font-weight:600; color:#fff; display:block; font-size:12px;">Suite Astrocartografía Completa</span>
+                                <span class="c-line blurred-inline" style="font-size:11px;">Líneas planetarias mundiales, sinastría de pareja y reportes PDF.</span>
+                            </div>
+                        </div>
+                        <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')">➜ Desbloquear con Cosmos</button>
+                    </div>
+                `;
+            } else if (tier === 'stellar') {
+                pTableHtml += `
+                    <div class="section-divider" style="margin-top:20px; margin-bottom:10px;"><span>Contenido Premium Bloqueado</span></div>
+                    <div class="compact-locked cosmos">
+                        <div style="font-size: 11.5px; font-weight: bold; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 6px;"><i class="fa-solid fa-infinity"></i> Nivel Cosmos</div>
+                        <div class="compact-row">
+                            <span style="font-size:16px; color:var(--accent-gold);">🌐</span>
+                            <div class="c-text">
+                                <span style="font-weight:600; color:#fff; display:block; font-size:12px;">Astrocartografía y Sinastría</span>
+                                <span class="c-line blurred-inline" style="font-size:11px;">Mapa interactivo completo, descargas PDF y afinidad de pareja.</span>
+                            </div>
+                        </div>
+                        <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')">➜ Desbloquear con Cosmos</button>
+                    </div>
+                `;
+            }
+            
+            listContainer.innerHTML = pTableHtml;
+            document.getElementById('natal-positions-card').style.display = 'block';
+            const divPos = document.getElementById('divider-natal-positions');
+            if (divPos) divPos.style.display = 'flex';
+        }
+
+        function applySubscriptionTierLimits() {
+            const tier = window.userTier || 'free';
+            
+            // --- GATING CARTA NATAL ---
+            renderNatalPositionsTable();
+
+            // --- GATING DIARIO / HOROSCOPO ---
+            const vocationCard = document.getElementById('vocation-card');
+            const vocationLocked = document.getElementById('vocation-card-locked');
+            const dailyScoresCard = document.getElementById('daily-scores-card');
+            const dailyScoresLocked = document.getElementById('daily-scores-locked');
+            const transitsContainer = document.getElementById('daily-transits-container');
+            const transitsSection = document.getElementById('divider-daily-transits');
+            const weeklyForecast = document.getElementById('weekly-transits-dashboard');
+            const weeklyForecastLocked = document.getElementById('weekly-transits-locked');
+
+            if (tier === 'free') {
+                if (vocationCard) vocationCard.style.display = 'none';
+                const divVoc = document.getElementById('divider-daily-vocation');
+                if (divVoc) divVoc.style.display = 'none';
+                if (vocationLocked) vocationLocked.style.display = 'block';
+
+                if (dailyScoresCard) dailyScoresCard.style.display = 'none';
+                if (dailyScoresLocked) dailyScoresLocked.style.display = 'block';
+
+                if (transitsContainer) transitsContainer.style.display = 'none';
+                if (transitsSection) transitsSection.style.display = 'none';
+
+                if (weeklyForecast) weeklyForecast.style.display = 'none';
+                const divWeekly = document.getElementById('divider-daily-weekly');
+                if (divWeekly) divWeekly.style.display = 'none';
+                if (weeklyForecastLocked) weeklyForecastLocked.style.display = 'block';
+            } else if (tier === 'stellar') {
+                if (vocationCard) vocationCard.style.display = 'block';
+                const divVoc = document.getElementById('divider-daily-vocation');
+                if (divVoc) divVoc.style.display = 'flex';
+                if (vocationLocked) vocationLocked.style.display = 'none';
+
+                if (dailyScoresCard) dailyScoresCard.style.display = 'block';
+                if (dailyScoresLocked) dailyScoresLocked.style.display = 'none';
+
+                if (transitsContainer) transitsContainer.style.display = 'block';
+                if (transitsSection) transitsSection.style.display = 'flex';
+
+                if (weeklyForecast) weeklyForecast.style.display = 'none';
+                const divWeekly = document.getElementById('divider-daily-weekly');
+                if (divWeekly) divWeekly.style.display = 'none';
+                if (weeklyForecastLocked) weeklyForecastLocked.style.display = 'block';
+            } else { // cosmos
+                if (vocationCard) vocationCard.style.display = 'block';
+                const divVoc = document.getElementById('divider-daily-vocation');
+                if (divVoc) divVoc.style.display = 'flex';
+                if (vocationLocked) vocationLocked.style.display = 'none';
+
+                if (dailyScoresCard) dailyScoresCard.style.display = 'block';
+                if (dailyScoresLocked) dailyScoresLocked.style.display = 'none';
+
+                if (transitsContainer) transitsContainer.style.display = 'block';
+                if (transitsSection) transitsSection.style.display = 'flex';
+
+                if (weeklyForecast) weeklyForecast.style.display = 'block';
+                const divWeekly = document.getElementById('divider-daily-weekly');
+                if (divWeekly) divWeekly.style.display = 'flex';
+                if (weeklyForecastLocked) weeklyForecastLocked.style.display = 'none';
+            }
+
+            // --- GATING MAPA Y DESTINOS ---
+            const mapEl = document.getElementById('map');
+            let mapLockOverlay = document.getElementById('map-lock-overlay');
+            
+            if (tier === 'cosmos') {
+                if (mapEl) {
+                    mapEl.classList.remove('map-blurred');
+                    mapEl.style.pointerEvents = 'auto';
+                }
+                if (mapLockOverlay) mapLockOverlay.style.display = 'none';
+            } else {
+                if (mapEl) {
+                    mapEl.classList.add('map-blurred');
+                    mapEl.style.pointerEvents = 'none';
+                }
+                if (!mapLockOverlay && mapEl) {
+                    mapLockOverlay = document.createElement('div');
+                    mapLockOverlay.id = 'map-lock-overlay';
+                    mapLockOverlay.className = 'map-lock-overlay-container';
+                    mapLockOverlay.innerHTML = `
+                        <div class="map-lock-card">
+                            <div style="font-size:32px; margin-bottom:10px;">🗺️</div>
+                            <h3 style="font-family:'Cinzel',serif; font-size:16px; margin:0 0 8px 0; color:var(--accent-gold);">Suite Astrocartografía Cosmos</h3>
+                            <p style="font-size:11.5px; color:var(--text-gray); line-height:1.45; margin:0 0 16px 0;">Explorá tu mapa interactivo de líneas de poder y tu calendario de viajes completo activando Cosmos.</p>
+                            <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')" style="margin:0; width:100%;">➜ Desbloquear con Cosmos</button>
+                        </div>
+                    `;
+                    mapEl.parentNode.appendChild(mapLockOverlay);
+                }
+                if (mapLockOverlay) {
+                    mapLockOverlay.style.display = 'flex';
+                }
+            }
+        }
+
+        // --- TRIAL / PAYWALL FLOW SIMULATION ---
+        
+        function startTrialFlowSimulation() {
+            const overlay = document.getElementById('trial-flow-overlay');
+            if (!overlay) return;
+            
+            document.getElementById('s-loading').style.display = 'flex';
+            document.getElementById('s-reveal').style.display = 'none';
+            document.getElementById('s-paywall').style.display = 'none';
+            
+            overlay.style.display = 'flex';
+            
+            const steps = [
+                "Ubicando tu Sol...",
+                "Trazando tu Ascendente...",
+                "Alineando coordenadas estelares...",
+                "Sincronizando efemérides NASA VSOP87..."
+            ];
+            
+            const stepEl = document.getElementById('loading-step');
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                currentStep++;
+                if (currentStep < steps.length) {
+                    if (stepEl) stepEl.textContent = steps[currentStep];
+                } else {
+                    clearInterval(interval);
+                    showTrialRevealScreen();
+                }
+            }, 800);
+        }
+        
+        function showTrialRevealScreen() {
+            document.getElementById('s-loading').style.display = 'none';
+            document.getElementById('s-reveal').style.display = 'flex';
+            
+            const username = document.getElementById('name-input').value || 'Viajero';
+            document.getElementById('reveal-username').textContent = username;
+            
+            if (window.natalPlanets) {
+                const sunLon = window.natalPlanets['Sun'];
+                if (sunLon !== undefined) {
+                    const sunSign = getZodiacSign(sunLon);
+                    const sunDeg = Math.floor(sunLon % 30);
+                    const sunMin = Math.floor(((sunLon % 30) - sunDeg) * 60);
+                    
+                    document.getElementById('reveal-sun-sign').textContent = sunSign.name;
+                    document.getElementById('reveal-sun-deg').textContent = `${sunDeg}° ${sunMin}'`;
+                    if (window.individualInterpretations && window.individualInterpretations['Sun']) {
+                        document.getElementById('reveal-sun-desc').textContent = window.individualInterpretations['Sun']['desc'][sunSign.name] || '';
+                    }
+                }
+                
+                const ascLon = window.natalPlanets['ASC'];
+                if (ascLon !== undefined) {
+                    const ascSign = getZodiacSign(ascLon);
+                    const ascDeg = Math.floor(ascLon % 30);
+                    const ascMin = Math.floor(((ascLon % 30) - ascDeg) * 60);
+                    
+                    document.getElementById('reveal-asc-sign').textContent = ascSign.name;
+                    document.getElementById('reveal-asc-deg').textContent = `${ascDeg}° ${ascMin}'`;
+                    if (window.individualInterpretations && window.individualInterpretations['ASC']) {
+                        document.getElementById('reveal-asc-desc').textContent = window.individualInterpretations['ASC']['desc'][ascSign.name] || '';
+                    }
+                }
+            }
+        }
+        
+        function showTrialScreen(screenId) {
+            document.getElementById('s-loading').style.display = 'none';
+            document.getElementById('s-reveal').style.display = 'none';
+            document.getElementById('s-paywall').style.display = 'none';
+            
+            const target = document.getElementById(screenId);
+            if (target) target.style.display = 'flex';
+        }
+        
+        function closeTrialFlow() {
+            const overlay = document.getElementById('trial-flow-overlay');
+            if (overlay) overlay.style.display = 'none';
+            localStorage.setItem('orbitae_paywall_shown', 'true');
+            
+            const onboardingOverlay = document.getElementById('onboarding-overlay');
+            if (onboardingOverlay) onboardingOverlay.style.display = 'none';
+        }
+        
+        function toggleTrialMode() {
+            const flag = document.getElementById('trial-active-flag');
+            const switchEl = document.getElementById('trial-toggle-switch');
+            const ctaBtn = document.getElementById('cta-trial-btn');
+            const finePrint = document.getElementById('trial-fine-print');
+            const selectedPlan = document.getElementById('paywall-selected-plan').value;
+            
+            const isTrial = flag.value === 'true';
+            
+            if (isTrial) {
+                flag.value = 'false';
+                switchEl.style.background = '#3f3f46';
+                switchEl.querySelector('div').style.right = 'auto';
+                switchEl.querySelector('div').style.left = '2px';
+                
+                ctaBtn.textContent = selectedPlan === 'stellar' ? 'Comprar Stellar ($2.990)' : 'Comprar Cosmos ($6.990)';
+                finePrint.textContent = selectedPlan === 'stellar' 
+                    ? 'Pago único mensual de $2.990. Sin cargos ocultos.' 
+                    : 'Pago único mensual de $6.990. Sin cargos ocultos.';
+            } else {
+                flag.value = 'true';
+                switchEl.style.background = '#7c3aed';
+                switchEl.querySelector('div').style.left = 'auto';
+                switchEl.querySelector('div').style.right = '2px';
+                
+                ctaBtn.textContent = 'Empezar prueba gratis';
+                finePrint.textContent = selectedPlan === 'stellar'
+                    ? 'Se te va a cobrar $2.990/mes recién el día 8, salvo que canceles antes. Podés cancelar en un toque desde Más ➔ Mi cuenta.'
+                    : 'Se te va a cobrar $6.990/mes recién el día 8, salvo que canceles antes. Podés cancelar en un toque desde Más ➔ Mi cuenta.';
+            }
+        }
+        
+        function selectPaywallPlan(planId) {
+            document.getElementById('plan-option-stellar').classList.remove('active');
+            document.getElementById('plan-option-cosmos').classList.remove('active');
+            
+            const selected = document.getElementById('plan-option-' + planId);
+            if (selected) selected.classList.add('active');
+            
+            document.getElementById('paywall-selected-plan').value = planId;
+            
+            const isTrial = document.getElementById('trial-active-flag').value === 'true';
+            const ctaBtn = document.getElementById('cta-trial-btn');
+            const finePrint = document.getElementById('trial-fine-print');
+            
+            if (isTrial) {
+                ctaBtn.textContent = 'Empezar prueba gratis';
+                finePrint.textContent = planId === 'stellar'
+                    ? 'Se te va a cobrar $2.990/mes recién el día 8, salvo que canceles antes. Podés cancelar en un toque desde Más ➔ Mi cuenta.'
+                    : 'Se te va a cobrar $6.990/mes recién el día 8, salvo que canceles antes. Podés cancelar en un toque desde Más ➔ Mi cuenta.';
+            } else {
+                ctaBtn.textContent = planId === 'stellar' ? 'Comprar Stellar ($2.990)' : 'Comprar Cosmos ($6.990)';
+                finePrint.textContent = planId === 'stellar'
+                    ? 'Pago único mensual de $2.990. Sin cargos ocultos.'
+                    : 'Pago único mensual de $6.990. Sin cargos ocultos.';
+            }
+        }
+        
+        async function submitTrialActivation() {
+            const emailInput = document.getElementById('trial-email-input');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email || !email.includes('@')) {
+                showToast('❌ Por favor ingresá un email válido para tu prueba gratis.');
+                return;
+            }
+            
+            const isTrial = document.getElementById('trial-active-flag').value === 'true';
+            const selectedPlan = document.getElementById('paywall-selected-plan').value;
+            
+            if (!isTrial) {
+                closeTrialFlow();
+                openUpgradeModal(selectedPlan);
+                return;
+            }
+            
+            const btn = document.getElementById('cta-trial-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Activando...';
+            
+            try {
+                const resp = await fetch('/api/premium/start-trial', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, tier: selectedPlan })
+                });
+                
+                if (!resp.ok) throw new Error('Error en el servidor');
+                const data = await resp.json();
+                
+                if (data.valid) {
+                    _activatePremiumLocally(data.session_token, data.tier);
+                    applySubscriptionTierLimits();
+                    showToast(`✨ ¡Prueba de 7 días de ${data.tier.toUpperCase()} activada correctamente!`);
+                    closeTrialFlow();
+                    setTimeout(() => { location.reload(); }, 1500);
+                } else {
+                    showToast('❌ No se pudo activar la prueba. Intentá de nuevo.');
+                    btn.disabled = false;
+                    btn.textContent = 'Empezar prueba gratis';
+                }
+            } catch (e) {
+                showToast('⚠️ Error de conexión. Verificá tu red.');
+                btn.disabled = false;
+                btn.textContent = 'Empezar prueba gratis';
+            }
+        }
+
+        function updateCalculatorStateUI() {
+            const hasData = localStorage.getItem('orbitae_birth_v1') !== null;
+            
+            const greetingCtas = document.getElementById('greeting-ctas');
+            const greetingMsg = document.getElementById('greeting-daily-msg');
+            const calculatorContainer = document.getElementById('calculator-fields-container');
+            const calcHeader = calculatorContainer ? calculatorContainer.querySelector('h3') : null;
+            const calcTitleText = calcHeader ? calcHeader.querySelector('span') : null;
+            const calcChevron = document.getElementById('calc-chevron');
+            const btnCalculate = document.getElementById('btn-calculate-chart');
+            const suiteBanner = document.querySelector('.orbitae-premium-banner');
+            
+            const activeDataCard = document.getElementById('active-data-card');
+            const dividerActiveData = document.getElementById('divider-active-data');
+            const dailyWidgetCard = document.getElementById('daily-widget-card');
+            const dividerDailyWidget = document.getElementById('divider-daily-widget');
+            const natalPositionsCard = document.getElementById('natal-positions-card');
+            const dividerNatalPositions = document.getElementById('divider-natal-positions');
+            
+            // Crear elementos dinámicos si no existen
+            let welcomeMsg = document.getElementById('calculator-welcome-msg');
+            if (calculatorContainer && !welcomeMsg) {
+                welcomeMsg = document.createElement('div');
+                welcomeMsg.id = 'calculator-welcome-msg';
+                welcomeMsg.style.cssText = 'padding: 14px 14px 0 14px; font-family: "Cinzel", serif; font-size: 15px; font-weight: 700; color: #ffffff; line-height: 1.4; position: relative; z-index: 1;';
+                const calcFields = document.getElementById('calculator-fields');
+                if (calcFields) {
+                    calcFields.parentNode.insertBefore(welcomeMsg, calcFields);
+                }
+            }
+            
+            let timeTip = document.getElementById('calculator-time-tip');
+            if (calculatorContainer && !timeTip) {
+                timeTip = document.createElement('div');
+                timeTip.id = 'calculator-time-tip';
+                timeTip.style.cssText = 'font-size: 11.5px; color: rgba(0, 229, 255, 0.85); line-height: 1.45; margin: 4px 14px 14px 14px; display: flex; align-items: flex-start; gap: 6px; position: relative; z-index: 1;';
+                const calcFields = document.getElementById('calculator-fields');
+                if (calcFields) {
+                    const btn = document.getElementById('btn-calculate-chart');
+                    if (btn) {
+                        btn.parentNode.insertBefore(timeTip, btn);
+                    } else {
+                        calcFields.appendChild(timeTip);
+                    }
+                }
+            }
+            
+            if (!hasData) {
+                // --- ESTADO A: Sin datos (Usuario Nuevo) ---
+                
+                // 1. Ocultar botones del saludo
+                if (greetingCtas) greetingCtas.style.display = 'none';
+                if (greetingMsg) greetingMsg.innerHTML = 'Ingresá tu fecha, hora y ciudad de nacimiento para calcular tu carta natal exacta.';
+                
+                // 2. Destacar calculadora como hero card
+                if (calculatorContainer) {
+                    calculatorContainer.style.display = 'block';
+                    calculatorContainer.style.boxShadow = '0 8px 32px rgba(124, 58, 237, 0.35), 0 0 25px rgba(6, 182, 212, 0.15)';
+                    calculatorContainer.style.background = 'linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed)';
+                }
+                
+                // 3. Modificar cabecera de la calculadora (estática, no toggleable)
+                if (calcHeader) {
+                    calcHeader.onclick = null;
+                    calcHeader.style.cursor = 'default';
+                }
+                if (calcTitleText) {
+                    calcTitleText.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 6px; color: #c4b5fd;"></i> Calculá tu carta natal';
+                }
+                if (calcChevron) calcChevron.style.display = 'none';
+                
+                // 4. Agregar mensaje de bienvenida e info sobre inputs
+                const username = document.getElementById('name-input')?.value || localStorage.getItem('orbitae_name') || 'Viajero';
+                if (welcomeMsg) {
+                    welcomeMsg.style.display = 'block';
+                    welcomeMsg.innerHTML = `✦ ¡Hola, ${username}! Empecemos <span style="color:var(--accent-gold);">✦</span><br><span style="font-family:'Inter',sans-serif; font-size:12px; color:rgba(255,255,255,0.6); font-weight:normal; display:block; margin-top:4px;">Ingresá tu fecha, hora y ciudad de nacimiento para calcular tu carta natal exacta.</span>`;
+                }
+                
+                // 5. Agregar tip de hora exacta
+                if (timeTip) {
+                    timeTip.style.display = 'flex';
+                    timeTip.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #00e5ff; margin-top: 2px;"></i> <span><strong>Importante:</strong> Cuanto más exacta sea la hora de nacimiento, más preciso será el cálculo de tu Ascendente y tu Medio Cielo (precisión física orbital NASA VSOP87).</span>`;
+                }
+                
+                // 6. Cambiar texto del botón
+                if (btnCalculate) {
+                    btnCalculate.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" style="font-size: 13px;"></i> Generar mi carta';
+                }
+                
+                // 7. Mostrar Banner de la Suite Astrológica (preview)
+                if (suiteBanner) suiteBanner.style.display = 'block';
+                
+                // 8. Ocultar todos los datos activos y lectura
+                if (activeDataCard) activeDataCard.style.display = 'none';
+                if (dividerActiveData) dividerActiveData.style.display = 'none';
+                if (dailyWidgetCard) dailyWidgetCard.style.display = 'none';
+                if (dividerDailyWidget) dividerDailyWidget.style.display = 'none';
+                if (natalPositionsCard) natalPositionsCard.style.display = 'none';
+                if (dividerNatalPositions) dividerNatalPositions.style.display = 'none';
+                
+            } else {
+                // --- ESTADO B: Con datos cargados (Usuario Existente) ---
+                
+                // 1. Mostrar saludo y botones correctos
+                if (greetingCtas) {
+                    greetingCtas.style.display = 'flex';
+                    greetingCtas.innerHTML = `
+                        <button class="cta-btn-primary" onclick="scrollToMainContent()" style="background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: white; border: none; border-radius: 20px; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2); transition: all 0.2s;">
+                            Ver tu carta completa ↓
+                        </button>
+                        <button class="cta-btn-secondary" onclick="openNewChartCalculator()" style="background: transparent; color: rgba(255,255,255,0.45); border: none; text-decoration: underline; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">
+                            Calcular otra carta
+                        </button>
+                    `;
+                }
+                
+                // 2. Colapsar/Ocultar el formulario por defecto
+                if (calculatorContainer) {
+                    calculatorContainer.style.display = 'none';
+                    calculatorContainer.style.boxShadow = '0 8px 32px rgba(124, 58, 237, 0.2), 0 0 15px rgba(6, 182, 212, 0.05)';
+                    calculatorContainer.style.background = 'linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed)';
+                }
+                
+                // 3. Restaurar comportamiento de toggleable en cabecera
+                if (calcHeader) {
+                    calcHeader.onclick = toggleCalculator;
+                    calcHeader.style.cursor = 'pointer';
+                }
+                if (calcTitleText) {
+                    calcTitleText.innerHTML = '<i class="fa-solid fa-calculator" style="margin-right: 6px; color: #c4b5fd;"></i> Calcular Otra Carta';
+                }
+                if (calcChevron) {
+                    calcChevron.style.display = 'inline-block';
+                    calcChevron.style.transform = 'rotate(0deg)';
+                }
+                
+                // 4. Ocultar mensaje de bienvenida y tip dentro de la calculadora
+                if (welcomeMsg) welcomeMsg.style.display = 'none';
+                if (timeTip) timeTip.style.display = 'none';
+                
+                // 5. Restaurar texto del botón de enviar
+                if (btnCalculate) {
+                    btnCalculate.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" style="font-size: 13px;"></i> Generar Carta';
+                }
+                
+                // 6. Ocultar banner de preview
+                if (suiteBanner) suiteBanner.style.display = 'none';
+                
+                // 7. Mostrar secciones activas
+                if (activeDataCard) activeDataCard.style.display = 'block';
+                if (dividerActiveData) dividerActiveData.style.display = 'flex';
+                if (dailyWidgetCard) dailyWidgetCard.style.display = 'block';
+                if (dividerDailyWidget) dividerDailyWidget.style.display = 'flex';
+                if (natalPositionsCard) natalPositionsCard.style.display = 'block';
+                if (dividerNatalPositions) dividerNatalPositions.style.display = 'flex';
+            }
+        }
 
         // ── VERIFICACIÓN DE TOKEN DE ACTIVACIÓN MANUAL ─────────────────────────
         async function verifyActivationCode() {
@@ -7162,8 +7977,13 @@
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
                 btn.disabled = true;
             }
+            const tier = window.upgradeModalSelectedTier || 'cosmos';
             try {
-                const resp = await fetch('/api/mp/create-preference', { method: 'POST' });
+                const resp = await fetch('/api/mp/create-preference', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tier: tier })
+                });
                 if (!resp.ok) throw new Error('Error al iniciar Mercado Pago');
                 const data = await resp.json();
                 if (data.init_point) {
@@ -7195,10 +8015,11 @@
                     body: JSON.stringify({ token: token.toUpperCase() })
                 }).then(r => r.json()).then(data => {
                     if (data.valid && data.session_token) {
-                        _activatePremiumLocally(data.session_token);
+                        _activatePremiumLocally(data.session_token, data.tier || 'cosmos');
                         setTimeout(() => {
                             showToast('✨ ¡Premium activado automáticamente! Bienvenido/a.');
                             updateCityBadge();
+                            setTimeout(() => { location.reload(); }, 1500);
                         }, 1500);
                     }
                 }).catch(() => {});
@@ -7217,7 +8038,7 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.approved && data.session_token) {
-                            _activatePremiumLocally(data.session_token);
+                            _activatePremiumLocally(data.session_token, data.tier || 'cosmos');
                             setTimeout(() => {
                                 showToast('✨ ¡Premium activado! Gracias por tu compra con Mercado Pago.');
                                 updateCityBadge();
@@ -8065,28 +8886,38 @@
         // ─────────────────────────────────────────────────────────────────────
         //  MODAL DE UPGRADE (REDESIGN)
         // ─────────────────────────────────────────────────────────────────────
-        function openUpgradeModal(isLimit = false) {
+        window.upgradeModalSelectedTier = 'cosmos';
+
+        function openUpgradeModal(tierOrLimit = false) {
             const usage = getCityUsage();
             const el = document.getElementById('upgrade-modal-overlay');
             const titleEl = document.getElementById('upgrade-modal-title');
             const subtitleEl = document.getElementById('upgrade-modal-subtitle');
             const counterEl = document.getElementById('upgrade-month-counter');
             
-            if (isLimit) {
+            let preselected = 'cosmos';
+            
+            if (tierOrLimit === true) {
                 if (titleEl) titleEl.textContent = 'Límite Alcanzado';
                 if (subtitleEl) subtitleEl.innerHTML = 'Usaste tus <strong>3 consultas gratuitas</strong> de este mes.<br>El contador se resetea el 1º de cada mes.';
                 if (counterEl) {
                     counterEl.style.display = 'inline-flex';
                     counterEl.innerHTML = `<i class="fa-solid fa-calendar-day"></i> <span>${usage.count}/${FREE_CITY_LIMIT} ciudades usadas este mes</span>`;
                 }
+                preselected = 'cosmos';
             } else {
                 if (titleEl) titleEl.textContent = 'Orbitae Premium';
                 if (subtitleEl) subtitleEl.textContent = 'Acceso completo a todas las funciones de la app.';
                 if (counterEl) {
                     counterEl.style.display = 'none';
                 }
+                if (typeof tierOrLimit === 'string') {
+                    preselected = tierOrLimit;
+                }
             }
+            
             if (el) el.classList.add('visible');
+            selectUpgradeModalTier(preselected);
         }
 
         function closeUpgradeModal() {
@@ -8157,9 +8988,9 @@
         }
 
         async function downloadNatalPDF() {
-            if (localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
-                openUpgradeModal();
-                showToast('🔒 La descarga de reportes PDF es una característica Premium.');
+            if (window.userTier !== 'cosmos') {
+                openUpgradeModal('cosmos');
+                showToast('🔒 La descarga de reportes PDF requiere el plan Cosmos.');
                 return;
             }
             if (typeof window.jspdf === 'undefined') {
@@ -8296,9 +9127,9 @@
         }
 
         async function downloadReportPDF(cityName) {
-            if (localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
-                openUpgradeModal();
-                showToast('🔒 La descarga de reportes PDF es una característica Premium.');
+            if (window.userTier !== 'cosmos') {
+                openUpgradeModal('cosmos');
+                showToast('🔒 La descarga de reportes PDF requiere el plan Cosmos.');
                 return;
             }
             if (typeof window.jspdf === 'undefined') {
@@ -9889,9 +10720,9 @@
 
         // ── GENERADOR PDF DE COMPATIBILIDAD ────────────────────────────────
         async function downloadCompatibilityPDF() {
-            if (localStorage.getItem('orbitae_premium_unlocked') !== 'true') {
-                openUpgradeModal();
-                showToast('🔒 La descarga de reportes PDF es una característica Premium.');
+            if (window.userTier !== 'cosmos') {
+                openUpgradeModal('cosmos');
+                showToast('🔒 La descarga de reportes PDF requiere el plan Cosmos.');
                 return;
             }
             if (typeof window.jspdf === 'undefined') {
@@ -11360,14 +12191,21 @@
             <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
 
             <!-- Header -->
-            <div style="text-align:center; padding: 0 8px 16px;">
-                <div style="font-size: 38px; line-height:1; margin-bottom: 8px;">🔮</div>
+            <div style="text-align:center; padding: 0 8px 12px;">
+                <div style="font-size: 32px; line-height:1; margin-bottom: 8px;">🔮</div>
                 <div class="upgrade-title" id="upgrade-modal-title">Orbitae Premium</div>
-                <p class="upgrade-subtitle" id="upgrade-modal-subtitle">
+                <p class="upgrade-subtitle" id="upgrade-modal-subtitle" style="margin-bottom: 8px;">
                     Acceso completo a todas las funciones de la app.
                 </p>
-                <div style="display:inline-flex; align-items:baseline; gap:4px; background:rgba(186,85,211,0.12); border:1px solid rgba(186,85,211,0.35); border-radius:20px; padding:6px 20px; margin-top:6px;">
-                    <span style="font-size:26px; font-weight:900; color:#e0b0ff;">USD&nbsp;2.99</span>
+                
+                <!-- Selector de Plan en Modal de Upgrade -->
+                <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px; max-width:280px; margin-left:auto; margin-right:auto;">
+                    <button id="modal-tab-stellar" onclick="selectUpgradeModalTier('stellar')" style="flex:1; padding:8px 12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:#a89fc0; font-weight:700; font-size:12px; cursor:pointer; transition:all 0.2s;">Stellar</button>
+                    <button id="modal-tab-cosmos" onclick="selectUpgradeModalTier('cosmos')" style="flex:1; padding:8px 12px; background:rgba(156,39,176,0.08); border:1px solid var(--accent-purple); border-radius:10px; color:#ffffff; font-weight:700; font-size:12px; cursor:pointer; transition:all 0.2s;">Cosmos</button>
+                </div>
+                
+                <div id="upgrade-price-badge" style="display:inline-flex; align-items:baseline; gap:4px; background:rgba(186,85,211,0.12); border:1px solid rgba(186,85,211,0.35); border-radius:20px; padding:6px 20px;">
+                    <span id="upgrade-price-val" style="font-size:26px; font-weight:900; color:#e0b0ff;">USD 6.99</span>
                     <span style="font-size:11px; color:rgba(255,255,255,0.45);">/ mes</span>
                 </div>
             </div>
@@ -11378,11 +12216,8 @@
                 <span>3/3 ciudades usadas este mes</span>
             </div>
 
-            <ul class="upgrade-features" style="margin-bottom:16px;">
-                <li><div class="feat-icon">🗺️</div><span>Consultas <strong>ilimitadas</strong> de destinos en el mapa</span></li>
-                <li><div class="feat-icon">📄</div><span>Reportes PDF descargables ilimitados</span></li>
-                <li><div class="feat-icon">🔮</div><span>Guías e interpretaciones de IA completas</span></li>
-                <li><div class="feat-icon">⚡</div><span>Acceso ilimitado a todas las herramientas</span></li>
+            <ul class="upgrade-features" id="upgrade-modal-features-list" style="margin-bottom:16px;">
+                <!-- Cargado dinámicamente -->
             </ul>
 
             <!-- Botones de pago -->
