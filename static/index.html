@@ -7062,25 +7062,58 @@
 
         /**
          * Verifica contra el servidor si el session_token guardado es válido.
-         * En esta versión de demostración, siempre retorna true para permitir grabaciones del producto.
+         * Llama al callback con true/false.
          */
         async function verifyPremiumWithServer() {
-            localStorage.setItem('orbitae_premium_unlocked', 'true');
-            return true;
+            const sessionToken = localStorage.getItem('orbitae_session_token');
+            if (!sessionToken) {
+                _revokePremiumLocally();
+                return false;
+            }
+            try {
+                const resp = await fetch('/api/premium/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_token: sessionToken })
+                });
+                const data = await resp.json();
+                if (data.premium) {
+                    localStorage.setItem('orbitae_premium_unlocked', 'true');
+                    localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
+                    return true;
+                } else {
+                    // Token inválido o expirado — revocar
+                    _revokePremiumLocally();
+                    updateCityBadge();
+                    return false;
+                }
+            } catch (e) {
+                // Sin conexión: usar caché local (máx 24h)
+                const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
+                const cacheOk = (Date.now() - verifiedAt) < 86400000; // 24 horas
+                return cacheOk && localStorage.getItem('orbitae_premium_unlocked') === 'true';
+            }
         }
 
-        // Verificar y forzar premium de forma automática al cargar (Bypass para Demo Video Product)
+        // Verificar premium con servidor al cargar (no bloquea la UI)
         (function initPremiumVerification() {
-            localStorage.setItem('orbitae_premium_unlocked', 'true');
-            localStorage.setItem('orbitae_session_token', 'demo-video-unlocked-token');
-            localStorage.setItem('orbitae_premium_verified_at', Date.now().toString());
-            
-            // Actualizar los indicadores a estado Premium
-            setTimeout(() => {
+            const sessionToken = localStorage.getItem('orbitae_session_token');
+            if (sessionToken) {
+                // Solo re-verificar si pasaron más de 4 horas desde la última verificación
+                const verifiedAt = parseInt(localStorage.getItem('orbitae_premium_verified_at') || '0');
+                const shouldRecheck = (Date.now() - verifiedAt) > 14400000; // 4 horas
+                if (shouldRecheck) {
+                    verifyPremiumWithServer().then(valid => {
+                        if (!valid) {
+                            console.log('Sesión premium expirada o inválida.');
+                        }
+                    });
+                }
+            } else if (localStorage.getItem('orbitae_premium_unlocked') === 'true') {
+                // Tiene el flag pero no el token → fraude o datos viejos → revocar
+                _revokePremiumLocally();
                 updateCityBadge();
-                const aiBadge = document.getElementById('ai-limit-badge');
-                if (aiBadge) aiBadge.textContent = '🌟 Premium';
-            }, 300);
+            }
         })();
 
         // ── VERIFICACIÓN DE TOKEN DE ACTIVACIÓN MANUAL ─────────────────────────
