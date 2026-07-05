@@ -9248,6 +9248,17 @@
         function updateDailyForecast() {
             if (!natalPlanets) return;
             try {
+                const planetSp = {
+                    'Sun': 'el Sol', 'Moon': 'la Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
+                    'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
+                    'ASC': 'tu Ascendente', 'MC': 'tu Medio Cielo'
+                };
+                const natalSp = {
+                    'Sun': 'Sol', 'Moon': 'Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
+                    'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
+                    'ASC': 'Ascendente', 'MC': 'Medio Cielo'
+                };
+
                 const dateParts = currentDailyDate.split('-');
                 const y = parseInt(dateParts[0]);
                 const m = parseInt(dateParts[1]);
@@ -9317,16 +9328,6 @@
                     const sortedAspects = [...aspects].sort((a, b) => a.orb - b.orb);
                     const activeAsp = sortedAspects[0];
                     
-                    const planetSp = {
-                        'Sun': 'el Sol', 'Moon': 'la Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
-                        'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
-                        'ASC': 'tu Ascendente', 'MC': 'tu Medio Cielo'
-                    };
-                    const natalSp = {
-                        'Sun': 'Sol', 'Moon': 'Luna', 'Mercury': 'Mercurio', 'Venus': 'Venus', 'Mars': 'Marte',
-                        'Jupiter': 'Júpiter', 'Saturn': 'Saturno', 'Uranus': 'Urano', 'Neptune': 'Neptuno', 'Pluto': 'Plutón',
-                        'ASC': 'Ascendente', 'MC': 'Medio Cielo'
-                    };
                     const planetEmoji = {
                         'Sun': '☀️', 'Moon': '🌙', 'Mercury': '🧠', 'Venus': '💖', 'Mars': '💥',
                         'Jupiter': '🪐', 'Saturn': '⏳', 'Uranus': '⚡', 'Neptune': '🌊', 'Pluto': '🌋',
