@@ -11910,6 +11910,80 @@
             }, 1500);
         }
 
+        // ── GENERAR CONSEJOS PARA LAS MÉTRICAS DIARIAS ────────────────────────
+        function generateMetricTips(alerts) {
+            const tips = {
+                love: "Estabilidad en tus vínculos. Momento propicio para la empatía y la escucha activa.",
+                career: "Día de enfoque en tareas habituales. Planificá tus objetivos con paciencia.",
+                money: "Finanzas estables. Evitá gastos impulsivos y priorizá la organización de tu presupuesto.",
+                energy: "Energía equilibrada. Ideal para actividades físicas moderadas y autocuidado.",
+                creativity: "Expresá tus ideas sin presiones. Momento excelente para escribir o dibujar.",
+                mind: "Mente clara. Buen día para la lectura, el aprendizaje y ordenar tus pendientes."
+            };
+
+            alerts.forEach(alert => {
+                const t = alert.transit;
+                const n = alert.natal;
+                const isHarmonious = alert.weight > 0;
+
+                if (t === 'Venus' || n === 'Venus') {
+                    if (isHarmonious) {
+                        tips.love = "Configuración favorable para conectar con el corazón y fortalecer la armonía en tus relaciones.";
+                    } else {
+                        tips.love = "Posible tensión en la comunicación afectiva. Evitá reclamos impulsivos y practicá la paciencia.";
+                    }
+                }
+                else if (t === 'Mars' || n === 'Mars') {
+                    if (isHarmonious) {
+                        tips.energy = "Impulso de vitalidad física y acción enfocada. Excelente para iniciar rutinas o encarar retos.";
+                    } else {
+                        tips.energy = "Tensión o cansancio. Canalizá la impaciencia a través del ejercicio y evitá confrontaciones.";
+                    }
+                }
+                else if (t === 'Mercury' || n === 'Mercury') {
+                    if (isHarmonious) {
+                        tips.mind = "Claridad intelectual, ideas fluidas e intercambios ágiles. Ideal para estudiar, escribir o negociar.";
+                    } else {
+                        tips.mind = "Distracción o malos entendidos en el aire. Revisá dos veces los mensajes y contratos importantes.";
+                    }
+                }
+                else if (t === 'Jupiter' || n === 'Jupiter') {
+                    if (isHarmonious) {
+                        tips.career = "Oportunidades de expansión, aprendizaje y reconocimiento. Confía en tu visión y da el paso.";
+                        tips.money = "Magnetismo y fluidez. Excelente momento para proyectar inversiones o planificar finanzas.";
+                    } else {
+                        tips.career = "Evitá la sobreestimación de tus fuerzas o recursos. Tomá decisiones basadas en hechos reales.";
+                        tips.money = "Atención con los excesos o compras optimistas. Mantené tu presupuesto bajo control.";
+                    }
+                }
+                else if (t === 'Saturn' || n === 'Saturn') {
+                    if (isHarmonious) {
+                        tips.career = "Constancia y solidez profesional. Tu esfuerzo rinde frutos duraderos bajo una gran disciplina.";
+                        tips.money = "Momento excelente para organizar ahorros y pensar en inversiones seguras a largo plazo.";
+                    } else {
+                        tips.career = "Demoras o exigencias extra en tus tareas. Aceptá el ritmo lento como un entrenamiento de paciencia.";
+                        tips.money = "Restricción o cautela financiera requerida. Evitá gastos superfluos y ordená tus prioridades.";
+                    }
+                }
+                else if (t === 'Sun' || n === 'Sun') {
+                    if (isHarmonious) {
+                        tips.creativity = "Claridad interior, vitalidad y autoexpresión radiante. Compartí tus talentos con el entorno.";
+                    } else {
+                        tips.creativity = "Dudas pasajeras sobre tu rumbo o autoestimación. Reconectá con tus pasiones sin exigirte tanto.";
+                    }
+                }
+                else if (t === 'Moon' || n === 'Moon') {
+                    if (isHarmonious) {
+                        tips.love = "Fluidez emocional y sintonía familiar o de pareja. Buen momento para el confort del hogar.";
+                    } else {
+                        tips.love = "Sensibilidad a flor de piel. Escuchá tus necesidades emocionales sin tomártelo todo a pecho.";
+                    }
+                }
+            });
+
+            return tips;
+        }
+
         // ── PRONÓSTICO DE TRÁNSITOS SEMANALES ────────────────────────────────
         function updateWeeklyTransitsForecast() {
             if (!natalPlanets) return;
