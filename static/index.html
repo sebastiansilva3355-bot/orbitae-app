@@ -4961,6 +4961,9 @@
                 if (hasSavedData) {
                     calculateNewChart(false, true);
                 } else {
+                    if (isMobileView()) {
+                        showMobileView('info');
+                    }
                     showCalculateCTA();
                 }
                 buildPlanetFilters();
