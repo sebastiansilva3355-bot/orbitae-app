@@ -7621,7 +7621,7 @@
             document.getElementById('s-loading').style.display = 'none';
             document.getElementById('s-reveal').style.display = 'flex';
             
-            const username = document.getElementById('name-input').value || 'Viajero';
+            const username = document.getElementById('onboarding-name-input')?.value || localStorage.getItem('orbitae_name') || 'Viajero';
             document.getElementById('reveal-username').textContent = username;
             
             if (window.natalPlanets) {
@@ -7850,7 +7850,7 @@
                 if (calcChevron) calcChevron.style.display = 'none';
                 
                 // 4. Agregar mensaje de bienvenida e info sobre inputs
-                const username = document.getElementById('name-input')?.value || localStorage.getItem('orbitae_name') || 'Viajero';
+                const username = document.getElementById('onboarding-name-input')?.value || localStorage.getItem('orbitae_name') || 'Viajero';
                 if (welcomeMsg) {
                     welcomeMsg.style.display = 'block';
                     welcomeMsg.innerHTML = `✦ ¡Hola, ${username}! Empecemos <span style="color:var(--accent-gold);">✦</span><br><span style="font-family:'Inter',sans-serif; font-size:12px; color:rgba(255,255,255,0.6); font-weight:normal; display:block; margin-top:4px;">Ingresá tu fecha, hora y ciudad de nacimiento para calcular tu carta natal exacta.</span>`;
