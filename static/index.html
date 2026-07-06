@@ -7579,6 +7579,10 @@
         function startTrialFlowSimulation() {
             const overlay = document.getElementById('trial-flow-overlay');
             if (!overlay) return;
+
+            // Ocultar barra de navegación móvil para evitar clics fantasma al enfocar inputs
+            const navBar = document.getElementById('mobile-navigation');
+            if (navBar) navBar.style.setProperty('display', 'none', 'important');
             
             document.getElementById('s-loading').style.display = 'flex';
             document.getElementById('s-reveal').style.display = 'none';
@@ -7659,6 +7663,10 @@
             
             const onboardingOverlay = document.getElementById('onboarding-overlay');
             if (onboardingOverlay) onboardingOverlay.style.display = 'none';
+
+            // Restaurar barra de navegación móvil
+            const navBar = document.getElementById('mobile-navigation');
+            if (navBar) navBar.style.removeProperty('display');
         }
         
         function toggleTrialMode() {
