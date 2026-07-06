@@ -2833,6 +2833,32 @@
 
                     <!-- LEYENDA INTRODUCTORIA PROFESIONAL (ANIMADA) -->
                     <style>
+                        /* Teaser mode overrides */
+                        .orbitae-premium-banner.teaser-mode {
+                            background: transparent !important;
+                            border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+                            border-radius: 12px !important;
+                            padding: 0 !important;
+                            box-shadow: none !important;
+                        }
+                        .orbitae-premium-banner.teaser-mode .orbitae-premium-inner {
+                            background: rgba(255, 255, 255, 0.01) !important;
+                            border-radius: 11px !important;
+                            padding: 12px 14px !important;
+                        }
+                        .orbitae-premium-banner.teaser-mode .glow-orb-1,
+                        .orbitae-premium-banner.teaser-mode .glow-orb-2 {
+                            display: none !important;
+                        }
+                        .orbitae-premium-banner.teaser-mode .banner-title {
+                            font-size: 11px !important;
+                            letter-spacing: 0.8px !important;
+                            color: rgba(255, 255, 255, 0.4) !important;
+                            text-align: center !important;
+                            margin: 0 !important;
+                            font-family: 'Cinzel', serif !important;
+                        }
+
                         .orbitae-premium-banner {
                             background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
                             border-radius: 16px;
@@ -3006,7 +3032,7 @@
                                     <i class="fa-solid fa-star-of-david" style="margin-right: 4px;"></i> Suite Astrológica
                                 </div>
                                 <div class="banner-badge-nasa">
-                                    <i class="fa-solid fa-atom" style="animation: spin 8s linear infinite; margin-right: 4px;"></i> NASA VSOP87
+                                    NASA VSOP87
                                 </div>
                             </div>
                             
@@ -3033,6 +3059,11 @@
                                     <span class="feat-icon">❤️ <span class="feat-label">Sinastría de Pareja</span></span>
                                     <span class="feat-desc">Análisis de afinidad con reporte PDF premium de 4 págs.</span>
                                 </div>
+                            </div>
+                            
+                            <!-- Teaser para cuando no hay carta generada aún -->
+                            <div class="banner-teaser-msg" style="display: none; font-size: 11.5px; color: rgba(255,255,255,0.65); text-align: center; margin-top: 10px; font-weight: normal; font-family: 'Inter', sans-serif; line-height: 1.4;">
+                                ✨ Al generar tu carta desbloqueás Astrocartografía, Tránsitos Diarios y Sinastría de Pareja
                             </div>
                         </div>
                     </div>
@@ -7847,7 +7878,7 @@
             if (calculatorContainer && !timeTip) {
                 timeTip = document.createElement('div');
                 timeTip.id = 'calculator-time-tip';
-                timeTip.style.cssText = 'margin: 4px 14px 14px 14px; position: relative; z-index: 1; background: rgba(0, 229, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.15); border-radius: 8px; padding: 10px 12px; transition: all 0.3s;';
+                timeTip.style.cssText = 'margin: 4px 14px 14px 14px; position: relative; z-index: 1; background: rgba(34, 211, 238, 0.05); border: 1px dashed rgba(34, 211, 238, 0.3); border-radius: 8px; padding: 10px 12px; transition: all 0.3s;';
                 const calcFields = document.getElementById('calculator-fields');
                 if (calcFields) {
                     const btn = document.getElementById('btn-calculate-chart');
@@ -7912,8 +7943,23 @@
                     btnCalculate.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" style="font-size: 13px;"></i> Generar mi carta';
                 }
                 
-                // 7. Mostrar Banner de la Suite Astrológica (preview)
-                if (suiteBanner) suiteBanner.style.display = 'block';
+                // 7. Mostrar Banner de la Suite en modo Teaser (vista previa mínima)
+                if (suiteBanner) {
+                    suiteBanner.style.display = 'block';
+                    suiteBanner.classList.add('teaser-mode');
+                    
+                    const header = suiteBanner.querySelector('.banner-header');
+                    const subtitle = suiteBanner.querySelector('.banner-subtitle');
+                    const divider = suiteBanner.querySelector('.banner-divider');
+                    const grid = suiteBanner.querySelector('.intro-features-grid');
+                    const teaser = suiteBanner.querySelector('.banner-teaser-msg');
+                    
+                    if (header) header.style.display = 'none';
+                    if (subtitle) subtitle.style.display = 'none';
+                    if (divider) divider.style.display = 'none';
+                    if (grid) grid.style.display = 'none';
+                    if (teaser) teaser.style.display = 'block';
+                }
                 
                 // 8. Ocultar todos los datos activos y lectura
                 if (activeDataCard) activeDataCard.style.display = 'none';
@@ -7973,8 +8019,23 @@
                     btnCalculate.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" style="font-size: 13px;"></i> Generar Carta';
                 }
                 
-                // 6. Ocultar banner de preview
-                if (suiteBanner) suiteBanner.style.display = 'none';
+                // 6. Mostrar Banner de la Suite completa en el dashboard
+                if (suiteBanner) {
+                    suiteBanner.style.display = 'block';
+                    suiteBanner.classList.remove('teaser-mode');
+                    
+                    const header = suiteBanner.querySelector('.banner-header');
+                    const subtitle = suiteBanner.querySelector('.banner-subtitle');
+                    const divider = suiteBanner.querySelector('.banner-divider');
+                    const grid = suiteBanner.querySelector('.intro-features-grid');
+                    const teaser = suiteBanner.querySelector('.banner-teaser-msg');
+                    
+                    if (header) header.style.display = 'flex';
+                    if (subtitle) subtitle.style.display = 'block';
+                    if (divider) divider.style.display = 'block';
+                    if (grid) grid.style.display = 'grid';
+                    if (teaser) teaser.style.display = 'none';
+                }
                 
                 // 7. Mostrar secciones activas
                 if (activeDataCard) activeDataCard.style.display = 'block';
