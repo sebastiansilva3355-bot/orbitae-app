@@ -3065,6 +3065,13 @@
                             <div class="banner-teaser-msg" style="display: none; font-size: 11.5px; color: rgba(255,255,255,0.65); text-align: center; margin-top: 10px; font-weight: normal; font-family: 'Inter', sans-serif; line-height: 1.4;">
                                 ✨ Al generar tu carta desbloqueás Astrocartografía, Tránsitos Diarios y Sinastría de Pareja
                             </div>
+                            
+                            <!-- Botón de actualización directa en el banner -->
+                            <div id="premium-banner-cta-container" style="display: none; margin-top: 14px; text-align: center; position: relative; z-index: 10;">
+                                <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')" style="margin: 0; width: 100%; padding: 10px; font-size: 12px; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                                    ➜ Desbloquear Acceso Cosmos Premium
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -7638,6 +7645,16 @@
                     mapLockOverlay.style.display = 'flex';
                 }
             }
+
+            // --- ACTUALIZAR CTA DE UPGRADE EN BANNER DE INICIO ---
+            const ctaContainer = document.getElementById('premium-banner-cta-container');
+            if (ctaContainer) {
+                if (tier !== 'cosmos' && hasSavedData) {
+                    ctaContainer.style.display = 'block';
+                } else {
+                    ctaContainer.style.display = 'none';
+                }
+            }
         }
 
         // --- TRIAL / PAYWALL FLOW SIMULATION ---
@@ -7953,12 +7970,14 @@
                     const divider = suiteBanner.querySelector('.banner-divider');
                     const grid = suiteBanner.querySelector('.intro-features-grid');
                     const teaser = suiteBanner.querySelector('.banner-teaser-msg');
+                    const ctaContainer = suiteBanner.querySelector('#premium-banner-cta-container');
                     
                     if (header) header.style.display = 'none';
                     if (subtitle) subtitle.style.display = 'none';
                     if (divider) divider.style.display = 'none';
                     if (grid) grid.style.display = 'none';
                     if (teaser) teaser.style.display = 'block';
+                    if (ctaContainer) ctaContainer.style.display = 'none';
                 }
                 
                 // 8. Ocultar todos los datos activos y lectura
@@ -8029,12 +8048,22 @@
                     const divider = suiteBanner.querySelector('.banner-divider');
                     const grid = suiteBanner.querySelector('.intro-features-grid');
                     const teaser = suiteBanner.querySelector('.banner-teaser-msg');
+                    const ctaContainer = suiteBanner.querySelector('#premium-banner-cta-container');
                     
                     if (header) header.style.display = 'flex';
                     if (subtitle) subtitle.style.display = 'block';
                     if (divider) divider.style.display = 'block';
                     if (grid) grid.style.display = 'grid';
                     if (teaser) teaser.style.display = 'none';
+                    
+                    if (ctaContainer) {
+                        const userTier = window.userTier || 'free';
+                        if (userTier !== 'cosmos') {
+                            ctaContainer.style.display = 'block';
+                        } else {
+                            ctaContainer.style.display = 'none';
+                        }
+                    }
                 }
                 
                 // 7. Mostrar secciones activas
