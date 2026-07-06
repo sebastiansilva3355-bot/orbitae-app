@@ -7542,8 +7542,9 @@
             // --- GATING MAPA Y DESTINOS ---
             const mapEl = document.getElementById('map');
             let mapLockOverlay = document.getElementById('map-lock-overlay');
+            const hasSavedData = localStorage.getItem(ASTRO_BIRTH_KEY) !== null;
             
-            if (tier === 'cosmos') {
+            if (tier === 'cosmos' || !hasSavedData) {
                 if (mapEl) {
                     mapEl.classList.remove('map-blurred');
                     mapEl.style.pointerEvents = 'auto';
