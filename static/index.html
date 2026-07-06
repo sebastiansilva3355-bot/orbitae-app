@@ -4833,7 +4833,7 @@
             
             // Registrar Service Worker para habilitar la instalación como App (PWA)
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/static/sw.js?v=14')
+                navigator.serviceWorker.register('/static/sw.js?v=15')
                     .then(reg => { /* SW registrado */ })
                     .catch(err => console.error('Error registrando Service Worker', err));
             }

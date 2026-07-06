@@ -1,5 +1,5 @@
-// Orbitae Service Worker — Offline Cache v38
-const CACHE_NAME = 'orbitae-v45';
+// Orbitae Service Worker — Offline Cache v46
+const CACHE_NAME = 'orbitae-v46';
 
 // Archivos a cachear al instalar (App Shell)
 // NOTA: index.html NO está aquí — siempre se sirve directo del servidor (no-cache)
