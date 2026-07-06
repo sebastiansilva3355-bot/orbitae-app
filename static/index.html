@@ -2583,9 +2583,11 @@
             color: #000000;
         }
 
-        .map-blurred {
+        .map-blurred > *:not(.map-lock-overlay-container) {
             filter: blur(4px) grayscale(40%);
             opacity: 0.75;
+        }
+        .map-blurred {
             pointer-events: none;
         }
         .map-lock-overlay-container {
@@ -2598,6 +2600,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            pointer-events: auto;
         }
         .map-lock-card {
             background: linear-gradient(145deg, #17122e, #0e0a1b);
