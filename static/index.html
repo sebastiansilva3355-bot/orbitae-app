@@ -2583,16 +2583,17 @@
             color: #000000;
         }
 
-        .map-blurred > *:not(.map-lock-overlay-container) {
+        .map-blurred {
             filter: blur(4px) grayscale(40%);
             opacity: 0.75;
-        }
-        .map-blurred {
             pointer-events: none;
         }
         .map-lock-overlay-container {
             position: absolute;
-            inset: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 60px;
             background: rgba(10, 8, 18, 0.6);
             backdrop-filter: blur(2px);
             z-index: 1000;
@@ -2600,7 +2601,12 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            pointer-events: auto;
+        }
+        @media (min-width: 901px) {
+            .map-lock-overlay-container {
+                left: 460px;
+                bottom: 0;
+            }
         }
         .map-lock-card {
             background: linear-gradient(145deg, #17122e, #0e0a1b);
@@ -7560,7 +7566,7 @@
                             <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')" style="margin:0; width:100%;">➜ Desbloquear con Cosmos</button>
                         </div>
                     `;
-                    mapEl.appendChild(mapLockOverlay);
+                    mapEl.parentNode.appendChild(mapLockOverlay);
                 }
                 if (mapLockOverlay) {
                     mapLockOverlay.style.display = 'flex';
