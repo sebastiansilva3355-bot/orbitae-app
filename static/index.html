@@ -7765,6 +7765,7 @@
         function updateCalculatorStateUI() {
             const hasData = localStorage.getItem('orbitae_birth_v1') !== null;
             
+            const welcomeGreetingBlock = document.getElementById('welcome-greeting-block');
             const greetingCtas = document.getElementById('greeting-ctas');
             const greetingMsg = document.getElementById('greeting-daily-msg');
             const calculatorContainer = document.getElementById('calculator-fields-container');
@@ -7811,6 +7812,7 @@
             
             if (!hasData) {
                 // --- ESTADO A: Sin datos (Usuario Nuevo) ---
+                if (welcomeGreetingBlock) welcomeGreetingBlock.style.display = 'none';
                 
                 // 1. Ocultar botones del saludo
                 if (greetingCtas) greetingCtas.style.display = 'none';
@@ -7864,6 +7866,7 @@
                 
             } else {
                 // --- ESTADO B: Con datos cargados (Usuario Existente) ---
+                if (welcomeGreetingBlock) welcomeGreetingBlock.style.display = 'block';
                 
                 // 1. Mostrar saludo y botones correctos
                 if (greetingCtas) {
