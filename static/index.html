@@ -410,7 +410,7 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%) !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
             border-radius: 8px;
-            padding: 13px 12px;
+            padding: 14px 16px;
             color: var(--text-dark);
             font-size: 13px;
             outline: none;
@@ -419,13 +419,13 @@
         }
 
         .text-input:focus, .select-input:focus {
-            border-color: rgba(0, 229, 255, 0.85) !important;
+            border-color: #22d3ee !important;
             background: rgba(255, 255, 255, 0.04) !important;
-            box-shadow: 0 0 16px rgba(0, 229, 255, 0.45), inset 0 1px 2px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.4) !important;
         }
 
         .text-input::placeholder, .select-input::placeholder {
-            color: rgba(255, 255, 255, 0.45) !important;
+            color: rgba(255, 255, 255, 0.6) !important;
             opacity: 1; /* Firefox */
         }
 
@@ -2732,7 +2732,7 @@
 
                     <!-- ACORDEÓN RELOCALIZADO DE LA CALCULADORA -->
                     <div id="calculator-fields-container" style="display: none; background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed); border-radius: 16px; padding: 1px; box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2), 0 0 15px rgba(6, 182, 212, 0.05); margin-bottom: 16px;">
-                        <div class="birth-info-card" style="border: none; background: linear-gradient(135deg, #080818 0%, #0e0626 55%, #080f1e 100%); border-radius: 15px; padding: 0; overflow: hidden; position: relative;">
+                        <div class="birth-info-card" style="border: none; background: linear-gradient(180deg, #1a0f2e 0%, #0a0a0f 100%); border-radius: 15px; padding: 0; overflow: hidden; position: relative;">
                             <div style="position: absolute; top: -30px; right: -20px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0;"></div>
                             
                             <h3 style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(13, 13, 23, 0.4) 100%); color: #e0b0ff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0; font-family: 'Cinzel', serif; position: relative; z-index: 1;" onclick="toggleCalculator()">
@@ -2740,7 +2740,21 @@
                                 <i class="fa-solid fa-chevron-down" id="calc-chevron" style="transition: transform 0.2s; transform: rotate(0deg); color: #c4b5fd; font-size: 11px;"></i>
                             </h3>
                             
-                            <div id="calculator-fields" style="display: block; padding: 14px; position: relative; z-index: 1;">
+                            <div id="calculator-fields" style="display: block; padding: 14px 14px 38px 14px; position: relative; z-index: 1;">
+                                <!-- Stepper Visual -->
+                                <div class="calculator-stepper" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding: 0 4px; user-select: none;">
+                                    <div class="step-item" id="step-1" style="font-size: 11px; font-weight: 700; color: var(--accent-purple-light); display: flex; align-items: center; gap: 6px; transition: all 0.3s;">
+                                        <span class="step-num" style="background: var(--accent-purple); color: #ffffff; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transition: all 0.3s;">1</span> Ciudad
+                                    </div>
+                                    <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08); margin: 0 10px;"></div>
+                                    <div class="step-item" id="step-2" style="font-size: 11px; font-weight: 500; color: var(--text-gray); display: flex; align-items: center; gap: 6px; transition: all 0.3s;">
+                                        <span class="step-num" style="background: rgba(255,255,255,0.1); color: var(--text-gray); width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transition: all 0.3s;">2</span> Fecha
+                                    </div>
+                                    <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08); margin: 0 10px;"></div>
+                                    <div class="step-item" id="step-3" style="font-size: 11px; font-weight: 500; color: var(--text-gray); display: flex; align-items: center; gap: 6px; transition: all 0.3s;">
+                                        <span class="step-num" style="background: rgba(255,255,255,0.1); color: var(--text-gray); width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transition: all 0.3s;">3</span> Hora
+                                    </div>
+                                </div>
                                 <div class="input-group autocomplete-container">
                                     <label class="input-label" style="color: rgba(255,255,255,0.7);">Ciudad de Nacimiento</label>
                                     <input type="text" id="city-search" value="" placeholder="Busca tu ciudad de nacimiento..." class="text-input" oninput="onCitySearchInput()" autocomplete="on" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: white;">
@@ -3002,11 +3016,12 @@
                             <div class="banner-divider"></div>
                             
                             <div class="intro-features-grid">
-                                <div class="intro-feature-card active" id="feat-card-0">
+                                <div class="intro-feature-card" id="feat-card-0">
                                     <span class="feat-icon">✦ <span class="feat-label">Carta Natal</span></span>
                                     <span class="feat-desc">Precisión física angular de 0.0001° en efemérides.</span>
                                 </div>
-                                <div class="intro-feature-card" id="feat-card-1">
+                                <div class="intro-feature-card active" id="feat-card-1" style="position: relative;">
+                                    <span style="position: absolute; top: -8px; right: 10px; background: #00e5ff; color: #080812; font-size: 7.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0, 229, 255, 0.3); z-index: 2;">MÁS USADA</span>
                                     <span class="feat-icon">🗺️ <span class="feat-label">Astrocartografía</span></span>
                                     <span class="feat-desc">Líneas mundiales con elipsoide terrestre WGS84.</span>
                                 </div>
@@ -3021,31 +3036,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <script>
-                        (function() {
-                            let activeIdx = 0;
-                            setInterval(() => {
-                                const cards = [
-                                    document.getElementById('feat-card-0'),
-                                    document.getElementById('feat-card-1'),
-                                    document.getElementById('feat-card-2'),
-                                    document.getElementById('feat-card-3')
-                                ];
-                                if (!cards[0]) return;
-                                activeIdx = (activeIdx + 1) % 4;
-                                cards.forEach((card, idx) => {
-                                    if (card) {
-                                        if (idx === activeIdx) {
-                                            card.classList.add('active');
-                                        } else {
-                                            card.classList.remove('active');
-                                        }
-                                    }
-                                });
-                            }, 2200);
-                        })();
-                    </script>
 
 
 
@@ -3295,8 +3285,8 @@
                     </div>
 
                     <!-- Borrar mis datos -->
-                    <div style="margin-top: 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
-                        <button onclick="borrarMisDatos()" style="background: rgba(255, 80, 80, 0.05); border: 1px solid rgba(255, 80, 80, 0.2); border-radius: 8px; color: rgba(255, 120, 120, 0.75); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(255, 80, 80, 0.15)'; this.style.borderColor='rgba(255, 80, 80, 0.45)'; this.style.color='#ff9999';" onmouseout="this.style.background='rgba(255, 80, 80, 0.05)'; this.style.borderColor='rgba(255, 80, 80, 0.2)'; this.style.color='rgba(255, 120, 120, 0.75)';">
+                    <div id="delete-data-container" style="margin-top: 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+                        <button onclick="borrarMisDatos()" style="background: transparent; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: rgba(239, 68, 68, 0.7); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.borderColor='rgba(239, 68, 68, 0.6)'; this.style.color='rgba(239, 68, 68, 0.95)';" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(239, 68, 68, 0.3)'; this.style.color='rgba(239, 68, 68, 0.7)';">
                             <i class="fa-solid fa-trash-can"></i> Borrar mis datos
                         </button>
                     </div>
@@ -4828,9 +4818,53 @@
         };
         let activeTileLayer = tileLayers.voyager; // Suave Voyager es el predeterminado (más moderno)
 
+        // Función para actualizar los pasos del Stepper del Formulario
+        function updateActiveStep(stepNum) {
+            for (let i = 1; i <= 3; i++) {
+                const stepEl = document.getElementById(`step-${i}`);
+                if (!stepEl) continue;
+                const numEl = stepEl.querySelector('.step-num');
+                if (i === stepNum) {
+                    stepEl.style.color = 'var(--accent-purple-light)';
+                    stepEl.style.fontWeight = '700';
+                    if (numEl) {
+                        numEl.style.background = 'var(--accent-purple)';
+                        numEl.style.color = '#ffffff';
+                    }
+                } else {
+                    stepEl.style.color = 'var(--text-gray)';
+                    stepEl.style.fontWeight = '500';
+                    if (numEl) {
+                        numEl.style.background = 'rgba(255,255,255,0.1)';
+                        numEl.style.color = 'var(--text-gray)';
+                    }
+                }
+            }
+        }
+
+        // Función para abrir/cerrar el acordeón de la hora exacta
+        window.toggleTimeTip = function() {
+            const content = document.getElementById('time-tip-content');
+            const chevron = document.getElementById('time-tip-chevron');
+            if (content && chevron) {
+                const isHidden = content.style.display === 'none';
+                content.style.display = isHidden ? 'block' : 'none';
+                chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        };
+
         // Inicializar la aplicación de forma segura
         window.addEventListener('DOMContentLoaded', () => {
             initAppWithRetry();
+
+            // Listeners para actualizar el Stepper del Formulario
+            const cityInput = document.getElementById('city-search');
+            const dateInput = document.getElementById('date-input');
+            const timeInput = document.getElementById('time-input');
+            
+            if (cityInput) cityInput.addEventListener('focus', () => updateActiveStep(1));
+            if (dateInput) dateInput.addEventListener('focus', () => updateActiveStep(2));
+            if (timeInput) timeInput.addEventListener('focus', () => updateActiveStep(3));
             // Cerrar selector de estilos de mapa al hacer clic afuera
             document.addEventListener('click', function(e) {
                 const selector = document.getElementById('style-selector');
@@ -7813,7 +7847,7 @@
             if (calculatorContainer && !timeTip) {
                 timeTip = document.createElement('div');
                 timeTip.id = 'calculator-time-tip';
-                timeTip.style.cssText = 'font-size: 11.5px; color: rgba(0, 229, 255, 0.85); line-height: 1.45; margin: 4px 14px 14px 14px; display: flex; align-items: flex-start; gap: 6px; position: relative; z-index: 1;';
+                timeTip.style.cssText = 'margin: 4px 14px 14px 14px; position: relative; z-index: 1; background: rgba(0, 229, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.15); border-radius: 8px; padding: 10px 12px; transition: all 0.3s;';
                 const calcFields = document.getElementById('calculator-fields');
                 if (calcFields) {
                     const btn = document.getElementById('btn-calculate-chart');
@@ -7859,8 +7893,18 @@
                 
                 // 5. Agregar tip de hora exacta
                 if (timeTip) {
-                    timeTip.style.display = 'flex';
-                    timeTip.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #00e5ff; margin-top: 2px;"></i> <span><strong>Importante:</strong> Cuanto más exacta sea la hora de nacimiento, más preciso será el cálculo de tu Ascendente y tu Medio Cielo (precisión física orbital NASA VSOP87).</span>`;
+                    timeTip.style.display = 'block';
+                    timeTip.innerHTML = `
+                        <div class="time-tip-accordion" style="width: 100%;">
+                            <div class="time-tip-header" onclick="toggleTimeTip()" style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #00e5ff; cursor: pointer; user-select: none;">
+                                <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle-info"></i> ¿Por qué importa la hora exacta?</span>
+                                <i id="time-tip-chevron" class="fa-solid fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
+                            </div>
+                            <div id="time-tip-content" style="display: none; font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.45; margin-top: 8px;">
+                                Cuanto más exacta sea la hora de nacimiento, más preciso será el cálculo de tu Ascendente y tu Medio Cielo (precisión física orbital NASA VSOP87).
+                            </div>
+                        </div>
+                    `;
                 }
                 
                 // 6. Cambiar texto del botón
@@ -7878,6 +7922,10 @@
                 if (dividerDailyWidget) dividerDailyWidget.style.display = 'none';
                 if (natalPositionsCard) natalPositionsCard.style.display = 'none';
                 if (dividerNatalPositions) dividerNatalPositions.style.display = 'none';
+
+                // 9. Ocultar botón de borrado de datos
+                const deleteDataContainer = document.getElementById('delete-data-container');
+                if (deleteDataContainer) deleteDataContainer.style.display = 'none';
                 
             } else {
                 // --- ESTADO B: Con datos cargados (Usuario Existente) ---
@@ -7935,6 +7983,10 @@
                 if (dividerDailyWidget) dividerDailyWidget.style.display = 'flex';
                 if (natalPositionsCard) natalPositionsCard.style.display = 'block';
                 if (dividerNatalPositions) dividerNatalPositions.style.display = 'flex';
+
+                // 8. Mostrar botón de borrado de datos
+                const deleteDataContainer = document.getElementById('delete-data-container');
+                if (deleteDataContainer) deleteDataContainer.style.display = 'block';
             }
         }
 
