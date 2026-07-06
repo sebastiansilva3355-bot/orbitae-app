@@ -2625,6 +2625,14 @@
             box-shadow: 0 0 12px rgba(156, 39, 176, 0.25) !important;
         }
 
+        /* Ocultar acceso al mapa en Desktop para evitar redundancia */
+        @media (min-width: 769px) {
+            #map-shortcut-card,
+            #map-shortcut-divider {
+                display: none !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -2683,11 +2691,11 @@
             
             <div class="tabs-wrapper" style="background: rgba(10, 10, 15, 0.45); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 10px; margin-bottom: 20px;">
                 <div class="tabs" style="margin: 0; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); padding: 2px; border-radius: 8px; display: flex; overflow-x: auto; scrollbar-width: none;">
-                    <button class="tab-btn active" onclick="switchTab('profile')"><i class="fa-solid fa-user-astronaut"></i> <span class="tab-text">Carta</span></button>
-                    <button class="tab-btn" onclick="switchTab('cities')"><i class="fa-solid fa-globe"></i> <span class="tab-text">Mapa</span></button>
-                    <button class="tab-btn" onclick="switchTab('compat')"><i class="fa-solid fa-heart"></i> <span class="tab-text">Sinastría</span></button>
-                    <button class="tab-btn" onclick="switchTab('daily')"><i class="fa-solid fa-calendar-alt"></i> <span class="tab-text">Diario</span></button>
-                    <button class="tab-btn" onclick="switchTab('legend')"><i class="fa-solid fa-circle-question"></i> <span class="tab-text">Ayuda</span></button>
+                    <button class="tab-btn" onclick="switchTab('daily')"><i class="fa-solid fa-calendar-day"></i> <span class="tab-text">Hoy</span></button>
+                    <button class="tab-btn active" onclick="switchTab('profile')"><i class="fa-solid fa-user-astronaut"></i> <span class="tab-text">Mi Carta</span></button>
+                    <button class="tab-btn" onclick="switchTab('compat')"><i class="fa-solid fa-user-group"></i> <span class="tab-text">Personas</span></button>
+                    <button class="tab-btn" onclick="switchTab('cities')"><i class="fa-solid fa-globe"></i> <span class="tab-text">Explorar</span></button>
+                    <button class="tab-btn" onclick="switchTab('more')"><i class="fa-solid fa-ellipsis"></i> <span class="tab-text">Más</span></button>
                 </div>
             </div>
             
@@ -3425,6 +3433,20 @@
                 <!-- Contenido Pestaña: Destinos (Consolidada) -->
                 <div id="tab-cities" class="tab-content" style="display: none;">
                     
+                    <!-- ACCESO DESTACADO AL MAPA INTERACTIVO -->
+                    <div class="section-divider" id="map-shortcut-divider"><span>Astrocartografía</span></div>
+                    <div class="birth-info-card" id="map-shortcut-card" style="border: 0.5px solid rgba(6, 182, 212, 0.25); background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(13, 13, 23, 0.4) 100%); box-shadow: 0 4px 15px rgba(6, 182, 212, 0.15); margin-bottom: 20px; padding: 14px;">
+                        <h3 style="font-family:'Cinzel', serif; font-size:12px; color:var(--accent-teal); font-weight:700; text-transform:uppercase; margin:0 0 8px 0; display:flex; align-items:center; gap:6px;">
+                            <i class="fa-solid fa-map"></i> Mapa Interactivo
+                        </h3>
+                        <p style="font-size:11px; color:var(--text-gray); line-height:1.45; margin-bottom:12px;">
+                            Visualizá tus líneas de poder solar, lunar y planetario sobre el mapa mundi interactivo.
+                        </p>
+                        <button class="compact-cta" onclick="showMobileView('map')" style="width:100%; justify-content:center; background: linear-gradient(135deg, #06b6d4 0%, #7c3aed 100%); color: white; border: none; border-radius: 8px; padding: 10px; font-weight: 700; font-size: 11.5px; cursor: pointer;">
+                            <i class="fa-solid fa-earth-americas"></i> Ver Mapa Interactivo
+                        </button>
+                    </div>
+
                     <div class="section-divider"><span>Lecturas de IA</span></div>
                     <!-- SECCIÓN 1: GUÍA ASTRAL IA (ACORDEÓN UNIFICADO) -->
                     <div class="birth-info-card" style="border: 0.5px solid rgba(156, 39, 176, 0.15); box-shadow: 0 0 8px rgba(156, 39, 176, 0.08); padding: 0; overflow: hidden; margin-bottom: 20px; background: rgba(13, 13, 23, 0.4);">
@@ -3934,6 +3956,22 @@
             <div class="panel-fade-overlay"></div>
         </div>
 
+        <!-- Contenido Pestaña: Más / Opciones (Desktop) -->
+        <div id="tab-more" class="tab-content" style="display: none;">
+            <div class="section-divider"><span>Opciones</span></div>
+            <div class="more-sheet-body" style="display: flex; flex-direction: column; gap: 12px; padding: 14px;">
+                <button class="more-sheet-item" onclick="handleMoreSheetAction('legend')">
+                    <i class="fa-solid fa-circle-question" style="font-size: 16px; color: var(--accent-purple-light);"></i>
+                    <span style="font-weight: 700; margin-top: 4px;">Ayuda y Leyendas</span>
+                </button>
+                <button class="more-sheet-item" onclick="handleMoreSheetAction('reload')">
+                    <i class="fa-solid fa-rotate-right" style="font-size: 16px; color: var(--accent-teal);"></i>
+                    <span style="font-weight: 700; margin-top: 4px;">Recargar Aplicación</span>
+                </button>
+            </div>
+            <div class="panel-fade-overlay"></div>
+        </div>
+
         <!-- Mapa -->
         <div id="map"></div>
         <div id="map-hint-tooltip" class="map-hint-tooltip">Tocá una línea para ver su significado ✦</div>
@@ -3970,6 +4008,14 @@
 
         <!-- Barra de navegación para móvil -->
         <div class="mobile-nav" id="mobile-navigation">
+            <button class="nav-item" id="nav-btn-hoy" onclick="handleMobileNavClick('daily', event)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.5"/>
+                    <path d="M3 8.5h18M16 2v4M8 2v4"/>
+                    <path d="m12 12 .8 1.5 1.7.2-1.2 1.2.3 1.6-1.6-.8-1.6.8.3-1.6-1.2-1.2 1.7-.2z" fill="currentColor"/>
+                </svg>
+                <span>Hoy</span>
+            </button>
             <button class="nav-item active" id="nav-btn-carta" onclick="handleMobileNavClick('profile', event)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
@@ -3980,20 +4026,21 @@
                 </svg>
                 <span>Mi Carta</span>
             </button>
-            <button class="nav-item" id="nav-btn-diario" onclick="handleMobileNavClick('daily', event)">
+            <button class="nav-item" id="nav-btn-personas" onclick="handleMobileNavClick('compat', event)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 8.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.5"/>
-                    <path d="M3 8.5h18M16 2v4M8 2v4"/>
-                    <path d="m12 12 .8 1.5 1.7.2-1.2 1.2.3 1.6-1.6-.8-1.6.8.3-1.6-1.2-1.2 1.7-.2z" fill="currentColor"/>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
-                <span>Diario</span>
+                <span>Personas</span>
             </button>
-            <button class="nav-item" id="nav-btn-destinos" onclick="handleMobileNavClick('cities', event)">
+            <button class="nav-item" id="nav-btn-explorar" onclick="handleMobileNavClick('cities', event)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                 </svg>
-                <span>Destinos</span>
+                <span>Explorar</span>
             </button>
             <button class="nav-item" id="nav-btn-more" onclick="handleMobileNavClick('more', event)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -4013,20 +4060,14 @@
                     <h3>Opciones</h3>
                 </div>
                 <div class="more-sheet-body">
-                    <button class="more-sheet-item" onclick="handleMoreSheetAction('map')">
-                        <i class="fa-solid fa-map"></i> <span>Ver Mapa Interactivo</span>
-                    </button>
-                    <button class="more-sheet-item" onclick="handleMoreSheetAction('compat')">
-                        <i class="fa-solid fa-heart-circle-bolt"></i> <span>Compatibilidad (Sinastría)</span>
-                    </button>
                     <button class="more-sheet-item" onclick="handleMoreSheetAction('legend')">
                         <i class="fa-solid fa-circle-question"></i> <span>Ayuda y Leyendas</span>
                     </button>
                     <button class="more-sheet-item" onclick="handleMoreSheetAction('reload')">
                         <i class="fa-solid fa-rotate-right"></i> <span>Recargar Aplicación</span>
                     </button>
-        </div>
-    </div>
+                </div>
+            </div>
 
     <!-- Flujo de Trial / Paywall Duro Overlay -->
     <div id="trial-flow-overlay" style="position: fixed; inset: 0; background: radial-gradient(ellipse at top, #1a1430 0%, #0a0812 55%); z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; font-family: 'Inter', sans-serif; color: #ffffff; overflow-y: auto;">
@@ -5041,7 +5082,9 @@
                 updateCalculatorStateUI();
                 if (hasSavedData) {
                     calculateNewChart(false, true);
+                    switchTab('daily');
                 } else {
+                    switchTab('profile');
                     if (isMobileView()) {
                         showMobileView('info');
                     }
@@ -6486,19 +6529,22 @@
         
         function updateMobileNavActiveState(tabName) {
             const btnCarta = document.getElementById('nav-btn-carta');
-            const btnDiario = document.getElementById('nav-btn-diario');
-            const btnDestinos = document.getElementById('nav-btn-destinos');
+            const btnHoy = document.getElementById('nav-btn-hoy');
+            const btnPersonas = document.getElementById('nav-btn-personas');
+            const btnExplorar = document.getElementById('nav-btn-explorar');
             const btnMore = document.getElementById('nav-btn-more');
             
             if (btnCarta) btnCarta.classList.remove('active');
-            if (btnDiario) btnDiario.classList.remove('active');
-            if (btnDestinos) btnDestinos.classList.remove('active');
+            if (btnHoy) btnHoy.classList.remove('active');
+            if (btnPersonas) btnPersonas.classList.remove('active');
+            if (btnExplorar) btnExplorar.classList.remove('active');
             if (btnMore) btnMore.classList.remove('active');
             
             if (tabName === 'profile' && btnCarta) btnCarta.classList.add('active');
-            if (tabName === 'daily' && btnDiario) btnDiario.classList.add('active');
-            if (tabName === 'cities' && btnDestinos) btnDestinos.classList.add('active');
-            if (['compat', 'legend', 'more'].includes(tabName) && btnMore) btnMore.classList.add('active');
+            if (tabName === 'daily' && btnHoy) btnHoy.classList.add('active');
+            if (tabName === 'compat' && btnPersonas) btnPersonas.classList.add('active');
+            if (tabName === 'cities' && btnExplorar) btnExplorar.classList.add('active');
+            if (['legend', 'more'].includes(tabName) && btnMore) btnMore.classList.add('active');
         }
 
         function openMoreSheet() {
