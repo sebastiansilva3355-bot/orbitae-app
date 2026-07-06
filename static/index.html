@@ -8228,7 +8228,9 @@
             
             btn.className = 'mobile-calculate-banner';
             btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Calcular mi Carta Natal';
-            btn.style.display = 'flex';
+            const sidebar = document.getElementById('sidebar');
+            const isSidebarActive = sidebar && sidebar.classList.contains('mobile-active');
+            btn.style.display = isSidebarActive ? 'none' : 'flex';
             
             const btnInfo = document.getElementById('btn-show-info');
             if (btnInfo) {
