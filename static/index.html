@@ -3,7 +3,7 @@
 <head>
     <script>
         // Force unregister service worker and clear cache to apply updates
-        if (!localStorage.getItem('sw_cleared_v45')) {
+        if (!localStorage.getItem('sw_cleared_v46')) {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for(let registration of registrations) {
@@ -16,7 +16,7 @@
                     for (let name of names) caches.delete(name);
                 });
             }
-            localStorage.setItem('sw_cleared_v45', 'true');
+            localStorage.setItem('sw_cleared_v46', 'true');
             setTimeout(() => {
                 window.location.reload(true);
             }, 500);
