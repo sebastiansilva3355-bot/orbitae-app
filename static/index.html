@@ -4881,9 +4881,9 @@
         }
 
         // Función para abrir/cerrar el acordeón de la hora exacta
-        window.toggleTimeTip = function() {
-            const content = document.getElementById('time-tip-content');
-            const chevron = document.getElementById('time-tip-chevron');
+        window.toggleTimeWarningAccordion = function() {
+            const content = document.getElementById('time-warning-body');
+            const chevron = document.getElementById('time-warning-chevron');
             if (content && chevron) {
                 const isHidden = content.style.display === 'none';
                 content.style.display = isHidden ? 'block' : 'none';
@@ -7891,10 +7891,10 @@
                 }
             }
             
-            let timeTip = document.getElementById('calculator-time-tip');
+            let timeTip = document.getElementById('calculator-time-warning-box');
             if (calculatorContainer && !timeTip) {
                 timeTip = document.createElement('div');
-                timeTip.id = 'calculator-time-tip';
+                timeTip.id = 'calculator-time-warning-box';
                 timeTip.style.cssText = 'margin: 4px 14px 14px 14px; position: relative; z-index: 1; background: rgba(34, 211, 238, 0.05); border: 1px dashed rgba(34, 211, 238, 0.3); border-radius: 8px; padding: 10px 12px; transition: all 0.3s;';
                 const calcFields = document.getElementById('calculator-fields');
                 if (calcFields) {
@@ -7943,12 +7943,12 @@
                 if (timeTip) {
                     timeTip.style.display = 'block';
                     timeTip.innerHTML = `
-                        <div class="time-tip-accordion" style="width: 100%;">
-                            <div class="time-tip-header" onclick="toggleTimeTip()" style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #00e5ff; cursor: pointer; user-select: none;">
+                        <div class="time-warning-accordion" style="width: 100%; position: relative; background: transparent;">
+                            <div class="time-warning-header" onclick="toggleTimeWarningAccordion()" style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #00e5ff; cursor: pointer; user-select: none; position: relative;">
                                 <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle-info"></i> ¿Por qué importa la hora exacta?</span>
-                                <i id="time-tip-chevron" class="fa-solid fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
+                                <i id="time-warning-chevron" class="fa-solid fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
                             </div>
-                            <div id="time-tip-content" style="display: none; font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.45; margin-top: 8px;">
+                            <div id="time-warning-body" style="display: none; font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.45; margin-top: 8px; position: relative; z-index: 10; background: transparent;">
                                 Cuanto más exacta sea la hora de nacimiento, más preciso será el cálculo de tu Ascendente y tu Medio Cielo (precisión física orbital NASA VSOP87).
                             </div>
                         </div>
