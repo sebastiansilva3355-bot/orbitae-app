@@ -862,12 +862,12 @@
             }
 
             #map {
-                height: calc(100% - 60px);
+                height: calc(100% - 70px);
                 width: 100%;
                 position: absolute;
                 top: 0;
                 left: 0;
-                bottom: 60px;
+                bottom: 70px;
             }
 
             /* Panel se convierte en pantalla completa sobrepuesta */
@@ -876,9 +876,9 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                bottom: 60px;
+                bottom: 70px;
                 width: 100%;
-                height: calc(100% - 60px);
+                height: calc(100% - 70px);
                 border-radius: 0;
                 border: none;
                 box-shadow: none;
@@ -2593,7 +2593,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 60px;
+            bottom: 70px;
             background: rgba(10, 8, 18, 0.6);
             backdrop-filter: blur(2px);
             z-index: 1000;
@@ -7687,7 +7687,7 @@
                             <button class="upgrade-btn-secondary" onclick="showMobileView('info'); switchTab('profile');" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:10px; font-size:11px; cursor:pointer;">Volver a Mi Carta</button>
                         </div>
                     `;
-                    mapEl.appendChild(mapLockOverlay);
+                    mapEl.parentNode.appendChild(mapLockOverlay);
                     mapLockOverlay.style.display = 'flex';
                 }
             }
