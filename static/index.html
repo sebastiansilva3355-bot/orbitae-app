@@ -2593,7 +2593,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 70px;
+            bottom: 0;
             background: rgba(10, 8, 18, 0.6);
             backdrop-filter: blur(2px);
             z-index: 1000;
@@ -7668,7 +7668,9 @@
                     mapEl.classList.remove('map-blurred');
                     mapEl.style.pointerEvents = 'auto';
                 }
-                if (mapLockOverlay) mapLockOverlay.style.display = 'none';
+                if (mapLockOverlay) {
+                    mapLockOverlay.remove();
+                }
             } else {
                 if (mapEl) {
                     mapEl.classList.add('map-blurred');
@@ -7687,7 +7689,9 @@
                             <button class="upgrade-btn-secondary" onclick="showMobileView('info'); switchTab('profile');" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:10px; font-size:11px; cursor:pointer;">Volver a Mi Carta</button>
                         </div>
                     `;
-                    mapEl.parentNode.appendChild(mapLockOverlay);
+                    mapEl.appendChild(mapLockOverlay);
+                    mapLockOverlay.style.display = 'flex';
+                } else if (mapLockOverlay) {
                     mapLockOverlay.style.display = 'flex';
                 }
             }
