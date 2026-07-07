@@ -2598,6 +2598,7 @@
             backdrop-filter: blur(2px);
             z-index: 1000;
             display: flex;
+            pointer-events: auto;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -7683,11 +7684,10 @@
                             <h3 style="font-family:'Cinzel',serif; font-size:16px; margin:0 0 8px 0; color:var(--accent-gold);">Suite Astrocartografía Cosmos</h3>
                             <p style="font-size:11.5px; color:var(--text-gray); line-height:1.45; margin:0 0 16px 0;">Explorá tu mapa interactivo de líneas de poder y tu calendario de viajes completo activando Cosmos.</p>
                             <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')" style="margin:0; width:100%;">➜ Desbloquear con Cosmos</button>
+                            <button class="upgrade-btn-secondary" onclick="showMobileView('info'); switchTab('profile');" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:10px; font-size:11px; cursor:pointer;">Volver a Mi Carta</button>
                         </div>
                     `;
-                    mapEl.parentNode.appendChild(mapLockOverlay);
-                }
-                if (mapLockOverlay) {
+                    mapEl.appendChild(mapLockOverlay);
                     mapLockOverlay.style.display = 'flex';
                 }
             }
@@ -7890,7 +7890,7 @@
                 if (data.valid) {
                     _activatePremiumLocally(data.session_token, data.tier);
                     applySubscriptionTierLimits();
-                    showToast(`✨ ¡Prueba de 7 días de ${data.tier.toUpperCase()} activada correctamente!`);
+                    showToast('Prueba de 7 dias de ' + data.tier.toUpperCase() + ' activada correctamente!');
                     closeTrialFlow();
                     setTimeout(() => { location.reload(); }, 1500);
                 } else {
@@ -7979,7 +7979,8 @@
                 if (calcChevron) calcChevron.style.display = 'none';
                 
                 // 4. Agregar mensaje de bienvenida e info sobre inputs
-                const username = document.getElementById('onboarding-name-input')?.value || localStorage.getItem('orbitae_name') || 'Viajero';
+                const onboardingNameInput = document.getElementById('onboarding-name-input');
+                const username = (onboardingNameInput && onboardingNameInput.value) || localStorage.getItem('orbitae_name') || 'Viajero';
                 if (welcomeMsg) {
                     welcomeMsg.style.display = 'block';
                     welcomeMsg.innerHTML = `✦ ¡Hola, ${username}! Empecemos <span style="color:var(--accent-gold);">✦</span><br><span style="font-family:'Inter',sans-serif; font-size:12px; color:rgba(255,255,255,0.6); font-weight:normal; display:block; margin-top:4px;">Ingresá tu fecha, hora y ciudad de nacimiento para calcular tu carta natal exacta.</span>`;
