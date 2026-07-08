@@ -4153,15 +4153,15 @@
                     <span style="font-size: 11.5px; font-weight: 700; color: #a89fc0;">Stellar</span>
                     <span style="font-size: 13px; font-weight: 800; color: #ffffff;">$2.990<span style="font-size: 9px; font-weight: normal; color: var(--text-gray);">/mes</span></span>
                 </div>
-                <div class="plan-option active" id="plan-option-cosmos" onclick="selectPaywallPlan('cosmos')" style="cursor:pointer; flex: 1; padding: 12px; background: rgba(124, 58, 237, 0.05); border: 1px solid #7c3aed; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.2s; box-shadow: 0 0 10px rgba(124, 58, 237, 0.15);">
+                <div class="plan-option" id="plan-option-cosmos" onclick="selectPaywallPlan('cosmos')" style="cursor:pointer; flex: 1; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.2s;">
                     <span style="font-size: 11.5px; font-weight: 700; color: #a78bfa;">Cosmos</span>
                     <span style="font-size: 13px; font-weight: 800; color: #ffffff;">$6.990<span style="font-size: 9px; font-weight: normal; color: var(--text-gray);">/mes</span></span>
                 </div>
             </div>
             <input type="hidden" id="paywall-selected-plan" value="cosmos">
 
-            <button id="cta-trial-btn" style="justify-content: center; background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: #0d0d1e; border: none; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; padding: 16px; border-radius: 12px; width: 100%; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.35); cursor: pointer; transition: transform 0.2s; margin-bottom: 12px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onclick="submitTrialActivation()">
-                Empezar prueba gratis
+            <button id="cta-trial-btn" style="justify-content: center; background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: #0d0d1e; border: none; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; padding: 16px; border-radius: 12px; width: 100%; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.35); cursor: pointer; transition: transform 0.2s; margin-bottom: 12px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'; submitTrialActivation();" onclick="submitTrialActivation()">
+                EMPEZAR PRUEBA GRATIS
             </button>
             
             <div id="trial-fine-print" style="font-size: 9px; color: var(--text-gray); line-height: 1.45; margin-bottom: 12px; width: 100%; text-align: center;">
@@ -7792,6 +7792,12 @@
             
             const target = document.getElementById(screenId);
             if (target) target.style.display = 'flex';
+            
+            // Inicializar selección visual del plan cuando se muestra el paywall
+            if (screenId === 's-paywall') {
+                const currentPlan = document.getElementById('paywall-selected-plan')?.value || 'cosmos';
+                selectPaywallPlan(currentPlan);
+            }
         }
         
         function closeTrialFlow() {
