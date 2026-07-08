@@ -7671,7 +7671,7 @@
             if (tier === 'cosmos' || !hasSavedData) {
                 if (mapEl) {
                     mapEl.classList.remove('map-blurred');
-                    mapEl.style.pointerEvents = 'auto';
+                    mapEl.style.pointerEvents = '';
                 }
                 if (mapLockOverlay) {
                     mapLockOverlay.remove();
@@ -7679,19 +7679,26 @@
             } else {
                 if (mapEl) {
                     mapEl.classList.add('map-blurred');
-                    mapEl.style.pointerEvents = 'none';
+                    // NO deshabilitamos pointer-events en #map — la tarjeta cubre todo
+                    // y algunos WebViews de Android no propagan eventos a hijos con pointer-events:auto
+                    mapEl.style.pointerEvents = '';
                 }
                 if (!mapLockOverlay && mapEl) {
                     mapLockOverlay = document.createElement('div');
                     mapLockOverlay.id = 'map-lock-overlay';
                     mapLockOverlay.className = 'map-lock-overlay-container';
+                    mapLockOverlay.style.pointerEvents = 'auto';
                     mapLockOverlay.innerHTML = `
                         <div class="map-lock-card">
                             <div style="font-size:32px; margin-bottom:10px;">🗺️</div>
                             <h3 style="font-family:'Cinzel',serif; font-size:16px; margin:0 0 8px 0; color:var(--accent-gold);">Suite Astrocartografía Cosmos</h3>
                             <p style="font-size:11.5px; color:var(--text-gray); line-height:1.45; margin:0 0 16px 0;">Explorá tu mapa interactivo de líneas de poder y tu calendario de viajes completo activando Cosmos.</p>
-                            <button class="compact-cta cosmos-cta" onclick="openUpgradeModal('cosmos')" style="margin:0; width:100%;">➜ Desbloquear con Cosmos</button>
-                            <button class="upgrade-btn-secondary" onclick="showMobileView('info'); switchTab('profile');" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:10px; font-size:11px; cursor:pointer;">Volver a Mi Carta</button>
+                            <button class="compact-cta cosmos-cta" style="margin:0; width:100%; pointer-events:auto;"
+                                onclick="openUpgradeModal('cosmos')"
+                                ontouchend="event.preventDefault(); openUpgradeModal('cosmos');">➜ Desbloquear con Cosmos</button>
+                            <button style="width:100%; margin-top:8px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; font-size:11px; cursor:pointer; pointer-events:auto;"
+                                onclick="showMobileView('info'); switchTab('profile');"
+                                ontouchend="event.preventDefault(); showMobileView('info'); switchTab('profile');">Volver a Mi Carta</button>
                         </div>
                     `;
                     mapEl.appendChild(mapLockOverlay);
@@ -7700,6 +7707,7 @@
                     mapLockOverlay.style.display = 'flex';
                 }
             }
+
 
             // --- ACTUALIZAR CTA DE UPGRADE EN BANNER DE INICIO ---
             const ctaContainer = document.getElementById('premium-banner-cta-container');
