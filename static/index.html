@@ -5084,6 +5084,9 @@
                 if (hasSavedData) {
                     calculateNewChart(false, true);
                     switchTab('daily');
+                    if (isMobileView()) {
+                        showMobileView('info');
+                    }
                 } else {
                     switchTab('profile');
                     if (isMobileView()) {
